@@ -3,7 +3,7 @@
 
 void parseConfiguration(std::string filePath, Domain* dest)
 {
-    rapidxml::file<> xml_file(filePath.c_str());  // Replace "domain.xml" with your actual file path
+    rapidxml::file<> xml_file(filePath.c_str()); 
     rapidxml::xml_document<> doc;
     doc.parse<0>(xml_file.data());
 
@@ -19,7 +19,7 @@ void parseConfiguration(std::string filePath, Domain* dest)
 
         std::string output_file = domain_node->first_node("outputFile")->value();
 
-        Domain domain(dim, Neighborhood(), filePath, output_file);  // Assuming default values for Neighborhood and inputFile
+        Domain domain(dim, Neighborhood(), filePath, output_file); 
 
     } else {
         std::cerr << "Error: Invalid XML format." << std::endl;

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<Domain>
+    <dimX>100</dimX>
+    <dimY>100</dimY>
+    <dimZ>1</dimZ>
+    <outputFile>output.txt</outputFile>
+</Domain>
