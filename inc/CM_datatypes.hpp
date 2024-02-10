@@ -5,6 +5,7 @@ typedef uint16_t cm_pos;
 typedef uint8_t cm_state;
 typedef uint8_t cm_colorampl;
 
+/* Class Field represents single field of a cellular automata domain */
 struct Field
 {
     cm_pos x,y,z;
@@ -12,11 +13,13 @@ struct Field
     cm_colorampl r,g,b;
 };
 
+/* Class Neighborhood contains information about neighboorhood type and parameters*/
 struct Neighborhood
 {
     
 };
 
+/* Class Domain represents cellular automata domain, it contains all data necessary to start a microstructure generating process */
 class Domain
 {
     private:
@@ -47,3 +50,4 @@ class Domain
 
     void printConfiguration() const;
 };
+
