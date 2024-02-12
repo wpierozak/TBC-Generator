@@ -14,7 +14,9 @@ struct Subdomain
 
 /* Function performs one iteration of a grain growth algorithm within a given subdomain */
 void grainGrowth(Subdomain& subdomain);
+/* Function tests neighbourhood and sets output state of a given cell */
 void tryNeighborhood(const cm_pos cX, const cm_pos cY, const cm_pos cZ, Subdomain& subdomain);
+/* Function tests if neighbour is within domain */
 inline bool tryIfFit(const cm_pos cX, const cm_pos cY, const cm_pos cZ, cm_smallsize n, Subdomain& subdomain)
 {
     return (cX + subdomain.neighborhood.neighbours[n][0] >= subdomain.x0 && cX + subdomain.neighborhood.neighbours[n][0] < subdomain.x1 &&

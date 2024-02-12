@@ -1,6 +1,5 @@
 #include"CM_generation.hpp"
 
-
 void grainGrowth(Subdomain& subdomain)
 {
     for(cm_pos y = subdomain.y0; y < subdomain.y1; y++)
@@ -20,7 +19,7 @@ void tryNeighborhood(const cm_pos cX, const cm_pos cY, const cm_pos cZ, Subdomai
         if(rand()%100 > 50)
         {
             subdomain.outputStates[cY*(subdomain.dimX*subdomain.dimZ) + cZ*subdomain.dimX + cX] =
-                subdomain.outputStates[(cY + subdomain.neighborhood.neighbours[n][1])*(subdomain.dimX*subdomain.dimZ) + 
+                subdomain.inputStates[(cY + subdomain.neighborhood.neighbours[n][1])*(subdomain.dimX*subdomain.dimZ) + 
                 (cZ + subdomain.neighborhood.neighbours[n][2])*subdomain.dimX + cX + subdomain.neighborhood.neighbours[n][0]];
             break;
         }
@@ -31,3 +30,4 @@ void nucleation(Domain& domain)
 {
 
 }
+
