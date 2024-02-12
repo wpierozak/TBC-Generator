@@ -4,12 +4,14 @@
 Domain::Domain(cm_pos dim[], Neighborhood neighborhood, std::string inputFile, std::string outputFile):
     _dimX(dim[0]), _dimY(dim[1]), _dimZ(dim[2]), _neighborhood(neighborhood), _inputFile(inputFile), _outputFile(outputFile)
 {
-    _domain = new Field[static_cast<size_t>(_dimX) * static_cast<size_t>(_dimY) * static_cast<size_t>(_dimZ)];
+    _Astates = new cm_state[static_cast<size_t>(_dimX) * static_cast<size_t>(_dimY) * static_cast<size_t>(_dimZ)];
+    _Bstates = new cm_state[static_cast<size_t>(_dimX) * static_cast<size_t>(_dimY) * static_cast<size_t>(_dimZ)];
 }
 
 Domain::~Domain()
 {
-    delete[] _domain;
+    delete[] _Astates;
+    delete[] _Bstates;
 }
 
 void Domain::printConfiguration() const
