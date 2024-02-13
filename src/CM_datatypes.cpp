@@ -12,6 +12,7 @@ Domain::~Domain()
 {
     delete[] _Astates;
     delete[] _Bstates;
+    delete[] _colors;
 }
 
 void Domain::printConfiguration() const

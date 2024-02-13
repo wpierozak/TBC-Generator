@@ -28,6 +28,16 @@ void tryNeighborhood(const cm_pos cX, const cm_pos cY, const cm_pos cZ, Subdomai
 
 void nucleation(Domain& domain)
 {
-
+    cm_pos nucleuses[3];
+    cm_size grainID = 0;
+    for(cm_size n = 0; n < domain.getNucleusNum(); n+= 3 )
+    {
+        nucleuses[0] = std::rand() % domain.getDimX();
+        nucleuses[1] = std::rand() % domain.getDimY();
+        nucleuses[2] = std::rand() % domain.getDimZ();
+        domain.getAbuffer()[nucleuses[1]*(domain.getDimX()*domain.getDimZ()) + nucleuses[2]*domain.getDimX() + nucleuses[0]]   
+            = grainID;
+        grainID++;
+    }
 }
 

@@ -36,8 +36,12 @@ class Domain
     cm_pos _dimY;
     cm_pos _dimZ;
 
+    cm_size _nucleusNum;
+
     std::string _outputFile;
     std::string _inputFile;
+
+    bool _2D;
 
     public:
     Domain(cm_pos dim[], Neighborhood neighborhood, std::string inputFile, std::string outputFile);
@@ -46,10 +50,16 @@ class Domain
     cm_pos getDimX() const { return _dimX; }
     cm_pos getDimY() const { return _dimY; }
     cm_pos getDimZ() const { return _dimZ; }
+    cm_state* getAbuffer() const { return _Astates; }
+    cm_state* getBbuffer() const { return _Bstates; }
+
+    cm_size getNucleusNum() const { return _nucleusNum; }
 
     std::string getOutputFile() const { return _outputFile; }
     std::string getInputFile() const { return _inputFile; }
-    
+
+    bool is2D() const { return _2D; }
+
     Neighborhood getNeighborhood() const { return _neighborhood; }
 
     void setOutputFile(const std::string& outputFile) { _outputFile = outputFile; }
