@@ -1,3 +1,4 @@
+#include<iostream>
 #include"CM_generation.hpp"
 
 void grainGrowth(Subdomain& subdomain)
@@ -6,7 +7,7 @@ void grainGrowth(Subdomain& subdomain)
     for(cm_pos z = subdomain.z0; z < subdomain.z1; z++)
     for(cm_pos x = subdomain.x0; x < subdomain.x1; x++)
     {
-        if(subdomain.inputStates[y*(subdomain.dimX*subdomain.dimZ) + z*subdomain.dimX + x] == EMPTY)
+        if(subdomain.inputStates[subdomain.getIdx(x,y,z)] == EMPTY)
             tryNeighborhood(x,y,z, subdomain);
     }
 }
@@ -18,9 +19,9 @@ void tryNeighborhood(const cm_pos cX, const cm_pos cY, const cm_pos cZ, Subdomai
         if(!tryIfFit(cX, cY, cZ, n, subdomain)) continue;
         if(rand()%100 > 50)
         {
-            subdomain.outputStates[cY*(subdomain.dimX*subdomain.dimZ) + cZ*subdomain.dimX + cX] =
-                subdomain.inputStates[(cY + subdomain.neighborhood.neighbours[n][1])*(subdomain.dimX*subdomain.dimZ) + 
-                (cZ + subdomain.neighborhood.neighbours[n][2])*subdomain.dimX + cX + subdomain.neighborhood.neighbours[n][0]];
+            subdomain.outputStates[subdomain.getIdx(cX, cY, cZ)] =
+                subdomain.inputStates[subdomain.getIdx(cX + subdomain.neighborhood.neighbours[n][0], 
+                cY + subdomain.neighborhood.neighbours[n][1], cZ + subdomain.neighborhood.neighbours[n][2])];
             break;
         }
     }
@@ -29,15 +30,16 @@ void tryNeighborhood(const cm_pos cX, const cm_pos cY, const cm_pos cZ, Subdomai
 void nucleation(Domain& domain)
 {
     cm_pos nucleuses[3];
-    cm_size grainID = 0;
-    for(cm_size n = 0; n < domain.getNucleusNum(); n+= 3 )
+    cm_state grainID = 0;
+    for(cm_size n = 0; n < domain.getNucleusNum(); n++ )
     {
         nucleuses[0] = std::rand() % domain.getDimX();
-        nucleuses[1] = std::rand() % domain.getDimY();
+        nucleuses[1] = 0;
         nucleuses[2] = std::rand() % domain.getDimZ();
-        domain.getAbuffer()[nucleuses[1]*(domain.getDimX()*domain.getDimZ()) + nucleuses[2]*domain.getDimX() + nucleuses[0]]   
+        domain.getAbuffer()[domain.getIdx(nucleuses[0], nucleuses[1], nucleuses[2])]   
             = grainID;
         grainID++;
+        std::cout<<nucleuses[0] << " " <<nucleuses[1] << " " <<nucleuses[2] << "\n";
     }
 }
 

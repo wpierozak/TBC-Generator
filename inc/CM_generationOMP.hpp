@@ -1,3 +1,5 @@
+#pragma once
+
 #include"CM_generation.hpp"
 
 void generate(Domain& caDomain, const int threadsNumber);

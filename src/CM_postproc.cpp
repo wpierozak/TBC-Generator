@@ -1,14 +1,18 @@
+#include<iostream>
 #include"CM_postproc.hpp"
 #include"BMP/libbmp.h"
+
+#define LOGS
+
 void fillColorBuffer(Domain& caDomain, const int threadNum)
 {
     cm_state * domain = caDomain.getAbuffer();
     cm_size grainNum = caDomain.getNucleusNum();
     cm_size cellsNum = caDomain.getCellsNum();
     cm_colorampl* colorsArray = defineColors(grainNum);
-    cm_colorampl* colorBuffer = new cm_colorampl[cellsNum];
+    cm_colorampl* colorBuffer = new cm_colorampl[cellsNum*3];
 
-    #pragma omp parallel for default(none) shared(colorBuffer, domain, colorsArray, cellsNum) num_threads(threadNum)
+    //#pragma omp parallel for default(none) shared(colorBuffer, domain, colorsArray, cellsNum) num_threads(threadNum)
     for(cm_size idx = 0; idx < cellsNum; idx++)
     {
         colorBuffer[idx*3] = colorsArray[domain[idx]*3];
@@ -22,7 +26,7 @@ void fillColorBuffer(Domain& caDomain, const int threadNum)
 
 cm_colorampl* defineColors(cm_size grainNum)
 {
-    int spec = 256/grainNum;
+    int spec = (256)/grainNum;
     cm_colorampl* colorsArray = new cm_colorampl[3*grainNum];
     for(int i = 0; i < grainNum; i++)
     {

@@ -3,5 +3,12 @@
     <dimX>100</dimX>
     <dimY>100</dimY>
     <dimZ>1</dimZ>
-    <outputFile>output.txt</outputFile>
+    <outputFile>output.bmp</outputFile>
+    <Neighbourhood size="5">   
+        <nb dx="-1"   dy="-1"   dz="0"/>
+        <nb dx="0"    dy="-1"   dz="0"/>
+        <nb dx="1"    dy="-1"   dz="0"/>
+        <nb dx="-1"   dy="0"    dz="0"/>
+        <nb dx="1"    dy="0"    dz="0"/> 
+    </Neighbourhood>
 </Domain>

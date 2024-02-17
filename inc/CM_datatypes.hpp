@@ -1,13 +1,15 @@
+#pragma once
+
 #include <cstdint>
 #include<string>
 
-#define EMPTY -1
-
-typedef uint16_t cm_pos;
-typedef uint8_t cm_state;
+typedef int32_t cm_pos;
+typedef int8_t cm_state;
 typedef uint8_t cm_colorampl;
 typedef uint8_t cm_smallsize;
 typedef size_t cm_size;
+
+const cm_state EMPTY = -1;
 
 /* Class Field represents single field of a cellular automata domain */
 struct Field
@@ -19,7 +21,7 @@ struct Field
 /* Class Neighborhood contains information about neighboorhood type and parameters*/
 struct Neighborhood
 {
-    cm_pos* neighbours[3];
+    cm_pos** neighbours;
     cm_smallsize size;
 };
 
@@ -36,7 +38,7 @@ class Domain
     cm_pos _dimY;
     cm_pos _dimZ;
 
-    cm_size _nucleusNum;
+    cm_size _nucleusNum{100};
 
     std::string _outputFile;
     std::string _inputFile;
@@ -72,5 +74,10 @@ class Domain
     void setColorBuffer(cm_colorampl* colorBuffer) { _colors = colorBuffer; }
 
     void printConfiguration() const;
+
+    cm_size getIdx(cm_pos x, cm_pos y, cm_pos z)
+    {
+        return cm_size(y)*(_dimX + _dimZ) + cm_size(z)*_dimX + cm_size(x);;
+    }
 };
 
