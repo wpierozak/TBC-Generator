@@ -1,4 +1,5 @@
 #include<iostream>
+#include<ctime>
 #include"CM_generation.hpp"
 
 void grainGrowth(Subdomain& subdomain)
@@ -17,7 +18,7 @@ void tryNeighborhood(const cm_pos cX, const cm_pos cY, const cm_pos cZ, Subdomai
     for(cm_smallsize n = 0; n < subdomain.neighborhood.size; n++)
     {
         if(!tryIfFit(cX, cY, cZ, n, subdomain)) continue;
-        if(rand()%100 > 50)
+        if(rand()%100 > 25)
         {
             subdomain.outputStates[subdomain.getIdx(cX, cY, cZ)] =
                 subdomain.inputStates[subdomain.getIdx(cX + subdomain.neighborhood.neighbours[n][0], 
@@ -29,17 +30,16 @@ void tryNeighborhood(const cm_pos cX, const cm_pos cY, const cm_pos cZ, Subdomai
 
 void nucleation(Domain& domain)
 {
+    srand(time(NULL));
     cm_pos nucleuses[3];
-    cm_state grainID = 0;
+    cm_state grainID = 1;
     for(cm_size n = 0; n < domain.getNucleusNum(); n++ )
     {
         nucleuses[0] = std::rand() % domain.getDimX();
         nucleuses[1] = 0;
         nucleuses[2] = std::rand() % domain.getDimZ();
-        domain.getAbuffer()[domain.getIdx(nucleuses[0], nucleuses[1], nucleuses[2])]   
-            = grainID;
+        domain.getAbuffer()[domain.getIdx(nucleuses[0], nucleuses[1], nucleuses[2])] = grainID;
         grainID++;
-        std::cout<<nucleuses[0] << " " <<nucleuses[1] << " " <<nucleuses[2] << "\n";
     }
 }
 

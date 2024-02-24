@@ -36,7 +36,6 @@ Domain* parseConfiguration(const std::string& filePath) {
             // Iterate through nb nodes
             for (child = nb_node->first_node(); child != nullptr; child = child->next_sibling()) {
                 // Allocate memory for individual neighbor's coordinates
-                std::cout<< idx << std::endl;
                 neighborhood.neighbours[idx] = new cm_pos[3];
             
                 std::string dx_str = child->first_attribute("dx")->value();
@@ -48,14 +47,13 @@ Domain* parseConfiguration(const std::string& filePath) {
                 neighborhood.neighbours[idx][0] = dx;
                 neighborhood.neighbours[idx][1] = dy;
                 neighborhood.neighbours[idx][2] = dz;
-                std::cout<< idx << std::endl;
                 idx++;
             }
         }
+        rapidxml::xml_node<>* nucleuses_node = domain_node->first_node("Nucleuses");
+        cm_size nucleuses_num = std::stoi(nucleuses_node->first_attribute("num")->value());
         // Update the provided Domain object
-        return (new Domain(dim, neighborhood, filePath, output_file)); // Construct new Domain in-place
-        
-
+        return (new Domain(dim, neighborhood, nucleuses_num, filePath, output_file)); 
     } else {
         throw std::runtime_error("Invalid XML format.");
     }

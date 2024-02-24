@@ -9,7 +9,7 @@ typedef uint8_t cm_colorampl;
 typedef uint8_t cm_smallsize;
 typedef size_t cm_size;
 
-const cm_state EMPTY = -1;
+const cm_state EMPTY = 0;
 
 /* Class Field represents single field of a cellular automata domain */
 struct Field
@@ -38,7 +38,7 @@ class Domain
     cm_pos _dimY;
     cm_pos _dimZ;
 
-    cm_size _nucleusNum{100};
+    cm_size _nucleusNum;
 
     std::string _outputFile;
     std::string _inputFile;
@@ -46,7 +46,7 @@ class Domain
     bool _2D;
 
     public:
-    Domain(cm_pos dim[], Neighborhood neighborhood, std::string inputFile, std::string outputFile);
+    Domain(cm_pos dim[], Neighborhood neighborhood, cm_size nucleusesNum, std::string inputFile, std::string outputFile);
     ~Domain();
 
     cm_pos getDimX() const { return _dimX; }

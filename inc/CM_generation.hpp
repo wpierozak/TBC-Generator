@@ -16,7 +16,7 @@ class Subdomain
 
     cm_size getIdx(cm_pos x, cm_pos y, cm_pos z)
     {
-        return cm_size(y)*(dimX + dimZ) + cm_size(z)*dimX + cm_size(x);;
+        return cm_size(y)*(dimX*dimZ) + cm_size(z)*dimX + cm_size(x);
     }
 };
 
@@ -27,10 +27,11 @@ void tryNeighborhood(const cm_pos cX, const cm_pos cY, const cm_pos cZ, Subdomai
 /* Function tests if neighbour is within domain */
 inline bool tryIfFit(const cm_pos cX, const cm_pos cY, const cm_pos cZ, cm_smallsize n, Subdomain& subdomain)
 {
-    return (cX + subdomain.neighborhood.neighbours[n][0] >= subdomain.x0 && cX + subdomain.neighborhood.neighbours[n][0] < subdomain.x1 &&
-        cX + subdomain.neighborhood.neighbours[n][0] >= subdomain.x0 && cX + subdomain.neighborhood.neighbours[n][0] < subdomain.x1 &&
-        cY + subdomain.neighborhood.neighbours[n][1] >= subdomain.y0 && cY + subdomain.neighborhood.neighbours[n][1] < subdomain.y1 &&
-        cZ + subdomain.neighborhood.neighbours[n][2] >= subdomain.z0 && cZ + subdomain.neighborhood.neighbours[n][2] < subdomain.z1);
+    return (
+        (cX + subdomain.neighborhood.neighbours[n][0] >= 0) && (cX + subdomain.neighborhood.neighbours[n][0] < subdomain.dimX )&&
+        (cY + subdomain.neighborhood.neighbours[n][1] >= 0) && (cY + subdomain.neighborhood.neighbours[n][1] < subdomain.dimY ) &&
+        (cZ + subdomain.neighborhood.neighbours[n][2] >= 0) && (cZ + subdomain.neighborhood.neighbours[n][2] < subdomain.dimZ )
+        );
 }
 /* Function sets all cells to a default value and performs a nucleation */
 void nucleation(Domain& domain);

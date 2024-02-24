@@ -3,59 +3,54 @@
 #include<iostream>
 #include"CM_generationOMP.hpp"
 
-#define LOGS
 
 void generate(Domain& caDomain, const int threadsNumber)
 {
+    srand(time(NULL));
     nucleation(caDomain);
     Subdomain* subdomains = createSubdomains(caDomain, threadsNumber);
-    cm_size threadChunk = cm_size(subdomains->x1 - subdomains->x0)*cm_size(subdomains->y1 - subdomains->y0)*cm_size(subdomains->z1-subdomains->z0);
+
     #ifdef LOGS
-        std::cout<< "Thread chunk: " << threadChunk << std::endl;
         std::cout<<"Generating begins - OMP\n";
     #endif
-    #pragma omp parallel default(none) shared(subdomains) num_threads(threadsNumber)
+
+    #pragma omp parallel default(none) shared(subdomains) num_threads(threadsNumber) firstprivate(threadsNumber) shared(std::cout)
     {
         int idx = omp_get_thread_num();
-        cm_size threadChunk = subdomains->getIdx(subdomains[idx].x1, subdomains[idx].y1 -1, subdomains[idx].z1-1);
         bool done = false;
-        static int alldone = 0; 
-        while(true)
+        static int alldone = 0;
+
+        while(alldone != threadsNumber)
         {
-            if(subdomains[idx].y0 != subdomains[idx].y1)
+            if(subdomains[idx].y1 != subdomains[idx].dimY)
             {
                 grainGrowth(subdomains[idx]);
-                std::memcpy(subdomains[0].inputStates + cm_size(idx)*threadChunk, subdomains[0].outputStates + cm_size(idx)*threadChunk, threadChunk*sizeof(cm_state));
+
+                for(cm_pos y = subdomains[idx].y0; y < subdomains[idx].y1; y++)
+                for(cm_pos z = subdomains[idx].z0; z < subdomains[idx].z1; z++)
+                    std::memcpy(subdomains[idx].inputStates + subdomains[idx].getIdx(subdomains[idx].x0, y, z),
+                    subdomains[idx].outputStates + subdomains[idx].getIdx(subdomains[idx].x0, y, z), 
+                    (subdomains[idx].x1 - subdomains[idx].x0 + 1)*sizeof(cm_state));
+
                 checkBottomLayer(subdomains[idx]);
                 checkUpperLayer(subdomains[idx]);
-                subdomains[idx].y1 = (subdomains[idx].y1 > subdomains[idx].y0) ? subdomains[idx].y1: subdomains[idx].y0 + 1;
-                subdomains[idx].y1 = (subdomains[idx].y1 < subdomains[idx].dimY) ? subdomains[idx].y1: subdomains[idx].dimY - 1;
-                threadChunk = subdomains->getIdx(subdomains[idx].x1, subdomains[idx].y1 -1, subdomains[idx].z1-1);
             }
             else if(done == false)
             {
                 done = true;
-                #pragma omp atomic
-                alldone += 1;
-
-                #ifdef LOGS
-                std::cout<< "Thread " << idx << " finished" << std::endl;
-                #endif
+                #pragma omp critical
+                {
+                    alldone += 1;
+                }
             }
             #pragma omp barrier
-            if(alldone == threadsNumber) break;
-            #pragma omp barrier
-            #pragma omp single
-            {
-                //std::cout << subdomains[idx].y0 << " " << subdomains[idx].y1 << std::endl;
-            }
         }
-
-
     }
+
     #ifdef LOGS
         std::cout<<"Generating ends - OMP\n";
     #endif
+
     delete[] subdomains;
 }
 
@@ -86,15 +81,6 @@ Subdomain* createSubdomains(Domain& caDomain, const int threadsNumber)
         subdomains[counter].z1 = ((z + dz) < caDomain.getDimZ())? z + dz: caDomain.getDimZ();   
         counter++;              
     }
-
-    #ifdef LOGS
-        std::cout <<"Dim X: " << subdomains[0].dimX << std::endl;
-        std::cout <<"Dim Y: " << subdomains[0].dimY << std::endl;
-        std::cout <<"Dim Z: " << subdomains[0].dimZ << std::endl;
-        std::cout << "x0: " << subdomains[0].x0 << std::endl;
-        std::cout << "x1: " << subdomains[0].x1 << std::endl;
-    #endif
-
     return subdomains;
 }
 
@@ -116,14 +102,29 @@ void checkBottomLayer(Subdomain& subdomain)
 void checkUpperLayer(Subdomain& subdomain)
 {
     bool moveUpperLayer = false;
-    for(cm_pos z = subdomain.z0; z < subdomain.z1; z++)
-    for(cm_pos x = subdomain.x0; x < subdomain.x1; x++)
+    //if(subdomain.y1 != subdomain.dimY - 1)
     {
-        if(subdomain.outputStates[subdomain.getIdx(x, subdomain.y1 - 1, z)] != EMPTY)
+        for(cm_pos z = subdomain.z0; z < subdomain.z1; z++)
+        for(cm_pos x = subdomain.x0; x < subdomain.x1; x++)
+        {
+            if(subdomain.outputStates[subdomain.getIdx(x, subdomain.y1 - 1, z)] != EMPTY)
             {
                 moveUpperLayer = true;
             }
+        }
     }
+    /*else
+    {
+        moveUpperLayer = true;
+        for(cm_pos z = subdomain.z0; z < subdomain.z1; z++)
+        for(cm_pos x = subdomain.x0; x < subdomain.x1; x++)
+        {
+            if(subdomain.outputStates[subdomain.getIdx(x, subdomain.y1 - 1, z)] == EMPTY)
+            {
+                moveUpperLayer = false;
+            }
+        }
+    }*/
     subdomain.y1 = (moveUpperLayer) ? subdomain.y1+1: subdomain.y1;
 }
 

@@ -1,14 +1,15 @@
 <?xml version="1.0"?>
 <Domain>
-    <dimX>100</dimX>
-    <dimY>100</dimY>
+    <dimX>5000</dimX>
+    <dimY>1000</dimY>
     <dimZ>1</dimZ>
-    <outputFile>output.bmp</outputFile>
+    <outputFile>../res/output.bmp</outputFile>
     <Neighbourhood size="5">   
-        <nb dx="-1"   dy="-1"   dz="0"/>
         <nb dx="0"    dy="-1"   dz="0"/>
+        <nb dx="1"    dy="0"    dz="0"/>
         <nb dx="1"    dy="-1"   dz="0"/>
+        <nb dx="-1"   dy="-1"   dz="0"/> 
         <nb dx="-1"   dy="0"    dz="0"/>
-        <nb dx="1"    dy="0"    dz="0"/> 
     </Neighbourhood>
+    <Nucleuses num="200"/>
 </Domain>

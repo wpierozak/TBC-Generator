@@ -3,12 +3,14 @@
 
 #define LOGS
 
-Domain::Domain(cm_pos dim[], Neighborhood neighborhood, std::string inputFile, std::string outputFile):
+Domain::Domain(cm_pos dim[], Neighborhood neighborhood, cm_size nucleusesNum, std::string inputFile, std::string outputFile):
     _dimX(dim[0]), _dimY(dim[1]), _dimZ(dim[2]), _inputFile(inputFile), _outputFile(outputFile)
 {
     _neighborhood = neighborhood;
     _Astates = new cm_state[cm_size(_dimX) * cm_size(_dimY) * cm_size(_dimZ)];
     _Bstates = new cm_state[cm_size(_dimX) * cm_size(_dimY) * cm_size(_dimZ)];
+    _colors = nullptr;
+    _nucleusNum = nucleusesNum;
     for(cm_size i = 0; i < getCellsNum(); i++)
     {
         _Astates[i] = EMPTY;
@@ -20,7 +22,7 @@ Domain::~Domain()
 {
     delete[] _Astates;
     delete[] _Bstates;
-    delete[] _colors;
+    if(_colors != nullptr) delete[] _colors;
 }
 
 void Domain::printConfiguration() const
