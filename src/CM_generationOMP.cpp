@@ -22,7 +22,7 @@ void generate(Domain& caDomain, const int threadsNumber)
 
         while(alldone != threadsNumber)
         {
-            if(subdomains[idx].y1 != subdomains[idx].dimY)
+            if(subdomains[idx].y0 != subdomains[idx].y1)
             {
                 grainGrowth(subdomains[idx]);
 
@@ -30,10 +30,11 @@ void generate(Domain& caDomain, const int threadsNumber)
                 for(cm_pos z = subdomains[idx].z0; z < subdomains[idx].z1; z++)
                     std::memcpy(subdomains[idx].inputStates + subdomains[idx].getIdx(subdomains[idx].x0, y, z),
                     subdomains[idx].outputStates + subdomains[idx].getIdx(subdomains[idx].x0, y, z), 
-                    (subdomains[idx].x1 - subdomains[idx].x0 + 1)*sizeof(cm_state));
+                    (subdomains[idx].x1 - subdomains[idx].x0)*sizeof(cm_state));
 
                 checkBottomLayer(subdomains[idx]);
                 checkUpperLayer(subdomains[idx]);
+                subdomains[idx].y1 = (subdomains[idx].y1 < subdomains[idx].dimY) ? subdomains[idx].y1 : subdomains[idx].dimY - 1;
             }
             else if(done == false)
             {

@@ -30,6 +30,7 @@ void Domain::printConfiguration() const
     std::cout<< "\t===\tDomain configuration\t===\n";
     std::cout<< "Input file:\t" << _inputFile << std::endl;
     std::cout<< "Dimension:\t" << _dimX << '\t' << _dimY << '\t' << _dimZ << std::endl;
+    std::cout<< "Nucleuses number:\t" << _nucleusNum << std::endl;
     std::cout<< "Neighbourhood size:\t" << _neighborhood.size << std::endl;
     std::cout<< "Neighbourhood:\n";
     for(int i = 0; i < _neighborhood.size; i++)

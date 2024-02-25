@@ -77,7 +77,7 @@ class Domain
 
     cm_size getIdx(cm_pos x, cm_pos y, cm_pos z)
     {
-        return cm_size(y)*(_dimX + _dimZ) + cm_size(z)*_dimX + cm_size(x);;
+        return cm_size(y)*(_dimX * _dimZ) + cm_size(z)*_dimX + cm_size(x);;
     }
 };
 

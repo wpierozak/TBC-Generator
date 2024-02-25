@@ -18,11 +18,11 @@ void tryNeighborhood(const cm_pos cX, const cm_pos cY, const cm_pos cZ, Subdomai
     for(cm_smallsize n = 0; n < subdomain.neighborhood.size; n++)
     {
         if(!tryIfFit(cX, cY, cZ, n, subdomain)) continue;
-        if(rand()%100 > 25)
-        {
-            subdomain.outputStates[subdomain.getIdx(cX, cY, cZ)] =
-                subdomain.inputStates[subdomain.getIdx(cX + subdomain.neighborhood.neighbours[n][0], 
+        cm_state neighbour = subdomain.inputStates[subdomain.getIdx(cX + subdomain.neighborhood.neighbours[n][0], 
                 cY + subdomain.neighborhood.neighbours[n][1], cZ + subdomain.neighborhood.neighbours[n][2])];
+        if(rand()%100 > 20 && neighbour != EMPTY)
+        {
+            subdomain.outputStates[subdomain.getIdx(cX, cY, cZ)] = neighbour;
             break;
         }
     }
