@@ -10,6 +10,7 @@ BIN = $(ROOT)/bin
 LIB = $(ROOT)/lib
 
 DEBUG = -g
+OPT = -O2
 OMP = -fopenmp 
 
 datatypes: $(INC)/CM_datatypes.hpp $(SRC)/CM_datatypes.cpp
@@ -37,7 +38,7 @@ clean:
 	rm $(OBJ)/*.o
 	
 test: $(LIB)/cmlib.a 
-	$(LOADER) -I$(INC) $(OMP) $(DEBUG) test.cpp $(LIB)/cmlib.a -o $(BIN)/cmtest
+	$(LOADER) -I$(INC) $(OMP) $(OPT) test.cpp $(LIB)/cmlib.a -o $(BIN)/cmtest
 
 run:
 	$(BIN)/cmtest

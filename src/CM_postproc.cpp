@@ -33,9 +33,9 @@ cm_colorampl* defineColors(cm_size grainNum)
     cm_colorampl* colorsArray = new cm_colorampl[3*grainNum];
     for(int i = 0; i < grainNum; i++)
     {
-        colorsArray[i*3] = std::rand()%256;
-        colorsArray[i*3+1] = std::rand()%256;
-        colorsArray[i*3+2] = std::rand()%256;
+        colorsArray[i*3] = std::rand();
+        colorsArray[i*3+1] = std::rand();
+        colorsArray[i*3+2] = std::rand();
     }
     return colorsArray;
 }
@@ -61,9 +61,9 @@ void createBitmap(Domain& caDomain, const int threadsNum)
         cm_state grain = domain[caDomain.getIdx(x, y, 0)];
         if( grain != EMPTY)
         {
-            pixel.Red = colorsArray[int(grain-1)*3];
-            pixel.Green = colorsArray[int(grain-1)*3 + 1];
-            pixel.Blue = colorsArray[int(grain-1)*3 + 2];
+            pixel.Red =  colorsArray[(grain-1)*3];
+            pixel.Green = colorsArray[(grain-1)*3 + 1];
+            pixel.Blue =  colorsArray[(grain-1)*3 + 2];
         }
         else
         {

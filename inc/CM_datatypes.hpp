@@ -4,7 +4,7 @@
 #include<string>
 
 typedef int32_t cm_pos;
-typedef int8_t cm_state;
+typedef uint16_t cm_state;
 typedef uint8_t cm_colorampl;
 typedef uint8_t cm_smallsize;
 typedef size_t cm_size;
@@ -52,9 +52,9 @@ class Domain
     cm_pos getDimX() const { return _dimX; }
     cm_pos getDimY() const { return _dimY; }
     cm_pos getDimZ() const { return _dimZ; }
-    cm_state* getAbuffer() const { return _Astates; }
-    cm_state* getBbuffer() const { return _Bstates; }
-    cm_colorampl* getColorBuffer() const { return _colors; }
+    cm_state* getAbuffer()  { return _Astates; }
+    cm_state* getBbuffer() { return _Bstates; }
+    cm_colorampl* getColorBuffer()  { return _colors; }
 
     cm_size getNucleusNum() const { return _nucleusNum; }
     cm_size getSizeInBytes() const { return sizeof(cm_state)*static_cast<size_t>(_dimX) * static_cast<size_t>(_dimY) * static_cast<size_t>(_dimZ); }

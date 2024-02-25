@@ -28,8 +28,8 @@ void generate(Domain& caDomain, const int threadsNumber)
 
                 for(cm_pos y = subdomains[idx].y0; y < subdomains[idx].y1; y++)
                 for(cm_pos z = subdomains[idx].z0; z < subdomains[idx].z1; z++)
-                    std::memcpy(subdomains[idx].inputStates + subdomains[idx].getIdx(subdomains[idx].x0, y, z),
-                    subdomains[idx].outputStates + subdomains[idx].getIdx(subdomains[idx].x0, y, z), 
+                    std::memcpy(&subdomains[idx].inputStates[subdomains[idx].getIdx(subdomains[idx].x0, y, z)],
+                    &subdomains[idx].outputStates[subdomains[idx].getIdx(subdomains[idx].x0, y, z)], 
                     (subdomains[idx].x1 - subdomains[idx].x0)*sizeof(cm_state));
 
                 checkBottomLayer(subdomains[idx]);
