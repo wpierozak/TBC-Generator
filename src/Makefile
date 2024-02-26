@@ -23,7 +23,7 @@ generation: datatypes $(INC)/CM_generation.hpp $(SRC)/CM_generation.cpp
 	$(COMP) -c -I$(INC) CM_generation.cpp -o $(OBJ)/CM_generation.o
 
 omp_generation: generation $(INC)/CM_generationOMP.hpp $(SRC)/CM_generationOMP.cpp
-	$(COMP) -c $(OMP) -I$(INC) CM_generationOMP.cpp -o $(OBJ)/CM_generationOMP.o
+	$(COMP) -c $(OMP) -I$(INC) -g -Wall CM_generationOMP.cpp -o $(OBJ)/CM_generationOMP.o
 
 postproc: datatypes $(INC)/CM_postproc.hpp $(SRC)/CM_postproc.cpp
 	$(COMP) -c -I$(INC) CM_postproc.cpp -o $(OBJ)/CM_postproc.o
@@ -38,7 +38,7 @@ clean:
 	rm $(OBJ)/*.o
 	
 test: $(LIB)/cmlib.a 
-	$(LOADER) -I$(INC) $(OMP) $(OPT) test.cpp $(LIB)/cmlib.a -o $(BIN)/cmtest
+	$(LOADER) -I$(INC) $(OMP) $(DEBUG) test.cpp $(LIB)/cmlib.a -o $(BIN)/cmtest
 
 run:
 	$(BIN)/cmtest

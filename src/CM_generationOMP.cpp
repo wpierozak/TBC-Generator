@@ -1,8 +1,10 @@
 #include<omp.h>
 #include<cstring>
 #include<iostream>
+#include<math.h>
 #include"CM_generationOMP.hpp"
 
+#define LOGS
 
 void generate(Domain& caDomain, const int threadsNumber)
 {
@@ -14,7 +16,7 @@ void generate(Domain& caDomain, const int threadsNumber)
         std::cout<<"Generating begins - OMP\n";
     #endif
 
-    #pragma omp parallel default(none) shared(subdomains) num_threads(threadsNumber) firstprivate(threadsNumber) shared(std::cout)
+    #pragma omp parallel default(none) shared(subdomains) num_threads(threadsNumber) firstprivate(threadsNumber)
     {
         int idx = omp_get_thread_num();
         bool done = false;
@@ -25,13 +27,11 @@ void generate(Domain& caDomain, const int threadsNumber)
             if(subdomains[idx].y0 != subdomains[idx].y1)
             {
                 grainGrowth(subdomains[idx]);
-
                 for(cm_pos y = subdomains[idx].y0; y < subdomains[idx].y1; y++)
                 for(cm_pos z = subdomains[idx].z0; z < subdomains[idx].z1; z++)
                     std::memcpy(&subdomains[idx].inputStates[subdomains[idx].getIdx(subdomains[idx].x0, y, z)],
                     &subdomains[idx].outputStates[subdomains[idx].getIdx(subdomains[idx].x0, y, z)], 
                     (subdomains[idx].x1 - subdomains[idx].x0)*sizeof(cm_state));
-
                 checkBottomLayer(subdomains[idx]);
                 checkUpperLayer(subdomains[idx]);
                 subdomains[idx].y1 = (subdomains[idx].y1 < subdomains[idx].dimY) ? subdomains[idx].y1 : subdomains[idx].dimY - 1;
@@ -58,8 +58,8 @@ void generate(Domain& caDomain, const int threadsNumber)
 Subdomain* createSubdomains(Domain& caDomain, const int threadsNumber)
 {
     Subdomain* subdomains = new Subdomain[threadsNumber];
-    cm_pos dx = (caDomain.getDimX() + threadsNumber - 1)/threadsNumber;
-    cm_pos dz = (caDomain.getDimZ() + threadsNumber - 1)/threadsNumber;
+    cm_pos dx = (caDomain.getDimX() + threadsNumber - 1)/ceil(sqrt(threadsNumber));
+    cm_pos dz = (caDomain.getDimZ() + threadsNumber - 1)/floor(sqrt(threadsNumber));
     cm_pos y0 = 0;
     cm_pos y1 = 5;
 
@@ -127,11 +127,4 @@ void checkUpperLayer(Subdomain& subdomain)
         }
     }*/
     subdomain.y1 = (moveUpperLayer) ? subdomain.y1+1: subdomain.y1;
-}
-
-void swapStateBuffers(Subdomain& subdomain)
-{
-    cm_state* tmp = subdomain.inputStates;
-    subdomain.inputStates = subdomain.outputStates;
-    subdomain.outputStates = tmp;
 }
