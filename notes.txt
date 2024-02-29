@@ -1,0 +1,10 @@
+===	27.02.2024	===
+
+Do zrobienia:
+	-> przegląd źródeł - mikrostruktury kolumnowe (!!!)
+	-> sąsiedztwo definiowane poprzez kąt
+	-> warunki brzegowe: periodyczne, odbijające, absorbcyjne
+	-> Ovio - wizualizacja struktur 3D
+	
+Wydajnościowo:
+	-> Póki co okej, jeżeli starzczy czasu to można implementować na GPU

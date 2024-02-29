@@ -1,15 +1,30 @@
 #include<iostream>
 #include<ctime>
+#include<random>
 #include"CM_generation.hpp"
 
 void grainGrowth(Subdomain& subdomain)
 {
+    std::minstd_rand gen(std::random_device{}());
+    std::normal_distribution<double> dist(0.5, 0.1);
+    cm_smallsize n;
     for(cm_pos y = subdomain.y0; y < subdomain.y1; y++)
     for(cm_pos z = subdomain.z0; z < subdomain.z1; z++)
     for(cm_pos x = subdomain.x0; x < subdomain.x1; x++)
     {
         if(subdomain.inputStates[subdomain.getIdx(x,y,z)] == EMPTY)
-            tryNeighborhood(x,y,z, subdomain);
+        {
+            while(true)
+            {
+                n = subdomain.neighborhood.size * dist(gen);
+                if(n < 0) n = 0;
+                else if(n >= subdomain.neighborhood.size) n = subdomain.neighborhood.size - 1;
+                if(!tryIfFit(x, y, z, n, subdomain)) continue;
+                subdomain.outputStates[subdomain.getIdx(x,y,z)] = subdomain.inputStates[subdomain.getIdx(x + subdomain.neighborhood.neighbours[n][0], 
+                y + subdomain.neighborhood.neighbours[n][1], z + subdomain.neighborhood.neighbours[n][2])];
+                break;
+            }
+        }
     }
 }
 
@@ -31,13 +46,15 @@ void tryNeighborhood(const cm_pos cX, const cm_pos cY, const cm_pos cZ, Subdomai
 
 void nucleation(Domain& domain)
 {
-    srand(time(NULL));
+    std::minstd_rand gen(std::random_device{}());
+    std::uniform_real_distribution<double> dist(0, 1);
+
     cm_pos nucleuses[3];
     for(cm_size n = 0; n < domain.getNucleusNum(); n++ )
     {
-        nucleuses[0] = std::rand() % domain.getDimX();
+        nucleuses[0] = dist(gen)* domain.getDimX();
         nucleuses[1] = 0;
-        nucleuses[2] = std::rand() % domain.getDimZ();
+        nucleuses[2] = dist(gen)* domain.getDimZ();
         domain.getAbuffer()[domain.getIdx(nucleuses[0], nucleuses[1], nucleuses[2])] = n+1;
     }
 }
