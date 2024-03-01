@@ -1,15 +1,17 @@
 <?xml version="1.0"?>
-<Domain>
+<Configuration>
     <dimX>1000</dimX>
     <dimY>1000</dimY>
     <dimZ>1</dimZ>
-    <outputFile>../res/output.bmp</outputFile>
-    <Neighbourhood size="5">   
-        <nb dx="-1"   dy="0"    dz="0"/>
+    <output_file>../res/output.bmp</output_file>
+    <neighbourhood size="5">   
         <nb dx="1"    dy="-1"   dz="0"/>
         <nb dx="0"    dy="-1"   dz="0"/>
         <nb dx="-1"   dy="-1"   dz="0"/> 
+       <nb dx="-1"   dy="0"    dz="0"/>
         <nb dx="1"    dy="0"    dz="0"/>
-    </Neighbourhood>
-    <Nucleuses num="50"/>
-</Domain>
+    </neighbourhood>
+    <grains_number>20</grains_number>
+    <base_radius>100</base_radius>
+    <threads_number>12</threads_number>
+</Configuration>

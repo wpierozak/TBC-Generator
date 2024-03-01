@@ -37,8 +37,8 @@ cmlib: datatypes xmlparser generation omp_generation postproc bmp
 clean:
 	rm $(OBJ)/*.o
 	
-test: $(LIB)/cmlib.a 
-	$(LOADER) -I$(INC) $(OMP) $(DEBUG) test.cpp $(LIB)/cmlib.a -o $(BIN)/cmtest
+generator_omp: $(LIB)/cmlib.a 
+	$(LOADER) -I$(INC) $(OMP) $(DEBUG) generator_omp.cpp $(LIB)/cmlib.a -o $(BIN)/generator_omp
 
 run:
-	$(BIN)/cmtest
+	$(BIN)/generator_omp ../xml/test_config_3D.xml

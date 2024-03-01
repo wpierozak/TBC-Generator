@@ -6,7 +6,7 @@
 void grainGrowth(Subdomain& subdomain)
 {
     std::minstd_rand gen(std::random_device{}());
-    std::normal_distribution<double> dist(0.5, 0.1);
+    std::uniform_real_distribution<> dist(0, 1);
     cm_smallsize n;
     for(cm_pos y = subdomain.y0; y < subdomain.y1; y++)
     for(cm_pos z = subdomain.z0; z < subdomain.z1; z++)
@@ -44,18 +44,27 @@ void tryNeighbourhood(const cm_pos cX, const cm_pos cY, const cm_pos cZ, Subdoma
     }
 }
 
-void nucleation(Domain& domain)
+void nucleation(GeneratorConfig& domain)
 {
     std::minstd_rand gen(std::random_device{}());
     std::uniform_real_distribution<double> dist(0, 1);
-
+    cm_state* buffer = domain.getAbuffer();
+    cm_pos dimX = domain.getDimX();
+    cm_pos dimZ = domain.getDimZ();
+    float radius = domain.getBaseRadius();
     cm_pos nucleuses[3];
     for(cm_size n = 0; n < domain.getNucleusNum(); n++ )
     {
-        nucleuses[0] = dist(gen)* domain.getDimX();
+        nucleuses[0] = dist(gen)* dimX;
         nucleuses[1] = 0;
-        nucleuses[2] = dist(gen)* domain.getDimZ();
-        domain.getAbuffer()[domain.getIdx(nucleuses[0], nucleuses[1], nucleuses[2])] = n+1;
+        nucleuses[2] = dist(gen)* dimZ;
+        for(cm_pos dz = 0; nucleuses[2] + dz < dimZ && dz < radius; dz++)
+        for(cm_pos dx = 0; nucleuses[0] + dx < dimX && dx < radius; dx++)
+        {
+            if(dx*dx + dz*dz > radius*radius) continue;
+            if(buffer[domain.getIdx(nucleuses[0], nucleuses[1], nucleuses[2])] == EMPTY)
+                buffer[domain.getIdx(nucleuses[0], nucleuses[1], nucleuses[2])] = n+1;
+        }
     }
 }
 

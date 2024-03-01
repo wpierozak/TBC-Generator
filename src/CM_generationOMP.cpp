@@ -6,7 +6,7 @@
 
 #define LOGS
 
-void generate(Domain& caDomain, const int threadsNumber)
+void generate(GeneratorConfig& caDomain, const int threadsNumber)
 {
     srand(time(NULL));
     nucleation(caDomain);
@@ -24,7 +24,7 @@ void generate(Domain& caDomain, const int threadsNumber)
 
         while(alldone != threadsNumber)
         {
-            if(subdomains[idx].y0 != subdomains[idx].y1)
+            if(subdomains[idx].y1 != subdomains[idx].dimY)
             {
                 grainGrowth(subdomains[idx]);
                 for(cm_pos y = subdomains[idx].y0; y < subdomains[idx].y1; y++)
@@ -34,7 +34,7 @@ void generate(Domain& caDomain, const int threadsNumber)
                     (subdomains[idx].x1 - subdomains[idx].x0)*sizeof(cm_state));
                 checkBottomLayer(subdomains[idx]);
                 checkUpperLayer(subdomains[idx]);
-                subdomains[idx].y1 = (subdomains[idx].y1 < subdomains[idx].dimY) ? subdomains[idx].y1 : subdomains[idx].dimY - 1;
+                //subdomains[idx].y1 = (subdomains[idx].y1 < subdomains[idx].dimY) ? subdomains[idx].y1 : subdomains[idx].dimY - 1;
             }
             else if(done == false)
             {
@@ -55,7 +55,7 @@ void generate(Domain& caDomain, const int threadsNumber)
     delete[] subdomains;
 }
 
-Subdomain* createSubdomains(Domain& caDomain, const int threadsNumber)
+Subdomain* createSubdomains(GeneratorConfig& caDomain, const int threadsNumber)
 {
     Subdomain* subdomains = new Subdomain[threadsNumber];
     cm_pos dx = (caDomain.getDimX() + threadsNumber - 1)/ceil(sqrt(threadsNumber));

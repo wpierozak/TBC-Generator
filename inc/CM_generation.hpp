@@ -34,4 +34,4 @@ inline bool tryIfFit(const cm_pos cX, const cm_pos cY, const cm_pos cZ, cm_small
         );
 }
 /* Function sets all cells to a default value and performs a nucleation */
-void nucleation(Domain& domain);
+void nucleation(GeneratorConfig& domain);

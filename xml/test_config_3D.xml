@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
-<Domain>
+<Configuration>
     <dimX>1000</dimX>
-    <dimY>1000</dimY>
-    <dimZ>1</dimZ>
-    <outputFile>../res/output.bmp</outputFile>
-    <Neighbourhood size="17">   
-        <nb dx="0"    dy="-1"   dz="0"/>
+    <dimY>100</dimY>
+    <dimZ>1000</dimZ>
+    <output_file>../res/output.bmp</output_file>
+    <neighbourhood size="17">   
         <nb dx="1"    dy="-1"   dz="0"/>
-        <nb dx="-1"   dy="0"    dz="0"/>
-        <nb dx="1"    dy="0"    dz="0"/>
+        <nb dx="0"    dy="-1"   dz="0"/>
         <nb dx="-1"   dy="-1"   dz="0"/> 
+       <nb dx="-1"   dy="0"    dz="0"/>
+        <nb dx="1"    dy="0"    dz="0"/>
 
-        <nb dx="0"  dy="0"  dz="1"/>
+         <nb dx="0"  dy="0"  dz="1"/>
         <nb dx="0"    dy="-1"   dz="1"/>
         <nb dx="1"    dy="-1"   dz="1"/>
         <nb dx="-1"   dy="0"    dz="1"/>
@@ -24,6 +24,8 @@
         <nb dx="-1"   dy="0"    dz="-1"/>
         <nb dx="1"    dy="0"    dz="-1"/>
         <nb dx="-1"   dy="-1"   dz="-1"/> 
-    </Neighbourhood>
-    <Nucleuses num="100"/>
-</Domain>
+    </neighbourhood>
+    <grains_number>2000</grains_number>
+    <base_radius>20</base_radius>
+    <threads_number>12</threads_number>
+</Configuration>

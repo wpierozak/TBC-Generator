@@ -15,7 +15,7 @@ cm_colorampl* defineColors(cm_size grainNum)
     return colorsArray;
 }
 
-void createBitmap(Domain& caDomain, const int threadsNum)
+void createBitmap(GeneratorConfig& caDomain, const int threadsNum)
 {
     cm_state * domain = caDomain.getAbuffer();
     cm_size grainNum = caDomain.getNucleusNum();

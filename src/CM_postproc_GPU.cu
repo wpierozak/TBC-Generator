@@ -4,7 +4,7 @@ __constant__ cm_pos dimX;
 __constant__ cm_pos dimY;
 __constant__ cm_pos dimZ;
 
-void fillColorBuffer_GPU(Domain& caDomain)
+void fillColorBuffer_GPU(GeneratorConfig& caDomain)
 {
     cm_state * domain = caDomain.getAbuffer();
     cm_size grainNum = caDomain.getNucleusNum();

@@ -2,33 +2,37 @@
 #include<unordered_map>
 #include"CM_xmlparser.hpp"
 
-const std::string DOMAIN_NODE = "Domain";
+const std::string MAIN_NODE = "Configuration";
 const std::string DIM_X = "dimX";
 const std::string DIM_Y = "dimY";
 const std::string DIM_Z = "dimZ";
-const std::string OUTPUT_FILE = "outputFile";
-const std::string NEIGHBOURHOOD = "Neighbourhood";
+const std::string OUTPUT_FILE = "output_file";
+const std::string NEIGHBOURHOOD = "neighbourhood";
 const std::string NEIGHBOUR_DX = "dx";
 const std::string NEIGHBOUR_DY = "dy";
 const std::string NEIGHBOUR_DZ = "dz";
-const std::string NUCLEUSES = "Nucleuses";
-const std::string NUCLEUSES_NUM = "num";
+const std::string GRAIN_NUMBER = "grains_number";
+const std::string BASE_RADIUS =  "base_radius";
+const std::string THREADS_NUMBER = "threads_number";
 
-Domain* parseConfiguration(const std::string& filePath) {
+GeneratorConfig* parseConfiguration(const std::string& filePath) {
     rapidxml::file<> xml_file(filePath.c_str());
     rapidxml::xml_document<> doc;
     doc.parse<0>(xml_file.data());
 
-    rapidxml::xml_node<>* domain_node = doc.first_node("Domain");
+    rapidxml::xml_node<>* domain_node = doc.first_node(MAIN_NODE.c_str());
     rapidxml::xml_attribute<>* attr = nullptr;
     std::unordered_map<std::string, int> nodesMap;
 
     if (!domain_node) throw std::runtime_error("Invalid XML format.");
-    
+
     cm_pos dim[3];
     std::string output_file;
     Neighbourhood neighbourhood;
-    cm_size nucleuses_num;
+    cm_size grains_number;
+    float base_radius;
+    cm_smallsize threads_number;
+
     rapidxml::xml_node<>* node = domain_node->first_node();
     while(node)
     {
@@ -52,15 +56,31 @@ Domain* parseConfiguration(const std::string& filePath) {
         {
             neighbourhood = parseNeighbourhood(node);
         }
-        else if(NUCLEUSES == node->name())
+        else if(GRAIN_NUMBER == node->name())
         {
-            nucleuses_num = std::stoi(node->first_attribute("num")->value());
+            grains_number = std::stoi(node->value());
+        }
+        else if(BASE_RADIUS == node->name())
+        {
+            base_radius = std::stoi(node->value());
+        }
+        else if(THREADS_NUMBER == node->name())
+        {
+            threads_number = std::stoi(node->value());
         }
         else throw std::runtime_error("Invalid XML format.");
         node = node->next_sibling();
     }
 
-    return (new Domain(dim, neighbourhood, nucleuses_num, filePath, output_file)); 
+    GeneratorConfig* config = new GeneratorConfig(dim);
+    config->setOutputFile(output_file);
+    config->setInputFile(filePath);
+    config->setThreadsNumber(threads_number);
+    config->setNeighbourhood(neighbourhood);
+    config->setBaseRadius(base_radius);
+    config->setGrainsNumber(grains_number);
+
+    return config; 
 }
 
 cm_pos parseDimension(rapidxml::xml_node<>* node)
