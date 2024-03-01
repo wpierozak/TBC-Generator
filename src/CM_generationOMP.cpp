@@ -71,7 +71,7 @@ Subdomain* createSubdomains(Domain& caDomain, const int threadsNumber)
         subdomains[counter].dimX = caDomain.getDimX();
         subdomains[counter].dimY = caDomain.getDimY();
         subdomains[counter].dimZ = caDomain.getDimZ();
-        subdomains[counter].neighborhood = caDomain.getNeighborhood();
+        subdomains[counter].neighbourhood = caDomain.getNeighbourhood();
         subdomains[counter].inputStates = caDomain.getAbuffer();
         subdomains[counter].outputStates = caDomain.getBbuffer();
         subdomains[counter].x0 = x;

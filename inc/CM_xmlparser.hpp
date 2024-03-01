@@ -8,4 +8,4 @@
 
  cm_pos parseDimension(rapidxml::xml_node<>* node);
  std::string parseOutputFile(rapidxml::xml_node<>* node);
- Neighborhood parseNeighborhood(rapidxml::xml_node<>* node);
+ Neighbourhood parseNeighbourhood(rapidxml::xml_node<>* node);

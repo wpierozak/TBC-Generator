@@ -16,26 +16,26 @@ void grainGrowth(Subdomain& subdomain)
         {
             while(true)
             {
-                n = subdomain.neighborhood.size * dist(gen);
+                n = subdomain.neighbourhood.size * dist(gen);
                 if(n < 0) n = 0;
-                else if(n >= subdomain.neighborhood.size) n = subdomain.neighborhood.size - 1;
+                else if(n >= subdomain.neighbourhood.size) n = subdomain.neighbourhood.size - 1;
                 if(!tryIfFit(x, y, z, n, subdomain)) continue;
-                subdomain.outputStates[subdomain.getIdx(x,y,z)] = subdomain.inputStates[subdomain.getIdx(x + subdomain.neighborhood.neighbours[n][0], 
-                y + subdomain.neighborhood.neighbours[n][1], z + subdomain.neighborhood.neighbours[n][2])];
+                subdomain.outputStates[subdomain.getIdx(x,y,z)] = subdomain.inputStates[subdomain.getIdx(x + subdomain.neighbourhood.neighbours[n][0], 
+                y + subdomain.neighbourhood.neighbours[n][1], z + subdomain.neighbourhood.neighbours[n][2])];
                 break;
             }
         }
     }
 }
 
-void tryNeighborhood(const cm_pos cX, const cm_pos cY, const cm_pos cZ, Subdomain& subdomain)
+void tryNeighbourhood(const cm_pos cX, const cm_pos cY, const cm_pos cZ, Subdomain& subdomain)
 {
     cm_state neighbour;
-    for(cm_smallsize n = 0; n < subdomain.neighborhood.size; n++)
+    for(cm_smallsize n = 0; n < subdomain.neighbourhood.size; n++)
     {
         if(!tryIfFit(cX, cY, cZ, n, subdomain)) continue;
-        neighbour = subdomain.inputStates[subdomain.getIdx(cX + subdomain.neighborhood.neighbours[n][0], 
-                cY + subdomain.neighborhood.neighbours[n][1], cZ + subdomain.neighborhood.neighbours[n][2])];
+        neighbour = subdomain.inputStates[subdomain.getIdx(cX + subdomain.neighbourhood.neighbours[n][0], 
+                cY + subdomain.neighbourhood.neighbours[n][1], cZ + subdomain.neighbourhood.neighbours[n][2])];
         if(std::rand()%100 > 20 && neighbour != EMPTY)
         {
             subdomain.outputStates[subdomain.getIdx(cX, cY, cZ)] = neighbour;

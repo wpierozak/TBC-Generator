@@ -7,10 +7,10 @@ const std::string DIM_X = "dimX";
 const std::string DIM_Y = "dimY";
 const std::string DIM_Z = "dimZ";
 const std::string OUTPUT_FILE = "outputFile";
-const std::string NEIGHBORHOOD = "Neighbourhood";
-const std::string NEIGHBOR_DX = "dx";
-const std::string NEIGHBOR_DY = "dy";
-const std::string NEIGHBOR_DZ = "dz";
+const std::string NEIGHBOURHOOD = "Neighbourhood";
+const std::string NEIGHBOUR_DX = "dx";
+const std::string NEIGHBOUR_DY = "dy";
+const std::string NEIGHBOUR_DZ = "dz";
 const std::string NUCLEUSES = "Nucleuses";
 const std::string NUCLEUSES_NUM = "num";
 
@@ -27,7 +27,7 @@ Domain* parseConfiguration(const std::string& filePath) {
     
     cm_pos dim[3];
     std::string output_file;
-    Neighborhood neighborhood;
+    Neighbourhood neighbourhood;
     cm_size nucleuses_num;
     rapidxml::xml_node<>* node = domain_node->first_node();
     while(node)
@@ -48,9 +48,9 @@ Domain* parseConfiguration(const std::string& filePath) {
         {
             output_file = parseOutputFile(node);
         }
-        else if(NEIGHBORHOOD == node->name())
+        else if(NEIGHBOURHOOD == node->name())
         {
-            neighborhood = parseNeighborhood(node);
+            neighbourhood = parseNeighbourhood(node);
         }
         else if(NUCLEUSES == node->name())
         {
@@ -60,7 +60,7 @@ Domain* parseConfiguration(const std::string& filePath) {
         node = node->next_sibling();
     }
 
-    return (new Domain(dim, neighborhood, nucleuses_num, filePath, output_file)); 
+    return (new Domain(dim, neighbourhood, nucleuses_num, filePath, output_file)); 
 }
 
 cm_pos parseDimension(rapidxml::xml_node<>* node)
@@ -73,15 +73,15 @@ std::string parseOutputFile(rapidxml::xml_node<>* node)
     return node->value();
 }
 
- Neighborhood parseNeighborhood(rapidxml::xml_node<>* node)
+ Neighbourhood parseNeighbourhood(rapidxml::xml_node<>* node)
  {
-    Neighborhood neighborhood;
-    neighborhood.size = std::stoi(node->first_attribute("size")->value());
-    neighborhood.neighbours = new cm_pos*[(int)neighborhood.size];
+    Neighbourhood neighbourhood;
+    neighbourhood.size = std::stoi(node->first_attribute("size")->value());
+    neighbourhood.neighbours = new cm_pos*[(int)neighbourhood.size];
     int idx = 0;
      for (rapidxml::xml_node<>* child = node->first_node(); child != nullptr; child = child->next_sibling()) 
      {
-        neighborhood.neighbours[idx] = new cm_pos[3];
+        neighbourhood.neighbours[idx] = new cm_pos[3];
             
         std::string dx_str = child->first_attribute("dx")->value();
         std::string dy_str = child->first_attribute("dy")->value();
@@ -89,11 +89,11 @@ std::string parseOutputFile(rapidxml::xml_node<>* node)
         cm_pos dx = std::stoi(dx_str);
         cm_pos dy = std::stoi(dy_str);
         cm_pos dz = std::stoi(dz_str);
-        neighborhood.neighbours[idx][0] = dx;
-        neighborhood.neighbours[idx][1] = dy;
-        neighborhood.neighbours[idx][2] = dz;
+        neighbourhood.neighbours[idx][0] = dx;
+        neighbourhood.neighbours[idx][1] = dy;
+        neighbourhood.neighbours[idx][2] = dz;
         idx++;
     }
 
-    return neighborhood;
+    return neighbourhood;
  }

@@ -18,8 +18,8 @@ struct Field
     cm_colorampl r,g,b;
 };
 
-/* Class Neighborhood contains information about neighboorhood type and parameters*/
-struct Neighborhood
+/* Class Neighbourhood contains information about neighboorhood type and parameters*/
+struct Neighbourhood
 {
     cm_pos** neighbours;
     cm_smallsize size;
@@ -32,7 +32,7 @@ class Domain
     cm_state* _Astates;
     cm_state* _Bstates;
     cm_colorampl* _colors;
-    Neighborhood _neighborhood;
+    Neighbourhood _neighbourhood;
 
     cm_pos _dimX;
     cm_pos _dimY;
@@ -46,7 +46,7 @@ class Domain
     bool _2D;
 
     public:
-    Domain(cm_pos dim[], Neighborhood neighborhood, cm_size nucleusesNum, std::string inputFile, std::string outputFile);
+    Domain(cm_pos dim[], Neighbourhood neighbourhood, cm_size nucleusesNum, std::string inputFile, std::string outputFile);
     ~Domain();
 
     cm_pos getDimX() const { return _dimX; }
@@ -68,7 +68,7 @@ class Domain
 
     bool is2D() const { return _2D; }
 
-    Neighborhood getNeighborhood() const { return _neighborhood; }
+    Neighbourhood getNeighbourhood() const { return _neighbourhood; }
 
     void setOutputFile(const std::string& outputFile) { _outputFile = outputFile; }
     void setColorBuffer(cm_colorampl* colorBuffer) { _colors = colorBuffer; }
