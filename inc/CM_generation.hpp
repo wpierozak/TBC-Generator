@@ -6,9 +6,10 @@
 class Subdomain
 {
     public:
-    cm_state* inputStates;
-    cm_state* outputStates;
+    cm_state* domain;
+    cm_state* statesBuffer;
     Neighbourhood neighbourhood;
+    NeighbourhoodPlane baseNeighbourhood;
     cm_pos dimX, dimY, dimZ;
     cm_pos x0, x1;
     cm_pos y0, y1;
@@ -17,6 +18,16 @@ class Subdomain
     cm_size getIdx(cm_pos x, cm_pos y, cm_pos z)
     {
         return cm_size(y)*(dimX*dimZ) + cm_size(z)*dimX + cm_size(x);
+    }
+
+    cm_state& getCell(cm_pos x, cm_pos y, cm_pos z)
+    {
+        return domain[cm_size(y)*(dimX*dimZ) + cm_size(z)*dimX + cm_size(x)];
+    }
+
+    cm_state& accessStatesBuffer(cm_pos x, cm_pos y, cm_pos z)
+    {
+        return statesBuffer[cm_size(y)*(dimX*dimZ) + cm_size(z)*dimX + cm_size(x)];
     }
 };
 
@@ -35,3 +46,5 @@ inline bool tryIfFit(const cm_pos cX, const cm_pos cY, const cm_pos cZ, cm_small
 }
 /* Function sets all cells to a default value and performs a nucleation */
 void nucleation(GeneratorConfig& domain);
+
+void fillBase(Subdomain& subdomain);

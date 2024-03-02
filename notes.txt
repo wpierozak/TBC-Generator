@@ -8,3 +8,9 @@ Do zrobienia:
 	
 Wydajnościowo:
 	-> Póki co okej, jeżeli starzczy czasu to można implementować na GPU
+
+---> 02.03.2024 01:00
+	-> uzupełnienie kodu o uwzględnienie fillBase
+	-> przetestowanie obecnego sąsiedztwa z wypełnieniem podstawy
+	-> przetestowanie dolnego sąsiedztwa z wypełnieniem podstawy
+	-> wyciagnięcie wniosków z testów, przygotowanie modelu nowego sąsiedztwa i implementacja

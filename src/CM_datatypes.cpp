@@ -6,35 +6,19 @@
 GeneratorConfig::GeneratorConfig(cm_pos dim[]):
 _dimX(dim[0]), _dimY(dim[1]), _dimZ(dim[2])
 {
-    _Astates = new cm_state[cm_size(_dimX) * cm_size(_dimY) * cm_size(_dimZ)];
-    _Bstates = new cm_state[cm_size(_dimX) * cm_size(_dimY) * cm_size(_dimZ)];
+    _domain = new cm_state[cm_size(_dimX) * cm_size(_dimY) * cm_size(_dimZ)];
+    _statesBuffer = new cm_state[cm_size(_dimX) * cm_size(_dimY) * cm_size(_dimZ)];
     for(cm_size i = 0; i < getCellsNum(); i++)
     {
-        _Astates[i] = EMPTY;
-        _Bstates[i] = EMPTY;
-    }
-}
-
-GeneratorConfig::GeneratorConfig(cm_pos dim[], Neighbourhood neighbourhood, cm_size nucleusesNum, std::string inputFile, std::string outputFile):
-    _dimX(dim[0]), _dimY(dim[1]), _dimZ(dim[2]), _inputFile(inputFile), _outputFile(outputFile)
-{
-    _neighbourhood = neighbourhood;
-    _Astates = new cm_state[cm_size(_dimX) * cm_size(_dimY) * cm_size(_dimZ)];
-    _Bstates = new cm_state[cm_size(_dimX) * cm_size(_dimY) * cm_size(_dimZ)];
-    _colors = nullptr;
-    _grainsNumber = nucleusesNum;
-    for(cm_size i = 0; i < getCellsNum(); i++)
-    {
-        _Astates[i] = EMPTY;
-        _Bstates[i] = EMPTY;
+        _domain[i] = EMPTY;
+        _statesBuffer[i] = EMPTY;
     }
 }
 
 GeneratorConfig::~GeneratorConfig()
 {
-    delete[] _Astates;
-    delete[] _Bstates;
-    if(_colors != nullptr) delete[] _colors;
+    delete[] _domain;
+    delete[] _statesBuffer;
 }
 
 void GeneratorConfig::printConfiguration() const
@@ -49,4 +33,72 @@ void GeneratorConfig::printConfiguration() const
         std::cout<< "\t" << _neighbourhood.neighbours[i][0] << '\t' <<_neighbourhood.neighbours[i][1] << '\t' <<_neighbourhood.neighbours[i][2] << std::endl;
     std::cout<< "Output file:\t" << _outputFile << std::endl;
 }
-    
+
+Neighbourhood::Neighbourhood(const Neighbourhood& obj)
+{
+    size = obj.size;
+    neighbours = new cm_pos*[size];
+    for(int i = 0; i < size; i++)
+    {
+        neighbours[i] = new cm_pos[3];
+        neighbours[i][0] = obj.neighbours[i][0];
+        neighbours[i][1] = obj.neighbours[i][1];
+        neighbours[i][2] = obj.neighbours[i][2];
+    }
+}
+
+Neighbourhood::~Neighbourhood()
+{
+    for(int i = 0; i < size; i++)
+        delete[] neighbours[i];
+    delete[] neighbours;
+}
+
+Neighbourhood& Neighbourhood::operator=(const Neighbourhood& obj)
+{
+    size = obj.size;
+    neighbours = new cm_pos*[size];
+    for(int i = 0; i < size; i++)
+    {
+        neighbours[i] = new cm_pos[3];
+        neighbours[i][0] = obj.neighbours[i][0];
+        neighbours[i][1] = obj.neighbours[i][1];
+        neighbours[i][2] = obj.neighbours[i][2];
+    }
+
+    return *this;
+}
+
+NeighbourhoodPlane::NeighbourhoodPlane(const NeighbourhoodPlane& obj)
+{
+    size = obj.size;
+    neighbours = new cm_pos*[size];
+    for(int i = 0; i < size; i++)
+    {
+        neighbours[i] = new cm_pos[3];
+        neighbours[i][0] = obj.neighbours[i][0];
+        neighbours[i][1] = obj.neighbours[i][1];
+        neighbours[i][2] = obj.neighbours[i][2];
+    }
+}
+
+NeighbourhoodPlane::~NeighbourhoodPlane()
+{
+    for(int i = 0; i < size; i++)
+        delete[] neighbours[i];
+    delete[] neighbours;
+}
+
+NeighbourhoodPlane& NeighbourhoodPlane::operator=(const NeighbourhoodPlane& obj)
+{
+    size = obj.size;
+    neighbours = new cm_pos*[size];
+    for(int i = 0; i < size; i++)
+    {
+        neighbours[i] = new cm_pos[3];
+        neighbours[i][0] = obj.neighbours[i][0];
+        neighbours[i][1] = obj.neighbours[i][1];
+        neighbours[i][2] = obj.neighbours[i][2];
+    }
+    return *this;
+}

@@ -6,3 +6,6 @@
     make run
 
 <b>Konfiguracje do testu ustala się w pliku:</b><i> test_config.xml</i>
+
+<b>Zastosowane sąsiedztwo opis</b><br>
+

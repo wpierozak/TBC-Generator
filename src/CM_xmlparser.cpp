@@ -14,6 +14,11 @@ const std::string NEIGHBOUR_DZ = "dz";
 const std::string GRAIN_NUMBER = "grains_number";
 const std::string BASE_RADIUS =  "base_radius";
 const std::string THREADS_NUMBER = "threads_number";
+const std::string FILL_BASE = "fill_base";
+const std::string BASE_NEIGHBOURHOOD = "base_neighbourhood";
+
+const std::string TRUE = "true";
+const std::string FALSE = "false";
 
 GeneratorConfig* parseConfiguration(const std::string& filePath) {
     rapidxml::file<> xml_file(filePath.c_str());
@@ -29,9 +34,11 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
     cm_pos dim[3];
     std::string output_file;
     Neighbourhood neighbourhood;
+    NeighbourhoodPlane base_neighbourhood;
     cm_size grains_number;
     float base_radius;
     cm_smallsize threads_number;
+    bool fill_base;
 
     rapidxml::xml_node<>* node = domain_node->first_node();
     while(node)
@@ -68,6 +75,15 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
         {
             threads_number = std::stoi(node->value());
         }
+        else if(FILL_BASE == node->name())
+        {
+            if(TRUE == node->value()) fill_base = true;
+            else fill_base = false;
+        }
+        else if(BASE_NEIGHBOURHOOD == node->name())
+        {
+            base_neighbourhood = parseBaseNeighbourhood(node);
+        }
         else throw std::runtime_error("Invalid XML format.");
         node = node->next_sibling();
     }
@@ -93,8 +109,8 @@ std::string parseOutputFile(rapidxml::xml_node<>* node)
     return node->value();
 }
 
- Neighbourhood parseNeighbourhood(rapidxml::xml_node<>* node)
- {
+Neighbourhood parseNeighbourhood(rapidxml::xml_node<>* node)
+{
     Neighbourhood neighbourhood;
     neighbourhood.size = std::stoi(node->first_attribute("size")->value());
     neighbourhood.neighbours = new cm_pos*[(int)neighbourhood.size];
@@ -116,4 +132,29 @@ std::string parseOutputFile(rapidxml::xml_node<>* node)
     }
 
     return neighbourhood;
- }
+}
+
+NeighbourhoodPlane parseBaseNeighbourhood(rapidxml::xml_node<>* node)
+{
+    NeighbourhoodPlane neighbourhood;
+    neighbourhood.size = std::stoi(node->first_attribute("size")->value());
+    neighbourhood.neighbours = new cm_pos*[(int)neighbourhood.size];
+    int idx = 0;
+     for (rapidxml::xml_node<>* child = node->first_node(); child != nullptr; child = child->next_sibling()) 
+     {
+        neighbourhood.neighbours[idx] = new cm_pos[3];
+            
+        std::string dx_str = child->first_attribute("dx")->value();
+        std::string dy_str = child->first_attribute("dy")->value();
+        std::string dz_str = child->first_attribute("dz")->value();
+        cm_pos dx = std::stoi(dx_str);
+        cm_pos dy = std::stoi(dy_str);
+        cm_pos dz = std::stoi(dz_str);
+        neighbourhood.neighbours[idx][0] = dx;
+        neighbourhood.neighbours[idx][1] = dy;
+        neighbourhood.neighbours[idx][2] = dz;
+        idx++;
+    }
+
+    return neighbourhood;
+}

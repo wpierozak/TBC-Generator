@@ -17,7 +17,7 @@ cm_colorampl* defineColors(cm_size grainNum)
 
 void createBitmap(GeneratorConfig& caDomain, const int threadsNum)
 {
-    cm_state * domain = caDomain.getAbuffer();
+    cm_state * domain = caDomain.getDomain();
     cm_size grainNum = caDomain.getNucleusNum();
     cm_size cellsNum = caDomain.getCellsNum();
     cm_size dimX = caDomain.getDimX();
