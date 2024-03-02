@@ -8,6 +8,7 @@ class Subdomain
     public:
     cm_state* domain;
     cm_state* statesBuffer;
+    BC boundryCondition;
     Neighbourhood neighbourhood;
     NeighbourhoodPlane baseNeighbourhood;
     cm_pos dimX, dimY, dimZ;
@@ -24,6 +25,8 @@ class Subdomain
     {
         return domain[cm_size(y)*(dimX*dimZ) + cm_size(z)*dimX + cm_size(x)];
     }
+
+    cm_state getState(cm_pos x, cm_pos y, cm_pos z);
 
     cm_state& accessStatesBuffer(cm_pos x, cm_pos y, cm_pos z)
     {

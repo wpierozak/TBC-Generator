@@ -5,6 +5,53 @@
 #include"CM_generation.hpp"
 #include"CM_parameters.hpp"
 
+cm_state Subdomain::getState(cm_pos x, cm_pos y, cm_pos z)
+{
+    bool inside = (x >= 0 && x < dimX) && (y >= 0 && y < dimY) && (z >= 0 && z < dimZ);
+
+    if(inside) return domain[cm_size(y)*(dimX * dimZ) + cm_size(z)*dimX + cm_size(x)];
+    cm_pos dx, dy, dz;
+    
+    switch (boundryCondition)
+    {
+    case BC::absorption :
+        return EMPTY;
+    break;
+
+    case BC::bouncy:
+        if(x >= dimX) dx = -2 * (x - (dimX-1)) + 1;
+        else dx = -2*x - 1;
+        
+        if(y >= dimY) dy = -2 * (y - (dimY-1)) + 1;
+        else dy = -2*y - 1;
+
+        if(dimZ == 1) z = 0;
+        else if(z >= dimZ) dz = -2 * (z - (dimZ-1)) + 1;
+        else dz = -2*z - 1;
+
+        return domain[cm_size(y + dy)*(dimX * dimZ) + cm_size(z + dz)*dimX + cm_size(x + dx)];
+    break;
+
+    case BC::periodic:
+        if(x >= dimX) x = x - dimX;
+        else x = dimX + x;
+
+        if(y >= dimY) y = y - dimY;
+        else y = dimY + y;
+
+        if(dimZ == 1) z = 0;
+        else if(z >= dimZ) z = z - dimZ;
+        else z = dimZ + z;
+        
+        return domain[cm_size(y)*(dimX * dimZ) + cm_size(z)*dimX + cm_size(x)];
+    break;
+
+    default:
+        return EMPTY;
+        break;
+    }
+}
+
 void grainGrowth(Subdomain& subdomain)
 {
     std::minstd_rand gen(std::random_device{}());
@@ -31,8 +78,7 @@ void grainGrowth(Subdomain& subdomain)
                 dp[0] = round(cos(dr[PHI])*cos(dr[ETA])*dr[RADIUS]);
                 dp[2] = round(cos(dr[PHI])*sin(dr[ETA])*dr[RADIUS]);
 
-                if(!tryIfFit(x, y, z, dp, subdomain)) continue;
-                subdomain.accessStatesBuffer(x,y,z) = subdomain.getCell(x + dp[0], y + dp[1], z + dp[2]);
+                subdomain.accessStatesBuffer(x,y,z) = subdomain.getState(x + dp[0], y + dp[1], z + dp[2]);
                 break;
             }
         }

@@ -6,6 +6,12 @@ const std::string MAIN_NODE = "Configuration";
 const std::string DIM_X = "dimX";
 const std::string DIM_Y = "dimY";
 const std::string DIM_Z = "dimZ";
+
+const std::string BOUNDRY_CONDITIONS = "boundry_conditions";
+const std::string ABSORPTION = "absorption";
+const std::string BOUNCY = "bouncy";
+const std::string PERIODIC = "periodic";
+
 const std::string OUTPUT_FILE = "output_filename";
 const std::string OUTPUT_DIR = "output_dir";
 
@@ -46,6 +52,7 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
     float base_radius;
     cm_smallsize threads_number;
     bool fill_base;
+    BC boundry_conditon;
 
     rapidxml::xml_node<>* node = domain_node->first_node();
     while(node)
@@ -95,6 +102,14 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
         {
             output_dir = node->value();
         }
+        else if(BOUNDRY_CONDITIONS == node->name())
+        {
+            std::string bc = node->value();
+            if(bc == ABSORPTION) boundry_conditon = BC::absorption;
+            else if(bc == BOUNCY) boundry_conditon = BC::bouncy;
+            else if(bc == PERIODIC) boundry_conditon = BC::periodic;
+            else throw std::runtime_error("Invalid XML format - invalid boundry condition");
+        }
         else throw std::runtime_error("Invalid XML format - invalid node");
         node = node->next_sibling();
     }
@@ -108,6 +123,7 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
     config->setGrainsNumber(grains_number);
     config->setBaseNeighbourhood(base_neighbourhood);
     config->setOutputDir(output_dir);
+    config->setBC(boundry_conditon);
 
     return config; 
 }

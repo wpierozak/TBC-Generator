@@ -10,15 +10,8 @@
         <radius>3</radius>
     </neighbourhood>
     <fill_base>true</fill_base>
-    <base_neighbourhood size="8">
-        <nb dx="1"      dy="0"      dz="1"/>
-        <nb dx="0"      dy="0"      dz="1"/>
-        <nb dx="-1"     dy="0"      dz="1"/> 
-        <nb dx="1"      dy="0"      dz="0"/>
-        <nb dx="-1"     dy="0"      dz="0"/>
-        <nb dx="1"      dy="0"      dz="-1"/>
-        <nb dx="0"      dy="0"      dz="-1"/>
-        <nb dx="-1"     dy="0"      dz="-1"/>
+    <base_neighbourhood>
+       <radius>1.5</radius>
     </base_neighbourhood>
     <grains_number>50</grains_number>
     <base_radius>10</base_radius>

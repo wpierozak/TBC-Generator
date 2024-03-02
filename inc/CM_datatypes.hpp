@@ -3,6 +3,8 @@
 #include <cstdint>
 #include<string>
 
+/* State of an empty cell */
+#define EMPTY 0
 
 typedef int32_t cm_pos;
 typedef uint16_t cm_state;
@@ -10,7 +12,7 @@ typedef uint8_t cm_colorampl;
 typedef uint8_t cm_smallsize;
 typedef size_t cm_size;
 
-#define EMPTY 0
+enum class BC{absorption, bouncy, periodic};
 
 /* Class Field represents single field of a cellular automata domain */
 struct Field
@@ -19,7 +21,7 @@ struct Field
     cm_colorampl r,g,b;
 };
 
-/* Class Neighbourhood contains information about neighboorhood type and parameters*/
+/* Struct Neighbourhood contains information about neighboorhood type and parameters*/
 struct Neighbourhood
 {
     float alpha;
@@ -27,7 +29,7 @@ struct Neighbourhood
     float r;
 };
 
-/* Class NeighbourhoodPlane contains information about neighboorhood type and parameters for a flat field*/
+/* Struct NeighbourhoodPlane contains information about neighboorhood type and parameters for a flat field*/
 struct NeighbourhoodPlane
 {
     float r;
@@ -49,6 +51,8 @@ class GeneratorConfig
     cm_pos _dimY;
     cm_pos _dimZ;
 
+    // Boundry conditions //
+    BC _boundryCondition;
 
     // Neighbourhood //
 
@@ -81,6 +85,7 @@ class GeneratorConfig
     cm_pos getDimZ() const { return _dimZ; }
     cm_state* getDomain()  { return _domain; }
     cm_state* getStatesBuffer() { return _statesBuffer; }
+    BC getBC() const { return _boundryCondition; }
 
     cm_size getNucleusNum() const { return _grainsNumber; }
     cm_size getCellsNum() const {return static_cast<size_t>(_dimX) * static_cast<size_t>(_dimY) * static_cast<size_t>(_dimZ);  }
@@ -109,6 +114,7 @@ class GeneratorConfig
     void setNeighbourhood(const Neighbourhood& neighbourhood) { _neighbourhood = neighbourhood; }
     void setBaseNeighbourhood(const NeighbourhoodPlane& neighbourhood) { _baseNeighbourhood = neighbourhood; }
     void setIfFillBase(bool fillBase) { _fillBase = fillBase; }
+    void setBC(BC bc){ _boundryCondition = bc; }
 
     void printConfiguration() const;
 
@@ -121,5 +127,7 @@ class GeneratorConfig
     {
         return _domain[cm_size(y)*(_dimX * _dimZ) + cm_size(z)*_dimX + cm_size(x)];
     }
+
+    cm_state getState(cm_pos x, cm_pos y, cm_pos z);
 };
 
