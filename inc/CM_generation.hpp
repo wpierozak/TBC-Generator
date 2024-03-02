@@ -33,15 +33,14 @@ class Subdomain
 
 /* Function performs one iteration of a grain growth algorithm within a given subdomain */
 void grainGrowth(Subdomain& subdomain);
-/* Function tests neighbourhood and sets output state of a given cell */
-void tryNeighbourhood(const cm_pos cX, const cm_pos cY, const cm_pos cZ, Subdomain& subdomain);
+
 /* Function tests if neighbour is within domain */
-inline bool tryIfFit(const cm_pos cX, const cm_pos cY, const cm_pos cZ, cm_smallsize n, Subdomain& subdomain)
+inline bool tryIfFit(const cm_pos cX, const cm_pos cY, const cm_pos cZ, cm_pos* dp, Subdomain& subdomain)
 {
     return (
-        (cX + subdomain.neighbourhood.neighbours[n][0] >= 0) && (cX + subdomain.neighbourhood.neighbours[n][0] < subdomain.dimX )&&
-        (cY + subdomain.neighbourhood.neighbours[n][1] >= 0) && (cY + subdomain.neighbourhood.neighbours[n][1] < subdomain.dimY ) &&
-        (cZ + subdomain.neighbourhood.neighbours[n][2] >= 0) && (cZ + subdomain.neighbourhood.neighbours[n][2] < subdomain.dimZ )
+        (cX + dp[0] >= 0) && (cX + dp[0] < subdomain.dimX )&&
+        (cY + dp[1] >= 0) && (cY + dp[1] < subdomain.dimY ) &&
+        (cZ + dp[2] >= 0) && (cZ + dp[2] < subdomain.dimZ )
         );
 }
 

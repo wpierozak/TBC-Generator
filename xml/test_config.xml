@@ -4,10 +4,10 @@
     <dimY>1000</dimY>
     <dimZ>1</dimZ>
     <output_file>../res/output</output_file>
-    <neighbourhood size="3">   
-        <nb dx="1"    dy="-1"   dz="0"/>
-        <nb dx="0"    dy="-1"   dz="0"/>
-        <nb dx="-1"   dy="-1"   dz="0"/>    
+    <neighbourhood mode="degrees">   
+        <alpha>45</alpha>
+        <beta>45</beta>
+        <radius>3</radius>
     </neighbourhood>
     <fill_base>true</fill_base>
     <base_neighbourhood size="8">

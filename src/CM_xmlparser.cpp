@@ -1,5 +1,5 @@
 #include<iostream>
-#include<unordered_map>
+#include<cmath>
 #include"CM_xmlparser.hpp"
 
 const std::string MAIN_NODE = "Configuration";
@@ -7,15 +7,21 @@ const std::string DIM_X = "dimX";
 const std::string DIM_Y = "dimY";
 const std::string DIM_Z = "dimZ";
 const std::string OUTPUT_FILE = "output_file";
+
 const std::string NEIGHBOURHOOD = "neighbourhood";
-const std::string NEIGHBOUR_DX = "dx";
-const std::string NEIGHBOUR_DY = "dy";
-const std::string NEIGHBOUR_DZ = "dz";
+const std::string ALPHA = "alpha";
+const std::string BETA = "beta";
+const std::string RADIUS = "radius";
+
 const std::string GRAIN_NUMBER = "grains_number";
 const std::string BASE_RADIUS =  "base_radius";
 const std::string THREADS_NUMBER = "threads_number";
 const std::string FILL_BASE = "fill_base";
 const std::string BASE_NEIGHBOURHOOD = "base_neighbourhood";
+
+const std::string MODE = "mode";
+const std::string DEGREES = "degrees";
+const std::string RADIANS = "radians";
 
 const std::string TRUE = "true";
 const std::string FALSE = "false";
@@ -27,7 +33,6 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
 
     rapidxml::xml_node<>* domain_node = doc.first_node(MAIN_NODE.c_str());
     rapidxml::xml_attribute<>* attr = nullptr;
-    std::unordered_map<std::string, int> nodesMap;
 
     if (!domain_node) throw std::runtime_error("Invalid XML format.");
 
@@ -113,24 +118,23 @@ std::string parseOutputFile(rapidxml::xml_node<>* node)
 Neighbourhood parseNeighbourhood(rapidxml::xml_node<>* node)
 {
     Neighbourhood neighbourhood;
-    neighbourhood.size = std::stoi(node->first_attribute("size")->value());
-    neighbourhood.neighbours = new cm_pos*[(int)neighbourhood.size];
-    int idx = 0;
-     for (rapidxml::xml_node<>* child = node->first_node(); child != nullptr; child = child->next_sibling()) 
-     {
-        neighbourhood.neighbours[idx] = new cm_pos[3];
-            
-        std::string dx_str = child->first_attribute("dx")->value();
-        std::string dy_str = child->first_attribute("dy")->value();
-        std::string dz_str = child->first_attribute("dz")->value();
-        cm_pos dx = std::stoi(dx_str);
-        cm_pos dy = std::stoi(dy_str);
-        cm_pos dz = std::stoi(dz_str);
-        neighbourhood.neighbours[idx][0] = dx;
-        neighbourhood.neighbours[idx][1] = dy;
-        neighbourhood.neighbours[idx][2] = dz;
-        idx++;
-    }
+    rapidxml::xml_attribute<>* attr = node->first_attribute(MODE.c_str());
+    if(attr == nullptr ) throw std::runtime_error("Invalid XML format - neighbourhood angles mode attribute is missing");
+    std::string mode = attr->value();
+
+    rapidxml::xml_node<>*child_node = node->first_node(ALPHA.c_str());
+    if(child_node == nullptr) throw std::runtime_error("Invalid XML format.");
+    if(mode == DEGREES) neighbourhood.alpha = strtof(child_node->value(), nullptr) * (M_PIf/180.0f);
+    else  neighbourhood.alpha = strtof(child_node->value(), nullptr);
+
+    child_node = node->first_node(BETA.c_str());
+    if(child_node == nullptr) throw std::runtime_error("Invalid XML format.");
+    if(mode == DEGREES) neighbourhood.beta = strtof(child_node->value(), nullptr) * (M_PIf/180.0f);
+    else neighbourhood.beta = strtof(child_node->value(), nullptr);
+
+    child_node = node->first_node(RADIUS.c_str());
+    if(child_node == nullptr) throw std::runtime_error("Invalid XML format.");
+    neighbourhood.r = strtof(child_node->value(), nullptr);
 
     return neighbourhood;
 }

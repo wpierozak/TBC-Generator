@@ -20,16 +20,11 @@ struct Field
 };
 
 /* Class Neighbourhood contains information about neighboorhood type and parameters*/
-class Neighbourhood
+struct Neighbourhood
 {
-    public:
-    Neighbourhood();
-    Neighbourhood(const Neighbourhood& obj);
-    ~Neighbourhood();
-    Neighbourhood& operator=(const Neighbourhood& obj);
-
-    cm_pos** neighbours;
-    cm_smallsize size;
+    float alpha;
+    float beta;
+    float r;
 };
 
 /* Class NeighbourhoodPlane contains information about neighboorhood type and parameters for a flat field*/
