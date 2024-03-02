@@ -6,7 +6,8 @@ const std::string MAIN_NODE = "Configuration";
 const std::string DIM_X = "dimX";
 const std::string DIM_Y = "dimY";
 const std::string DIM_Z = "dimZ";
-const std::string OUTPUT_FILE = "output_file";
+const std::string OUTPUT_FILE = "output_filename";
+const std::string OUTPUT_DIR = "output_dir";
 
 const std::string NEIGHBOURHOOD = "neighbourhood";
 const std::string ALPHA = "alpha";
@@ -38,6 +39,7 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
 
     cm_pos dim[3];
     std::string output_file;
+    std::string output_dir;
     Neighbourhood neighbourhood;
     NeighbourhoodPlane base_neighbourhood;
     cm_size grains_number;
@@ -89,7 +91,11 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
         {
             base_neighbourhood = parseBaseNeighbourhood(node);
         }
-        else throw std::runtime_error("Invalid XML format.");
+        else if(OUTPUT_DIR == node->name())
+        {
+            output_dir = node->value();
+        }
+        else throw std::runtime_error("Invalid XML format - invalid node");
         node = node->next_sibling();
     }
 
@@ -101,6 +107,7 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
     config->setBaseRadius(base_radius);
     config->setGrainsNumber(grains_number);
     config->setBaseNeighbourhood(base_neighbourhood);
+    config->setOutputDir(output_dir);
 
     return config; 
 }
@@ -142,24 +149,9 @@ Neighbourhood parseNeighbourhood(rapidxml::xml_node<>* node)
 NeighbourhoodPlane parseBaseNeighbourhood(rapidxml::xml_node<>* node)
 {
     NeighbourhoodPlane neighbourhood;
-    neighbourhood.size = std::stoi(node->first_attribute("size")->value());
-    neighbourhood.neighbours = new cm_pos*[(int)neighbourhood.size];
-    int idx = 0;
-     for (rapidxml::xml_node<>* child = node->first_node(); child != nullptr; child = child->next_sibling()) 
-     {
-        neighbourhood.neighbours[idx] = new cm_pos[3];
-            
-        std::string dx_str = child->first_attribute("dx")->value();
-        std::string dy_str = child->first_attribute("dy")->value();
-        std::string dz_str = child->first_attribute("dz")->value();
-        cm_pos dx = std::stoi(dx_str);
-        cm_pos dy = std::stoi(dy_str);
-        cm_pos dz = std::stoi(dz_str);
-        neighbourhood.neighbours[idx][0] = dx;
-        neighbourhood.neighbours[idx][1] = dy;
-        neighbourhood.neighbours[idx][2] = dz;
-        idx++;
-    }
+    rapidxml::xml_node<>* child_node = node->first_node(RADIUS.c_str());
+    if(child_node == nullptr) throw std::runtime_error("Invalid XML format.");
+    neighbourhood.r = strtof(child_node->value(), nullptr);
 
     return neighbourhood;
 }

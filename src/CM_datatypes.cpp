@@ -31,50 +31,7 @@ void GeneratorConfig::printConfiguration() const
     std::cout<<"\talpha:\t" << _neighbourhood.alpha << std::endl;
     std::cout<<"\tbeta:\t" << _neighbourhood.beta << std::endl;
     std::cout<<"\tradius:\t" << _neighbourhood.r << std::endl;
-    std::cout<< "Base neighbourhood size:\t" << (int)_baseNeighbourhood.size << std::endl;
     std::cout<< "Base neighbourhood:\n";
-    for(int i = 0; i < _baseNeighbourhood.size; i++)
-        std::cout<< "\t" << _baseNeighbourhood.neighbours[i][0] << '\t' <<_baseNeighbourhood.neighbours[i][1] << '\t' <<_baseNeighbourhood.neighbours[i][2] << std::endl;
+    std::cout<<"\tradius:\t" << _baseNeighbourhood.r << std::endl;
     std::cout<< "Output file:\t" << _outputFile << std::endl;
-}
-
-NeighbourhoodPlane::NeighbourhoodPlane()
-{
-    neighbours = nullptr;
-    size = 0;
-}
-
-NeighbourhoodPlane::NeighbourhoodPlane(const NeighbourhoodPlane& obj)
-{
-    size = obj.size;
-    neighbours = new cm_pos*[size];
-    for(int i = 0; i < size; i++)
-    {
-        neighbours[i] = new cm_pos[3];
-        neighbours[i][0] = obj.neighbours[i][0];
-        neighbours[i][1] = obj.neighbours[i][1];
-        neighbours[i][2] = obj.neighbours[i][2];
-    }
-}
-
-NeighbourhoodPlane::~NeighbourhoodPlane()
-{
-    if(neighbours == nullptr) return;
-    for(int i = 0; i < size; i++)
-        delete[] neighbours[i];
-    delete[] neighbours;
-}
-
-NeighbourhoodPlane& NeighbourhoodPlane::operator=(const NeighbourhoodPlane& obj)
-{
-    size = obj.size;
-    neighbours = new cm_pos*[size];
-    for(int i = 0; i < size; i++)
-    {
-        neighbours[i] = new cm_pos[3];
-        neighbours[i][0] = obj.neighbours[i][0];
-        neighbours[i][1] = obj.neighbours[i][1];
-        neighbours[i][2] = obj.neighbours[i][2];
-    }
-    return *this;
 }

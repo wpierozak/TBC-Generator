@@ -66,12 +66,13 @@ void nucleation(GeneratorConfig& domain)
 
 void fillBase(Subdomain& subdomain)
 {
-    cm_smallsize n;
-    cm_pos** neighbours = subdomain.baseNeighbourhood.neighbours;
-    cm_size size = subdomain.baseNeighbourhood.size;
-
     std::minstd_rand gen(std::random_device{}());
-    std::uniform_int_distribution<> dist(0, size - 1);
+    std::uniform_real_distribution<> eta_dist(0, 2.0 * M_PIf);
+    std::uniform_real_distribution<> radius_dist(0, subdomain.baseNeighbourhood.r);
+
+    float dr[2];
+    cm_pos dp[3];
+    dp[1] = 0;
 
     for(cm_pos z = subdomain.z0; z < subdomain.z1; z++)
     for(cm_pos x = subdomain.x0; x < subdomain.x1; x++)
@@ -80,12 +81,15 @@ void fillBase(Subdomain& subdomain)
         {
             while(true)
             {
-                n = dist(gen);
-                if(n < 0) n = 0;
-                else if(n >= size) n = size - 1;
-                if(!tryIfFitBase(x, 0, z, n, subdomain)) continue;
-                subdomain.accessStatesBuffer(x,0,z) = subdomain.getCell(x + neighbours[n][0], 
-                0, z + neighbours[n][2]);
+                dr[0] = 2.0 * M_PIf * eta_dist(gen);
+                dr[1] = subdomain.neighbourhood.r * radius_dist(gen);
+  
+                dp[0] = round(cos(dr[0])*dr[1]);
+                dp[2] = round(sin(dr[0])*dr[1]);
+
+                if(!tryIfFit(x, 0, z, dp, subdomain)) continue;
+                subdomain.accessStatesBuffer(x,0,z) = subdomain.getCell(x + dp[0], 
+                0, z + dp[2]);
                 break;
             }
         }

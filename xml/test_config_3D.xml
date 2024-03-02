@@ -3,22 +3,16 @@
     <dimX>500</dimX>
     <dimY>500</dimY>
     <dimZ>500</dimZ>
-    <output_file>../res/output</output_file>
+    <output_dir>../res/3D</output_dir>
+    <output_filename>test</output_filename>
    <neighbourhood mode="degrees">   
-        <alpha>75</alpha>
-        <beta>15</beta>
-        <radius>3</radius>
+        <alpha>75.0</alpha>
+        <beta>15.0</beta>
+        <radius>3.0</radius>
     </neighbourhood>
     <fill_base>true</fill_base>
-    <base_neighbourhood size="8">
-        <nb dx="1"      dy="0"      dz="1"/>
-        <nb dx="0"      dy="0"      dz="1"/>
-        <nb dx="-1"     dy="0"      dz="1"/> 
-        <nb dx="1"      dy="0"      dz="0"/>
-        <nb dx="-1"     dy="0"      dz="0"/>
-        <nb dx="1"      dy="0"      dz="-1"/>
-        <nb dx="0"      dy="0"      dz="-1"/>
-        <nb dx="-1"     dy="0"      dz="-1"/>
+    <base_neighbourhood>
+       <radius>1.5</radius>
     </base_neighbourhood>
     <grains_number>100</grains_number>
     <base_radius>10</base_radius>

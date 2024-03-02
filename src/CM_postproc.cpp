@@ -24,8 +24,10 @@ void createBitmap(GeneratorConfig& caDomain, const int threadsNum)
     cm_size dimY = caDomain.getDimY();
     cm_size dimZ = caDomain.getDimZ();
     cm_colorampl* colorsArray = defineColors(grainNum);
+    std::string filename = caDomain.getOutputFile();
+    std::string dir = caDomain.getOutpuDir();
 
-   #pragma omp parallel for schedule(static) num_threads(threads_num) firstprivate(dimX, dimY, domain, colorsArray, domain, EMPTY)
+   #pragma omp parallel for schedule(static) num_threads(threads_num) firstprivate(dimX, dimY, domain, colorsArray, domain, filename, dir)
     for(cm_pos z = 0; z < dimZ; z++)
     {
         BMP bmp;
@@ -49,7 +51,7 @@ void createBitmap(GeneratorConfig& caDomain, const int threadsNum)
             bmp.SetPixel(x,dimY - y - 1, pixel);
     }
 
-    std::string output = caDomain.getOutputFile() + std::string("_") + std::to_string(z) + std::string(".bmp");
+    std::string output = dir + std::string("/") + filename + std::string("_") + std::to_string(z) + std::string(".bmp");
     bmp.WriteToFile(output.c_str());
     }
 

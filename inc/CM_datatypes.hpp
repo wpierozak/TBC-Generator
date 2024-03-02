@@ -28,16 +28,9 @@ struct Neighbourhood
 };
 
 /* Class NeighbourhoodPlane contains information about neighboorhood type and parameters for a flat field*/
-class NeighbourhoodPlane
+struct NeighbourhoodPlane
 {
-    public:
-    NeighbourhoodPlane();
-    NeighbourhoodPlane(const NeighbourhoodPlane& obj);
-    ~NeighbourhoodPlane();
-    NeighbourhoodPlane& operator=(const NeighbourhoodPlane& obj);
-
-    cm_pos** neighbours;
-    cm_smallsize size;
+    float r;
 };
 
 /* Class GeneratorConfig contains all data necessary to start a microstructure generating process */
@@ -77,6 +70,7 @@ class GeneratorConfig
 
     std::string _outputFile;
     std::string _inputFile;
+    std::string _outputDir;
 
     public:
     GeneratorConfig(cm_pos dim[]);
@@ -96,6 +90,7 @@ class GeneratorConfig
 
     std::string getOutputFile() const { return _outputFile; }
     std::string getInputFile() const { return _inputFile; }
+    std::string getOutpuDir() const { return _outputDir; }
 
 
     const Neighbourhood& getNeighbourhood() { return _neighbourhood; }
@@ -104,6 +99,7 @@ class GeneratorConfig
 
     void setOutputFile(const std::string& outputFile) { _outputFile = outputFile; }
     void setInputFile(const std::string& inputFile) {_inputFile = inputFile; }
+    void setOutputDir(const std::string& dir) { _outputDir = dir; }
     void setDimX(cm_pos dimX) { _dimX = dimX; }
     void setDimY(cm_pos dimY) { _dimY = dimY; }
     void setDimZ(cm_pos dimZ) { _dimZ = dimZ; }
