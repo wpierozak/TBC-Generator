@@ -3,13 +3,13 @@
 
     <dimX>500</dimX>
     <dimY>500</dimY>
-    <dimZ>1</dimZ>
+    <dimZ>500</dimZ>
 
     <output_dir>../res/3D</output_dir>
     <output_filename>test</output_filename>
 
     <neighbourhood mode="degrees">   
-        <alpha>30.0</alpha>
+        <alpha>60.0</alpha>
         <beta>30.0</beta>
         <radius>3.0</radius>
     </neighbourhood>

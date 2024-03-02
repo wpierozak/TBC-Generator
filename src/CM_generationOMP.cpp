@@ -4,8 +4,6 @@
 #include<math.h>
 #include"CM_generationOMP.hpp"
 
-#define LOGS
-
 void generate(GeneratorConfig& caDomain, const int threadsNumber)
 {
     srand(time(NULL));
