@@ -1,31 +1,43 @@
 <?xml version="1.0"?>
 <Configuration>
     <dimX>1000</dimX>
-    <dimY>100</dimY>
+    <dimY>1000</dimY>
     <dimZ>1000</dimZ>
-    <output_file>../res/output.bmp</output_file>
-    <neighbourhood size="17">   
+    <output_file>../res/output</output_file>
+    <neighbourhood size="9">   
         <nb dx="1"    dy="-1"   dz="0"/>
         <nb dx="0"    dy="-1"   dz="0"/>
         <nb dx="-1"   dy="-1"   dz="0"/> 
-       <nb dx="-1"   dy="0"    dz="0"/>
-        <nb dx="1"    dy="0"    dz="0"/>
+       <!-- <nb dx="-1"   dy="0"    dz="0"/> -->
+        <!-- <nb dx="1"    dy="0"    dz="0"/>-->
 
-         <nb dx="0"  dy="0"  dz="1"/>
-        <nb dx="0"    dy="-1"   dz="1"/>
+        <!-- <nb dx="0"  dy="0"  dz="1"/>-->
+        <nb dx="0"    dy="-1"   dz="1"/> 
         <nb dx="1"    dy="-1"   dz="1"/>
-        <nb dx="-1"   dy="0"    dz="1"/>
-        <nb dx="1"    dy="0"    dz="1"/>
-        <nb dx="-1"   dy="-1"   dz="1"/> 
+        <!-- <nb dx="-1"   dy="0"    dz="1"/> -->
+       <!-- <nb dx="1"    dy="0"    dz="1"/>-->
+       <nb dx="-1"   dy="-1"   dz="1"/> 
 
-        <nb dx="0"  dy="0"  dz="-1"/>
+      <!--  <nb dx="0"  dy="0"  dz="-1"/>-->
         <nb dx="0"    dy="-1"   dz="-1"/>
         <nb dx="1"    dy="-1"   dz="-1"/>
-        <nb dx="-1"   dy="0"    dz="-1"/>
-        <nb dx="1"    dy="0"    dz="-1"/>
+     <!--  <nb dx="-1"   dy="0"    dz="-1"/>-->
+      <!--  <nb dx="1"    dy="0"    dz="-1"/>-->
         <nb dx="-1"   dy="-1"   dz="-1"/> 
+       
     </neighbourhood>
-    <grains_number>2000</grains_number>
-    <base_radius>20</base_radius>
+    <fill_base>true</fill_base>
+    <base_neighbourhood size="8">
+        <nb dx="1"      dy="0"      dz="1"/>
+        <nb dx="0"      dy="0"      dz="1"/>
+        <nb dx="-1"     dy="0"      dz="1"/> 
+        <nb dx="1"      dy="0"      dz="0"/>
+        <nb dx="-1"     dy="0"      dz="0"/>
+        <nb dx="1"      dy="0"      dz="-1"/>
+        <nb dx="0"      dy="0"      dz="-1"/>
+        <nb dx="-1"     dy="0"      dz="-1"/>
+    </base_neighbourhood>
+    <grains_number>100</grains_number>
+    <base_radius>10</base_radius>
     <threads_number>12</threads_number>
 </Configuration>

@@ -3,26 +3,24 @@
     <dimX>1000</dimX>
     <dimY>1000</dimY>
     <dimZ>1</dimZ>
-    <output_file>../res/output.bmp</output_file>
-    <neighbourhood size="5">   
-        <nb dx="1"      dy="-1"     dz="0"/>
-        <nb dx="0"      dy="-1"     dz="0"/>
-        <nb dx="-1"     dy="-1"     dz="0"/> 
-        <nb dx="-1"     dy="0"      dz="0"/>
-        <nb dx="1"      dy="0"      dz="0"/>
+    <output_file>../res/output</output_file>
+    <neighbourhood size="3">   
+        <nb dx="1"    dy="-1"   dz="0"/>
+        <nb dx="0"    dy="-1"   dz="0"/>
+        <nb dx="-1"   dy="-1"   dz="0"/>    
     </neighbourhood>
     <fill_base>true</fill_base>
-    <base_neighbourhood size = "8">
+    <base_neighbourhood size="8">
         <nb dx="1"      dy="0"      dz="1"/>
         <nb dx="0"      dy="0"      dz="1"/>
-        <nb dx="-1"     dy="1"      dz="1"/> 
+        <nb dx="-1"     dy="0"      dz="1"/> 
         <nb dx="1"      dy="0"      dz="0"/>
         <nb dx="-1"     dy="0"      dz="0"/>
         <nb dx="1"      dy="0"      dz="-1"/>
         <nb dx="0"      dy="0"      dz="-1"/>
         <nb dx="-1"     dy="0"      dz="-1"/>
     </base_neighbourhood>
-    <grains_number>20</grains_number>
-    <base_radius>100</base_radius>
+    <grains_number>50</grains_number>
+    <base_radius>10</base_radius>
     <threads_number>12</threads_number>
 </Configuration>

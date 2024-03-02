@@ -27,11 +27,21 @@ void GeneratorConfig::printConfiguration() const
     std::cout<< "Input file:\t" << _inputFile << std::endl;
     std::cout<< "Dimension:\t" << _dimX << '\t' << _dimY << '\t' << _dimZ << std::endl;
     std::cout<< "Nucleuses number:\t" << _grainsNumber << std::endl;
-    std::cout<< "Neighbourhood size:\t" << _neighbourhood.size << std::endl;
+    std::cout<< "Neighbourhood size:\t" << (int)_neighbourhood.size << std::endl;
     std::cout<< "Neighbourhood:\n";
     for(int i = 0; i < _neighbourhood.size; i++)
         std::cout<< "\t" << _neighbourhood.neighbours[i][0] << '\t' <<_neighbourhood.neighbours[i][1] << '\t' <<_neighbourhood.neighbours[i][2] << std::endl;
+    std::cout<< "Base neighbourhood size:\t" << (int)_baseNeighbourhood.size << std::endl;
+    std::cout<< "Base neighbourhood:\n";
+    for(int i = 0; i < _baseNeighbourhood.size; i++)
+        std::cout<< "\t" << _baseNeighbourhood.neighbours[i][0] << '\t' <<_baseNeighbourhood.neighbours[i][1] << '\t' <<_baseNeighbourhood.neighbours[i][2] << std::endl;
     std::cout<< "Output file:\t" << _outputFile << std::endl;
+}
+
+Neighbourhood::Neighbourhood()
+{
+    neighbours = nullptr;
+    size = 0;
 }
 
 Neighbourhood::Neighbourhood(const Neighbourhood& obj)
@@ -49,6 +59,7 @@ Neighbourhood::Neighbourhood(const Neighbourhood& obj)
 
 Neighbourhood::~Neighbourhood()
 {
+    if(neighbours == nullptr) return;
     for(int i = 0; i < size; i++)
         delete[] neighbours[i];
     delete[] neighbours;
@@ -58,6 +69,7 @@ Neighbourhood& Neighbourhood::operator=(const Neighbourhood& obj)
 {
     size = obj.size;
     neighbours = new cm_pos*[size];
+    
     for(int i = 0; i < size; i++)
     {
         neighbours[i] = new cm_pos[3];
@@ -67,6 +79,12 @@ Neighbourhood& Neighbourhood::operator=(const Neighbourhood& obj)
     }
 
     return *this;
+}
+
+NeighbourhoodPlane::NeighbourhoodPlane()
+{
+    neighbours = nullptr;
+    size = 0;
 }
 
 NeighbourhoodPlane::NeighbourhoodPlane(const NeighbourhoodPlane& obj)
@@ -84,6 +102,7 @@ NeighbourhoodPlane::NeighbourhoodPlane(const NeighbourhoodPlane& obj)
 
 NeighbourhoodPlane::~NeighbourhoodPlane()
 {
+    if(neighbours == nullptr) return;
     for(int i = 0; i < size; i++)
         delete[] neighbours[i];
     delete[] neighbours;

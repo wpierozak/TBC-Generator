@@ -44,6 +44,15 @@ inline bool tryIfFit(const cm_pos cX, const cm_pos cY, const cm_pos cZ, cm_small
         (cZ + subdomain.neighbourhood.neighbours[n][2] >= 0) && (cZ + subdomain.neighbourhood.neighbours[n][2] < subdomain.dimZ )
         );
 }
+
+inline bool tryIfFitBase(const cm_pos cX, const cm_pos cY, const cm_pos cZ, cm_smallsize n, Subdomain& subdomain)
+{
+    return (
+        (cX + subdomain.baseNeighbourhood.neighbours[n][0] >= 0) && (cX + subdomain.baseNeighbourhood.neighbours[n][0] < subdomain.dimX )&&
+        (cY + subdomain.baseNeighbourhood.neighbours[n][1] >= 0) && (cY + subdomain.baseNeighbourhood.neighbours[n][1] < subdomain.dimY ) &&
+        (cZ + subdomain.baseNeighbourhood.neighbours[n][2] >= 0) && (cZ + subdomain.baseNeighbourhood.neighbours[n][2] < subdomain.dimZ )
+        );
+}
 /* Function sets all cells to a default value and performs a nucleation */
 void nucleation(GeneratorConfig& domain);
 

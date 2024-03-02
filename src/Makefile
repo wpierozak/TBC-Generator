@@ -38,7 +38,10 @@ clean:
 	rm $(OBJ)/*.o
 	
 generator_omp: $(LIB)/cmlib.a 
-	$(LOADER) -I$(INC) $(OMP) $(OPT) generator_omp.cpp $(LIB)/cmlib.a -o $(BIN)/generator_omp
+	$(LOADER) -I$(INC) $(OMP) $(DEBUG) generator_omp.cpp $(LIB)/cmlib.a -o $(BIN)/generator_omp
 
-run:
+2Drun:
 	$(BIN)/generator_omp ../xml/test_config.xml
+
+3Drun:
+	$(BIN)/generator_omp ../xml/test_config_3D.xml

@@ -95,6 +95,7 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
     config->setNeighbourhood(neighbourhood);
     config->setBaseRadius(base_radius);
     config->setGrainsNumber(grains_number);
+    config->setBaseNeighbourhood(base_neighbourhood);
 
     return config; 
 }

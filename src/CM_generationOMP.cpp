@@ -9,10 +9,34 @@
 void generate(GeneratorConfig& caDomain, const int threadsNumber)
 {
     srand(time(NULL));
-    nucleation(caDomain);
-    Subdomain* subdomains = createSubdomains(caDomain, threadsNumber);
+    #ifdef LOGS
+    std::cout<<"\t===\tNucleation - start\t===\t"<<std::endl;
+    #endif
 
-    #pragma omp parallel default(none) shared(subdomains) num_threads(threadsNumber) firstprivate(threadsNumber)
+    nucleation(caDomain);
+
+    #ifdef LOGS
+    std::cout<<"\t===\tNucleation - end\t===\t"<<std::endl;
+    #endif
+
+    #ifdef LOGS
+    std::cout<<"\t===\tSubdomain creation - start\t===\t"<<std::endl;
+    #endif
+
+    Subdomain* subdomains = createSubdomains(caDomain, threadsNumber);
+    #ifdef LOGS
+
+    std::cout<<"\t===\tSubdomain creation - end\t===\t"<<std::endl;
+    #endif
+
+    if(caDomain.fillBase())
+    {
+
+    #ifdef LOGS
+    std::cout<<"\t===\tFilling base - start\t===\t"<<std::endl;
+    #endif
+
+    #pragma omp parallel default(none) shared(subdomains) num_threads(threadsNumber) firstprivate(threadsNumber) 
     {
         int idx = omp_get_thread_num();
         bool done = false;
@@ -52,7 +76,13 @@ void generate(GeneratorConfig& caDomain, const int threadsNumber)
     }
 
     #ifdef LOGS
-        std::cout<<"Generating begins - OMP\n";
+    std::cout<<"\t===\tFilling base - end\t==="<<std::endl;
+    #endif
+
+    }
+
+    #ifdef LOGS
+        std::cout<<"\t===\tMicrostructure generation - OMP - start\t===" << std::endl;
     #endif
 
     #pragma omp parallel default(none) shared(subdomains) num_threads(threadsNumber) firstprivate(threadsNumber)
@@ -88,7 +118,7 @@ void generate(GeneratorConfig& caDomain, const int threadsNumber)
     }
 
     #ifdef LOGS
-        std::cout<<"Generating ends - OMP\n";
+        std::cout<<"\t===\tMicrostructure generation - OMP - end\t===" << std::endl;
     #endif
 
     delete[] subdomains;

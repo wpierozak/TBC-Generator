@@ -23,7 +23,7 @@ struct Field
 class Neighbourhood
 {
     public:
-    Neighbourhood() = default;
+    Neighbourhood();
     Neighbourhood(const Neighbourhood& obj);
     ~Neighbourhood();
     Neighbourhood& operator=(const Neighbourhood& obj);
@@ -36,7 +36,7 @@ class Neighbourhood
 class NeighbourhoodPlane
 {
     public:
-    NeighbourhoodPlane() = default;
+    NeighbourhoodPlane();
     NeighbourhoodPlane(const NeighbourhoodPlane& obj);
     ~NeighbourhoodPlane();
     NeighbourhoodPlane& operator=(const NeighbourhoodPlane& obj);

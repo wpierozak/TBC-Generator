@@ -72,7 +72,7 @@ void fillBase(Subdomain& subdomain)
 {
     cm_smallsize n;
     cm_pos** neighbours = subdomain.baseNeighbourhood.neighbours;
-    cm_size size = subdomain.neighbourhood.size;
+    cm_size size = subdomain.baseNeighbourhood.size;
 
     std::minstd_rand gen(std::random_device{}());
     std::uniform_int_distribution<> dist(0, size - 1);
@@ -87,9 +87,9 @@ void fillBase(Subdomain& subdomain)
                 n = dist(gen);
                 if(n < 0) n = 0;
                 else if(n >= size) n = size - 1;
-                if(!tryIfFit(x, 0, z, n, subdomain)) continue;
+                if(!tryIfFitBase(x, 0, z, n, subdomain)) continue;
                 subdomain.statesBuffer[subdomain.getIdx(x,0,z)] = subdomain.domain[subdomain.getIdx(x + neighbours[n][0], 
-                0 + neighbours[n][1], z + neighbours[n][2])];
+                0, z + neighbours[n][2])];
                 break;
             }
         }
