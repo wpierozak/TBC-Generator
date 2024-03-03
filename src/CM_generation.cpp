@@ -5,6 +5,11 @@
 #include"CM_generation.hpp"
 #include"CM_parameters.hpp"
 
+void f()
+{
+    
+}
+
 cm_state Subdomain::getState(cm_pos x, cm_pos y, cm_pos z)
 {
     if(dimZ > 1)
