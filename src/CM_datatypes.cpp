@@ -39,7 +39,7 @@ void GeneratorConfig::printConfiguration() const
     std::cout<< "Base neighbourhood:\n";
     std::cout<<"\tradius:\t" << _baseNeighbourhood.r << std::endl;
     std::cout<<"Grains number:\t" << _grainsNumber << std::endl;
-    std::cout<<"Runnig on: " << _threadsNum << " threads" << std::endl;
+    std::cout<<"Runnig on: " << (int) _threadsNum << " threads" << std::endl;
 }
 
 cm_state GeneratorConfig::getState(cm_pos x, cm_pos y, cm_pos z)

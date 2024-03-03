@@ -7,10 +7,17 @@
 
 cm_state Subdomain::getState(cm_pos x, cm_pos y, cm_pos z)
 {
-    bool inside = (x >= 0 && x < dimX) && (y >= 0 && y < dimY) && (z >= 0 && z < dimZ);
+    if(dimZ > 1)
+    {
+        bool inside = (x >= 0 && x < dimX) && (y >= 0 && y < dimY) && (z >= 0 && z < dimZ);
+        if(inside) return domain[cm_size(y)*(dimX * dimZ) + cm_size(z)*dimX + cm_size(x)];
+    }
 
-    if(inside) return domain[cm_size(y)*(dimX * dimZ) + cm_size(z)*dimX + cm_size(x)];
-    cm_pos dx, dy, dz;
+    else
+    {
+        bool inside = (x >= 0 && x < dimX) && (y >= 0 && y < dimY);
+        if(inside) return domain[cm_size(y)*(dimX * dimZ) + cm_size(x)];
+    }
     
     switch (boundryCondition)
     {
@@ -19,35 +26,33 @@ cm_state Subdomain::getState(cm_pos x, cm_pos y, cm_pos z)
     break;
 
     case BC::bouncy:
-        if(x >= dimX) dx = -2 * (x - (dimX-1)) + 1;
-        else dx = -2*x - 1;
+        if(x >= dimX) x = dimX - 1 - (x-dimX);
+        else if(x < 0) x = -x - 1;
         
-        if(y >= dimY) dy = -2 * (y - (dimY-1)) + 1;
-        else dy = -2*y - 1;
+        if(y >= dimY) y = dimY - 1 - (y-dimY);
+        else if(y < 0) y = -y - 1;
 
-        if(dimZ == 1) z = 0;
-        else if(z >= dimZ) dz = -2 * (z - (dimZ-1)) + 1;
-        else dz = -2*z - 1;
+        if(z >= dimZ) z = dimZ - 1 - (z-dimZ);
+        else if(z < 0) z = -z - 1;
 
-        return domain[cm_size(y + dy)*(dimX * dimZ) + cm_size(z + dz)*dimX + cm_size(x + dx)];
+        return domain[cm_size(y)*(dimX * dimZ) + cm_size(z)*dimX + cm_size(x)];
     break;
 
     case BC::periodic:
         if(x >= dimX) x = x - dimX;
-        else x = dimX + x;
+        else if(x < 0) x = dimX + x;
 
         if(y >= dimY) y = y - dimY;
-        else y = dimY + y;
+        else if(y < 0) y = dimY + y;
 
-        if(dimZ == 1) z = 0;
-        else if(z >= dimZ) z = z - dimZ;
-        else z = dimZ + z;
+        if(z >= dimZ) z = z - dimZ;
+        else if(z < 0) z = dimZ + z;
         
         return domain[cm_size(y)*(dimX * dimZ) + cm_size(z)*dimX + cm_size(x)];
     break;
 
     default:
-        return EMPTY;
+        throw std::runtime_error("Invalid bc");
         break;
     }
 }
@@ -70,13 +75,13 @@ void grainGrowth(Subdomain& subdomain)
         {
             while(true)
             {
-                dr[PHI] = subdomain.neighbourhood.alpha + phi_dist(gen)*subdomain.neighbourhood.beta;
+                dr[PHI] = subdomain.neighbourhood.alpha - DEG_90 + phi_dist(gen)*subdomain.neighbourhood.beta;
                 dr[ETA] = 2.0 * M_PIf * eta_dist(gen);
                 dr[RADIUS] = subdomain.neighbourhood.r * radius_dist(gen);
 
-                dp[1] = round(-sin(dr[PHI])*dr[RADIUS]);
-                dp[0] = round(cos(dr[PHI])*cos(dr[ETA])*dr[RADIUS]);
-                dp[2] = round(cos(dr[PHI])*sin(dr[ETA])*dr[RADIUS]);
+                dp[1] = round(-cos(dr[PHI])*dr[RADIUS]);
+                dp[0] = round(cos(dr[ETA])*sin(dr[PHI])*dr[RADIUS]);
+                dp[2] = round(sin(dr[PHI])*sin(dr[ETA])*dr[RADIUS]);
 
                 subdomain.accessStatesBuffer(x,y,z) = subdomain.getState(x + dp[0], y + dp[1], z + dp[2]);
                 break;

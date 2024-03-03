@@ -96,8 +96,8 @@ void generate(GeneratorConfig& caDomain, const int threadsNumber)
                 grainGrowth(subdomains[idx]);
                 for(cm_pos y = subdomains[idx].y0; y < subdomains[idx].y1; y++)
                 for(cm_pos z = subdomains[idx].z0; z < subdomains[idx].z1; z++)
-                    std::memcpy(&subdomains[idx].domain[subdomains[idx].getIdx(subdomains[idx].x0, y, z)],
-                    &subdomains[idx].statesBuffer[subdomains[idx].getIdx(subdomains[idx].x0, y, z)], 
+                    std::memcpy(&subdomains[idx].getCell(subdomains[idx].x0, y, z),
+                    &subdomains[idx].accessStatesBuffer(subdomains[idx].x0, y, z), 
                     (subdomains[idx].x1 - subdomains[idx].x0)*sizeof(cm_state));
                 checkBottomLayer(subdomains[idx]);
                 checkUpperLayer(subdomains[idx]);
@@ -140,6 +140,7 @@ Subdomain* createSubdomains(GeneratorConfig& caDomain, const int threadsNumber)
         subdomains[counter].dimZ = caDomain.getDimZ();
         subdomains[counter].neighbourhood = caDomain.getNeighbourhood();
         subdomains[counter].baseNeighbourhood = caDomain.getBaseNeighbourhood();
+        subdomains[counter].boundryCondition = caDomain.getBC();
         subdomains[counter].domain = caDomain.getDomain();
         subdomains[counter].statesBuffer = caDomain.getStatesBuffer();
         subdomains[counter].x0 = x;
