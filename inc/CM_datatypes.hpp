@@ -13,6 +13,7 @@ typedef uint8_t cm_smallsize;
 typedef size_t cm_size;
 
 enum class BC{absorption, bouncy, periodic};
+enum class MsFileForamt{xyz, xyzrgb};
 
 /* Class Field represents single field of a cellular automata domain */
 struct Field
@@ -75,6 +76,7 @@ class GeneratorConfig
     std::string _outputFile;
     std::string _inputFile;
     std::string _outputDir;
+    MsFileForamt _msFileFormat;
 
     public:
     GeneratorConfig(cm_pos dim[]);
@@ -96,6 +98,7 @@ class GeneratorConfig
     std::string getOutputFile() const { return _outputFile; }
     std::string getInputFile() const { return _inputFile; }
     std::string getOutpuDir() const { return _outputDir; }
+    MsFileForamt getMsFileFormat() const { return _msFileFormat; }
 
 
     const Neighbourhood& getNeighbourhood() { return _neighbourhood; }
@@ -115,6 +118,7 @@ class GeneratorConfig
     void setBaseNeighbourhood(const NeighbourhoodPlane& neighbourhood) { _baseNeighbourhood = neighbourhood; }
     void setIfFillBase(bool fillBase) { _fillBase = fillBase; }
     void setBC(BC bc){ _boundryCondition = bc; }
+    void setMsFileFormat(MsFileForamt ms) { _msFileFormat = ms; }
 
     void printConfiguration() const;
 
