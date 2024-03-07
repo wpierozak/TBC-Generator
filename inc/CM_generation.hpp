@@ -6,11 +6,16 @@
 class Subdomain
 {
     public:
+    ~Subdomain();
+
     cm_state* domain;
     cm_state* statesBuffer;
     BC boundryCondition;
     Neighbourhood neighbourhood;
     NeighbourhoodPlane baseNeighbourhood;
+    Grain* grains;
+    cm_size grainsNum;
+
     cm_pos dimX, dimY, dimZ;
     cm_pos x0, x1;
     cm_pos y0, y1;

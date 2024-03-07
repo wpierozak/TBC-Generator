@@ -141,17 +141,25 @@ Subdomain* createSubdomains(GeneratorConfig& caDomain, const int threadsNumber)
         subdomains[counter].dimX = caDomain.getDimX();
         subdomains[counter].dimY = caDomain.getDimY();
         subdomains[counter].dimZ = caDomain.getDimZ();
+
         subdomains[counter].neighbourhood = caDomain.getNeighbourhood();
         subdomains[counter].baseNeighbourhood = caDomain.getBaseNeighbourhood();
+
         subdomains[counter].boundryCondition = caDomain.getBC();
+
         subdomains[counter].domain = caDomain.getDomain();
         subdomains[counter].statesBuffer = caDomain.getStatesBuffer();
+
+        subdomains[counter].grains = caDomain.getGrains();
+        subdomains[counter].grainsNum = caDomain.getGrainsNum();
+
         subdomains[counter].x0 = x;
         subdomains[counter].x1 = ((x + dx) < caDomain.getDimX())? x + dx: caDomain.getDimX();
         subdomains[counter].y0 = y0;
         subdomains[counter].y1 = y1;
         subdomains[counter].z0 = z;
-        subdomains[counter].z1 = ((z + dz) < caDomain.getDimZ())? z + dz: caDomain.getDimZ();   
+        subdomains[counter].z1 = ((z + dz) < caDomain.getDimZ())? z + dz: caDomain.getDimZ();
+           
         counter++;              
     }
     return subdomains;

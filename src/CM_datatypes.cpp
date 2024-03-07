@@ -19,6 +19,7 @@ GeneratorConfig::~GeneratorConfig()
 {
     delete[] _domain;
     delete[] _statesBuffer;
+    delete[] _grains;
 }
 
 void GeneratorConfig::printConfiguration() const

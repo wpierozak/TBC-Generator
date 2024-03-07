@@ -20,7 +20,7 @@ cm_colorampl* defineColors(cm_size grainNum)
 void createBitmap(GeneratorConfig& caDomain, const int threadsNum)
 {
     cm_state * domain = caDomain.getDomain();
-    cm_size grainNum = caDomain.getNucleusNum();
+    cm_size grainNum = caDomain.getGrainsNum();
     cm_size cellsNum = caDomain.getCellsNum();
     cm_size dimX = caDomain.getDimX();
     cm_size dimY = caDomain.getDimY();
@@ -63,7 +63,7 @@ void createBitmap(GeneratorConfig& caDomain, const int threadsNum)
 void saveMicrostructureFile(GeneratorConfig& caDomain)
 {
     cm_state * domain = caDomain.getDomain();
-    cm_size grainNum = caDomain.getNucleusNum();
+    cm_size grainNum = caDomain.getGrainsNum();
     cm_size cellsNum = caDomain.getCellsNum();
     cm_size dimX = caDomain.getDimX();
     cm_size dimY = caDomain.getDimY();

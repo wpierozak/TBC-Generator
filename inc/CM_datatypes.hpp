@@ -36,6 +36,12 @@ struct NeighbourhoodPlane
     float r;
 };
 
+struct Grain
+{
+    cm_pos x,y,z;
+    cm_pos tx, ty, tz;
+};
+
 /* Class GeneratorConfig contains all data necessary to start a microstructure generating process */
 class GeneratorConfig
 {
@@ -63,6 +69,7 @@ class GeneratorConfig
 
     // Grains //
 
+    Grain* _grains;
     cm_size _grainsNumber;
     float _baseRadius;
     float _maxRadius;
@@ -89,7 +96,8 @@ class GeneratorConfig
     cm_state* getStatesBuffer() { return _statesBuffer; }
     BC getBC() const { return _boundryCondition; }
 
-    cm_size getNucleusNum() const { return _grainsNumber; }
+    Grain* getGrains() { return _grains; }
+    cm_size getGrainsNum() const { return _grainsNumber; }
     cm_size getCellsNum() const {return static_cast<size_t>(_dimX) * static_cast<size_t>(_dimY) * static_cast<size_t>(_dimZ);  }
 
     float getBaseRadius() const { return _baseRadius; }
@@ -119,6 +127,7 @@ class GeneratorConfig
     void setIfFillBase(bool fillBase) { _fillBase = fillBase; }
     void setBC(BC bc){ _boundryCondition = bc; }
     void setMsFileFormat(MsFileFormat ms) { _msFileFormat = ms; }
+    void setGrains(Grain* grains) { _grains = grains; }
 
     void printConfiguration() const;
 

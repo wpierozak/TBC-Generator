@@ -5,9 +5,9 @@
 #include"CM_generation.hpp"
 #include"CM_parameters.hpp"
 
-void f()
+Subdomain::~Subdomain()
 {
-    
+    delete[] grains;
 }
 
 cm_state Subdomain::getState(cm_pos x, cm_pos y, cm_pos z)
@@ -105,7 +105,7 @@ void nucleation(GeneratorConfig& domain)
     float radius = domain.getBaseRadius();
     cm_pos nucleuses[3];
 
-    for(cm_size n = 0; n < domain.getNucleusNum(); n++ )
+    for(cm_size n = 0; n < domain.getGrainsNum(); n++ )
     {
         nucleuses[0] = dist(gen)* dimX;
         nucleuses[1] = 0;
