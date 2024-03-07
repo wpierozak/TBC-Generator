@@ -1,6 +1,7 @@
 #include<iostream>
 #include<fstream>
 #include"CM_postproc.hpp"
+#include"CM_ui.hpp"
 #include"BMP/libbmp.h"
 #include"BMP/EasyBMP.h"
 
@@ -76,7 +77,11 @@ void saveMicrostructureFile(GeneratorConfig& caDomain)
     if(file.is_open() == false)
         throw std::runtime_error("Output file cannot be created/loade\n");
 
-    file << caDomain.getCellsNum() << std::endl << std::endl;    
+    file << caDomain.getCellsNum() << std::endl << std::endl;
+    size_t step = caDomain.getCellsNum() / 10;
+    int counter = 0; 
+
+    msg_header("", "Microstructure TXT file generation", "");
 
     switch (caDomain.getMsFileFormat())
     {
@@ -85,6 +90,11 @@ void saveMicrostructureFile(GeneratorConfig& caDomain)
         for(cm_pos z = 0; z < dimZ; z++)
         for(cm_pos x = 0; x < dimX; x++)
         {
+            if(caDomain.getIdx(x,y,z) % step == 0)
+            {
+                msg_header("", counter*10,"%"); 
+                counter++;
+            }
             file << x << ' ' << y << ' ' << z << ' ' << caDomain.getCell(x, y, z) << std::endl;
         }
         break;
