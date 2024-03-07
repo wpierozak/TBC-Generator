@@ -83,7 +83,7 @@ void generate(GeneratorConfig& caDomain, const int threadsNumber)
         std::cout<<"\t===\tMicrostructure generation - OMP - start\t===" << std::endl;
     #endif
 
-    #pragma omp parallel default(none) shared(subdomains) num_threads(threadsNumber) firstprivate(threadsNumber)
+    #pragma omp parallel default(none) shared(subdomains) num_threads(threadsNumber) firstprivate(threadsNumber) shared(std::cout)
     {
         int idx = omp_get_thread_num();
         bool done = false;
@@ -91,6 +91,8 @@ void generate(GeneratorConfig& caDomain, const int threadsNumber)
 
         while(alldone != threadsNumber)
         {
+            #pragma omp barrier
+            
             if(subdomains[idx].y1 != subdomains[idx].dimY)
             {
                 grainGrowth(subdomains[idx]);
@@ -111,6 +113,7 @@ void generate(GeneratorConfig& caDomain, const int threadsNumber)
                     alldone += 1;
                 }
             }
+            
             #pragma omp barrier
         }
     }

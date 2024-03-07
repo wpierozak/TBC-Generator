@@ -10,8 +10,8 @@
 
     <neighbourhood mode="degrees">   
         <alpha>60.0</alpha>
-        <beta>30.0</beta>
-        <radius>3.0</radius>
+        <beta>60.0</beta>
+        <radius>2.0</radius>
     </neighbourhood>
 
     <fill_base>true</fill_base>
@@ -26,6 +26,6 @@
 
     <threads_number>12</threads_number>
 
-    <boundry_conditions>periodic</boundry_conditions>
+    <boundry_conditions>bouncy</boundry_conditions>
 
 </Configuration>

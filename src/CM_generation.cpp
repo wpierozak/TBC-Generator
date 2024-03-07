@@ -80,13 +80,13 @@ void grainGrowth(Subdomain& subdomain)
         {
             while(true)
             {
-                dr[PHI] = subdomain.neighbourhood.alpha - DEG_90 + phi_dist(gen)*subdomain.neighbourhood.beta;
+                dr[PHI] = subdomain.neighbourhood.alpha + phi_dist(gen)*subdomain.neighbourhood.beta;
                 dr[ETA] = 2.0 * M_PIf * eta_dist(gen);
                 dr[RADIUS] = subdomain.neighbourhood.r * radius_dist(gen);
 
-                dp[1] = round(-cos(dr[PHI])*dr[RADIUS]);
-                dp[0] = round(cos(dr[ETA])*sin(dr[PHI])*dr[RADIUS]);
-                dp[2] = round(sin(dr[PHI])*sin(dr[ETA])*dr[RADIUS]);
+                dp[1] = round(-sin(dr[PHI])*dr[RADIUS]);
+                dp[0] = round(cos(dr[PHI])*cos(dr[ETA])*dr[RADIUS]);
+                dp[2] = round(cos(dr[PHI])*sin(dr[ETA])*dr[RADIUS]);
 
                 subdomain.accessStatesBuffer(x,y,z) = subdomain.getState(x + dp[0], y + dp[1], z + dp[2]);
                 break;
