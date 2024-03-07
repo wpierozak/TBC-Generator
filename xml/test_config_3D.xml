@@ -7,7 +7,7 @@
 
     <output_dir>../res/3D</output_dir>
     <output_filename>test</output_filename>
-
+    <ms_file_format>xyz</ms_file_format>
     <neighbourhood mode="degrees">   
         <alpha>60.0</alpha>
         <beta>60.0</beta>

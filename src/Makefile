@@ -41,7 +41,7 @@ clean:
 	rm $(OBJ)/*.o
 	
 implementation_omp: $(LIB)/cmlib.a 
-	$(LOADER) -I$(INC) $(OMP) $(DEBUG) generator_omp.cpp $(LIB)/cmlib.a -o $(BIN)/generator_omp
+	$(LOADER) -I$(INC) $(OMP) generator_omp.cpp $(LIB)/cmlib.a -o $(BIN)/generator_omp
 
 clmstructure: $(LIB)/cmlib.a 
 	$(LOADER) -I$(INC) $(OMP) clmstructure.cpp $(LIB)/cmlib.a -o $(BIN)/clmstructure

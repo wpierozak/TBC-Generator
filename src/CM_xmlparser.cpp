@@ -15,6 +15,10 @@ const std::string PERIODIC = "periodic";
 const std::string OUTPUT_FILE = "output_filename";
 const std::string OUTPUT_DIR = "output_dir";
 
+const std::string MS_FILE_FORMAT = "ms_file_format";
+const std::string MS_XYZ = "xyz";
+const std::string MS_RGB = "xyzrgb";
+
 const std::string NEIGHBOURHOOD = "neighbourhood";
 const std::string ALPHA = "alpha";
 const std::string BETA = "beta";
@@ -53,6 +57,7 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
     cm_smallsize threads_number;
     bool fill_base;
     BC boundry_conditon;
+    MsFileFormat ms_file_format;
 
     rapidxml::xml_node<>* node = domain_node->first_node();
     while(node)
@@ -110,6 +115,12 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
             else if(bc == PERIODIC) boundry_conditon = BC::periodic;
             else throw std::runtime_error("Invalid XML format - invalid boundry condition");
         }
+        else if(MS_FILE_FORMAT == node->name())
+        {
+            std::string format = node->value();
+            if(format == MS_XYZ) ms_file_format = MsFileFormat::xyz;
+            else if(format == MS_RGB) ms_file_format = MsFileFormat::xyzrgb;
+        }
         else throw std::runtime_error("Invalid XML format - invalid node");
         node = node->next_sibling();
     }
@@ -124,6 +135,7 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
     config->setBaseNeighbourhood(base_neighbourhood);
     config->setOutputDir(output_dir);
     config->setBC(boundry_conditon);
+    config->setMsFileFormat(ms_file_format);
 
     return config; 
 }
