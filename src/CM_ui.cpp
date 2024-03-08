@@ -96,6 +96,7 @@ void clear(vec_string& arg, GeneratorConfig** config)
     if(*config == nullptr) throw cm_error("Configuration is already cleared", "clear");
     if(arg.size() != 1) throw cm_error("Invalid argument", "clear");
     delete *config;
+    *config = nullptr;
 }
 
 void run(vec_string& arg, GeneratorConfig** config)

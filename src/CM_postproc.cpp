@@ -98,6 +98,21 @@ void saveMicrostructureFile(GeneratorConfig& caDomain)
             file << x << ' ' << y << ' ' << z << ' ' << caDomain.getCell(x, y, z) << std::endl;
         }
         break;
+
+    case MsFileFormat::xyzrgb:
+        for(cm_pos y = 0; y < dimY; y++)
+        for(cm_pos z = 0; z < dimZ; z++)
+        for(cm_pos x = 0; x < dimX; x++)
+        {
+            if(caDomain.getIdx(x,y,z) % step == 0)
+            {
+                msg_header("", counter*10,"%"); 
+                counter++;
+            }
+            file << x << ' ' << y << ' ' << z << ' ' << colorsArray[caDomain.getCell(x, y, z)] << 
+            colorsArray[caDomain.getCell(x, y, z) + 1] << colorsArray[caDomain.getCell(x, y, z) + 2] << caDomain.getCell(x, y, z) << std::endl;
+        }
+        break;
     
     default:
         throw std::runtime_error("Format (yet) not supported!");

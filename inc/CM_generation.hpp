@@ -11,6 +11,8 @@ class Subdomain
     BC boundryCondition;
     Neighbourhood neighbourhood;
     NeighbourhoodPlane baseNeighbourhood;
+    Grain* grains;
+    cm_size grainNum;
     cm_pos dimX, dimY, dimZ;
     cm_pos x0, x1;
     cm_pos y0, y1;

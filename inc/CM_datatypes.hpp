@@ -28,12 +28,21 @@ struct Neighbourhood
     float alpha;
     float beta;
     float r;
+
+    float tilt_x;
+    float tilt_z;
 };
 
 /* Struct NeighbourhoodPlane contains information about neighboorhood type and parameters for a flat field*/
 struct NeighbourhoodPlane
 {
     float r;
+};
+
+struct Grain
+{
+    cm_pos cx, cy, cz;
+    cm_pos gx, gy, gz;
 };
 
 /* Class GeneratorConfig contains all data necessary to start a microstructure generating process */
@@ -63,6 +72,7 @@ class GeneratorConfig
 
     // Grains //
 
+    Grain* _grains;
     cm_size _grainsNumber;
     float _baseRadius;
     float _maxRadius;

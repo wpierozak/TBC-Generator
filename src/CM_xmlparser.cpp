@@ -23,6 +23,8 @@ const std::string NEIGHBOURHOOD = "neighbourhood";
 const std::string ALPHA = "alpha";
 const std::string BETA = "beta";
 const std::string RADIUS = "radius";
+const std::string TILT_X = "tilt_x";
+const std::string TILT_Z = "tilt_z";
 
 const std::string GRAIN_NUMBER = "grains_number";
 const std::string BASE_RADIUS =  "base_radius";
@@ -162,14 +164,17 @@ Neighbourhood parseNeighbourhood(rapidxml::xml_node<>* node)
     if(mode == DEGREES) neighbourhood.alpha = strtof(child_node->value(), nullptr) * (M_PIf/180.0f);
     else  neighbourhood.alpha = strtof(child_node->value(), nullptr);
 
-    child_node = node->first_node(BETA.c_str());
-    if(child_node == nullptr) throw std::runtime_error("Invalid XML format.");
-    if(mode == DEGREES) neighbourhood.beta = strtof(child_node->value(), nullptr) * (M_PIf/180.0f);
-    else neighbourhood.beta = strtof(child_node->value(), nullptr);
-
     child_node = node->first_node(RADIUS.c_str());
     if(child_node == nullptr) throw std::runtime_error("Invalid XML format.");
     neighbourhood.r = strtof(child_node->value(), nullptr);
+
+    child_node = node->first_node(TILT_X.c_str());
+    if(child_node != nullptr) neighbourhood.tilt_x = strtof(child_node->value(), nullptr);
+    else neighbourhood.tilt_x = 0;
+
+    child_node = node->first_node(TILT_Z.c_str());
+    if(child_node != nullptr) neighbourhood.tilt_z = strtof(child_node->value(), nullptr);
+    else neighbourhood.tilt_z = 0;
 
     return neighbourhood;
 }

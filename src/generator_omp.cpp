@@ -43,7 +43,7 @@ int main(int argc, const char* argv[])
     elapsed = end_time - start_time;
     std::cout<<"Time of the bitmap creation process: " << elapsed.count() << " milliseconds" <<std::endl;
 
-    saveMicrostructureFile(*d0);
+    //saveMicrostructureFile(*d0);
 
     delete d0;
     return 0;
