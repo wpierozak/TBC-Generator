@@ -35,9 +35,21 @@ const std::string BASE_NEIGHBOURHOOD = "base_neighbourhood";
 const std::string MODE = "mode";
 const std::string DEGREES = "degrees";
 const std::string RADIANS = "radians";
+const std::string BOX = "box";
+const std::string BOX_X0 = "x0";
+const std::string BOX_X1 = "x1";
+const std::string BOX_Y0 = "y0";
+const std::string BOX_Y1 = "y1";
+const std::string BOX_Z0 = "z0";
+const std::string BOX_Z1 = "z1";
 
 const std::string TRUE = "true";
 const std::string FALSE = "false";
+
+const std::string MAX_COLUMN_TILT = "max_tilt";
+const std::string MIN_COLUMN_TILT = "min_tilt";
+const std::string REFERENCE_RADIUS = "ref_radius";
+const std::string MAX_ANGULAR_WIDTH = "max_angular_width";
 
 GeneratorConfig* parseConfiguration(const std::string& filePath) {
     rapidxml::file<> xml_file(filePath.c_str());
@@ -52,10 +64,17 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
     cm_pos dim[3];
     std::string output_file;
     std::string output_dir;
+
     Neighbourhood neighbourhood;
     NeighbourhoodPlane base_neighbourhood;
+
     cm_size grains_number;
     double base_radius;
+    double max_tilt;
+    double min_tilt;
+    double ref_radius;
+    double max_angular_width;
+
     cm_smallsize threads_number;
     bool fill_base;
     BC boundry_conditon;
@@ -123,6 +142,22 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
             if(format == MS_XYZ) ms_file_format = MsFileFormat::xyz;
             else if(format == MS_RGB) ms_file_format = MsFileFormat::xyzrgb;
         }
+        else if(MAX_COLUMN_TILT == node->name())
+        {
+            max_tilt = std::stoi(node->value());
+        }
+        else if(MIN_COLUMN_TILT == node->name())
+        {
+            min_tilt = std::stoi(node->value());
+        }
+        else if(REFERENCE_RADIUS == node->name())
+        {
+            ref_radius = std::stoi(node->value());
+        }
+        else if(MAX_ANGULAR_WIDTH == node->name())
+        {
+            max_angular_width = std::stoi(node->value());
+        }
         else throw std::runtime_error("Invalid XML format - invalid node");
         node = node->next_sibling();
     }
@@ -138,6 +173,10 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
     config->setOutputDir(output_dir);
     config->setBC(boundry_conditon);
     config->setMsFileFormat(ms_file_format);
+    config->setRefRadius(ref_radius);
+    config->setMaxTilt(max_tilt);
+    config->setMinTilt(min_tilt);
+    config->setMaxAngularWidth(max_angular_width);
 
     return config; 
 }
@@ -158,38 +197,42 @@ Neighbourhood parseNeighbourhood(rapidxml::xml_node<>* node)
     rapidxml::xml_attribute<>* attr = node->first_attribute(MODE.c_str());
     if(attr == nullptr ) throw std::runtime_error("Invalid XML format - neighbourhood angles mode attribute is missing");
     std::string mode = attr->value();
+    rapidxml::xml_node<>*child_node = nullptr;
 
-    rapidxml::xml_node<>*child_node = node->first_node(ALPHA.c_str());
-    if(child_node == nullptr) throw std::runtime_error("Invalid XML format.");
-    if(mode == DEGREES) neighbourhood.alpha = strtof(child_node->value(), nullptr) * (M_PIf/180.0f);
-    else  neighbourhood.alpha = strtof(child_node->value(), nullptr);
-
-    child_node = node->first_node(RADIUS.c_str());
-    if(child_node == nullptr) throw std::runtime_error("Invalid XML format.");
-    neighbourhood.r = strtof(child_node->value(), nullptr);
-
-    child_node = node->first_node(TILT_X.c_str());
-    if(child_node != nullptr) neighbourhood.tilt_x = strtof(child_node->value(), nullptr);
-    else neighbourhood.tilt_x = 0;
-
-    child_node = node->first_node(TILT_Z.c_str());
-    if(child_node != nullptr) neighbourhood.tilt_z = strtof(child_node->value(), nullptr);
-    else neighbourhood.tilt_z = 0;
-
-    neighbourhood.size = 25*3;
-    neighbourhood.relative_pos = new cm_pos[3*25*3];
-    
-    int counter = 0;
-    for(int y = -2; y <= 0; y++)
-    for(int z = -2; z <= 2; z++)
-    for(int x = -2; x <= 2; x++)
+    if(mode == BOX)
     {
-        if(x == 0 && y == 0 && z == 0) continue;
-        neighbourhood.relative_pos[counter] = x;
-        neighbourhood.relative_pos[counter + 1] = y;
-        neighbourhood.relative_pos[counter + 2] = z;
-        std::cout<< neighbourhood.relative_pos[counter] << ' ' << neighbourhood.relative_pos[counter+1] << ' ' << neighbourhood.relative_pos[counter+2] <<std::endl;
-        counter+=3;
+        child_node = node->first_node();
+        while(child_node)
+        {
+
+        if(child_node->name() == BOX_X0)
+        {
+            neighbourhood.x0 = std::stoi(child_node->value());
+        }
+        else if(child_node->name() == BOX_X1)
+        {
+            neighbourhood.x1 = std::stoi(child_node->value());
+        }
+        else if(child_node->name() == BOX_Y0)
+        {  
+            neighbourhood.y0 = std::stoi(child_node->value());
+        }
+        else if(child_node->name() == BOX_Y1)
+        {   
+            neighbourhood.y1 = std::stoi(child_node->value());
+        }
+        else if(child_node->name() == BOX_Z0)
+        {
+            neighbourhood.z0 = std::stoi(child_node->value());
+        }
+        else if(child_node->name() == BOX_Z1)
+        {
+            neighbourhood.z1 = std::stoi(child_node->value());
+        }
+        else throw  std::runtime_error("Invalid XML format - neighbourhood");
+
+        child_node = child_node->next_sibling();
+        }
     }
 
     return neighbourhood;

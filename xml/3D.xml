@@ -6,22 +6,31 @@
     <dimZ>100</dimZ>
 
     <output_dir>../res/3D</output_dir>
+
     <output_filename>test</output_filename>
+
     <ms_file_format>xyz</ms_file_format>
-    <neighbourhood mode="degrees">   
-        <alpha>80.0</alpha>
-        <radius>3.0</radius>
+
+    <neighbourhood mode="box">   
+        <x0>-2</x0>
+        <x1>2</x1>
+
+        <y0>-2</y0>
+        <y1>0</y1>
+
+        <z0>-2</z0>
+        <z1>2</z1>
     </neighbourhood>
 
-    <fill_base>true</fill_base>
-
-    <base_neighbourhood>
-       <radius>20</radius>
-    </base_neighbourhood>
-
-    <grains_number>10</grains_number>
+    <grains_number>30</grains_number>
     
-    <base_radius>10</base_radius>
+    <ref_radius>8</ref_radius>
+
+    <max_tilt>0</max_tilt>
+
+    <min_tilt>8</min_tilt>
+
+    <max_angular_width>6</max_angular_width>
 
     <threads_number>12</threads_number>
 

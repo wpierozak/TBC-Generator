@@ -1,6 +1,7 @@
 #pragma once
 #include<cmath>
 #include <cstdint>
+#include<vector>
 #include<string>
 
 /* State of an empty cell */
@@ -37,12 +38,11 @@ enum class MsFileFormat{xyz, xyzrgb};
 /* Struct Neighbourhood contains information about neighboorhood type and parameters*/
 struct Neighbourhood
 {
-    double alpha;
-    double beta;
-    double r;
+    cm_pos x0, x1;
+    cm_pos y0, y1;
+    cm_pos z0, z1;
 
-    double tilt_x;
-    double tilt_z;
+    double radius;
 
     cm_pos* relative_pos;
     cm_size size;
@@ -58,10 +58,11 @@ struct NeighbourhoodPlane
 
 struct Grain
 {
+    /* Grain global ID */
     cm_size ID;
 
     /* Coordinates of the center cell of the base of a column*/
-    cm_pos_vec center;
+    f_vec center;
 
     /* Growth tensor' coordinates */
     f_vec growth_tensor;
@@ -71,7 +72,12 @@ struct Grain
 
     /* Reference bound for the RPV norm */
     double rpv_norm_ub;
+
+    /* Reference column radius */
+    double ref_column_rad;
 };
+
+typedef std::vector<Grain> grains_array;
 
 void copy(Grain& dest, const Grain& src);
 
@@ -83,7 +89,6 @@ class GeneratorConfig
     // Buffers //
 
     cm_state* _domain;
-    cm_state* _statesBuffer;
 
     // Dimensions //
 
@@ -102,10 +107,15 @@ class GeneratorConfig
 
     // Grains //
 
-    Grain* _grains;
+    grains_array _grains;
     cm_size _grainsNumber;
     double _baseRadius;
     double _maxRadius;
+
+    double _referenceRadius;
+    double _minTilt;
+    double _maxTilt;
+    double _maxAngularWidth;
 
     // For CPU parallel execution //
 
@@ -126,12 +136,15 @@ class GeneratorConfig
     cm_pos getDimY() const { return _dimY; }
     cm_pos getDimZ() const { return _dimZ; }
     cm_state* getDomain()  { return _domain; }
-    cm_state* getStatesBuffer() { return _statesBuffer; }
     BC getBC() const { return _boundryCondition; }
 
-    cm_size getNucleusNum() const { return _grainsNumber; }
-    Grain* getGrains() {return _grains; }
+    cm_size getGrainsNum() const { return _grainsNumber; }
+    grains_array& getGrains() {return _grains; }
     cm_size getCellsNum() const {return static_cast<size_t>(_dimX) * static_cast<size_t>(_dimY) * static_cast<size_t>(_dimZ);  }
+    double getMinTilt() const { return _minTilt; }
+    double getMaxTilt() const { return _maxTilt; }
+    double getRefRadius() const { return _referenceRadius; }
+    double getMaxAngularWidth() const { return _maxAngularWidth; }
 
     double getBaseRadius() const { return _baseRadius; }
     cm_smallsize getThreadsNumber() const { return _threadsNum; }
@@ -160,7 +173,12 @@ class GeneratorConfig
     void setIfFillBase(bool fillBase) { _fillBase = fillBase; }
     void setBC(BC bc){ _boundryCondition = bc; }
     void setMsFileFormat(MsFileFormat ms) { _msFileFormat = ms; }
-    void setGrainsConfiguration(Grain* grains) { _grains = grains; }
+    void setGrainsConfiguration(grains_array& grains) { std::copy(grains.begin(), grains.end(), std::back_insert_iterator(_grains)); }
+    void setMinTilt(double min) { _minTilt = min; }
+    void setMaxTilt(double max) { _maxTilt = max; }
+    void setRefRadius(double ref) {_referenceRadius = ref; }
+    void setMaxAngularWidth(double maxang) {_maxAngularWidth = maxang;}
+
 
     void printConfiguration() const;
 

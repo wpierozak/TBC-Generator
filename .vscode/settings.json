@@ -64,6 +64,8 @@
         "variant": "cpp",
         "format": "cpp",
         "__nullptr": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "list": "cpp",
+        "cinttypes": "cpp"
     }
 }

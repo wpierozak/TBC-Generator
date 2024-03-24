@@ -7,19 +7,15 @@
 GeneratorConfig::GeneratorConfig(cm_pos dim[]) : _dimX(dim[0]), _dimY(dim[1]), _dimZ(dim[2])
 {
     _domain = new cm_state[cm_size(_dimX) * cm_size(_dimY) * cm_size(_dimZ)];
-    _statesBuffer = new cm_state[cm_size(_dimX) * cm_size(_dimY) * cm_size(_dimZ)];
     for (cm_size i = 0; i < getCellsNum(); i++)
     {
         _domain[i] = EMPTY;
-        _statesBuffer[i] = EMPTY;
     }
 }
 
 GeneratorConfig::~GeneratorConfig()
 {
     delete[] _domain;
-    delete[] _statesBuffer;
-    delete[] _grains;
 }
 
 void GeneratorConfig::printConfiguration() const
@@ -37,9 +33,8 @@ void GeneratorConfig::printConfiguration() const
     else if (_boundryCondition == BC::periodic)
         std::cout << "periodic" << std::endl;
     std::cout << "Neighbourhood:\n";
-    std::cout << "\talpha:\t" << _neighbourhood.alpha << std::endl;
-    std::cout << "\tbeta:\t" << _neighbourhood.beta << std::endl;
-    std::cout << "\tradius:\t" << _neighbourhood.r << std::endl;
+    std::cout << "Max column tilt: " << _maxTilt << std::endl;
+    std::cout << "Min column tilt: " << _minTilt << std::endl;
     std::cout << "Base neighbourhood:\n";
     std::cout << "\tradius:\t" << _baseNeighbourhood.r << std::endl;
     std::cout << "Grains number:\t" << _grainsNumber << std::endl;

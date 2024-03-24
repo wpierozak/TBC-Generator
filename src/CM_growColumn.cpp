@@ -6,8 +6,9 @@ void generate_columns(GeneratorConfig& config)
 {
     subdomains_array subdomains;
     nucleation(config);
-    createSubdomains(config, subdomains);
+    createSubdomains(config, subdomains);;
     int threadsNumber = config.getThreadsNumber();
+
     #pragma omp parallel num_threads(threadsNumber) shared(subdomains)
     {
         growColumns(subdomains[omp_get_thread_num()]);

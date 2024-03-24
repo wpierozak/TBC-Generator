@@ -22,9 +22,6 @@ xmlparser: datatypes $(INC)/CM_xmlparser.hpp $(SRC)/CM_xmlparser.cpp
 generation: datatypes $(INC)/CM_generation.hpp $(SRC)/CM_generation.cpp
 	$(COMP) -c -I$(INC) CM_generation.cpp -o $(OBJ)/CM_generation.o
 
-omp_generation: generation $(INC)/CM_generationOMP.hpp $(SRC)/CM_generationOMP.cpp
-	$(COMP) -c $(OMP) -I$(INC) -g -Wall CM_generationOMP.cpp -o $(OBJ)/CM_generationOMP.o
-
 postproc: datatypes $(INC)/CM_postproc.hpp $(SRC)/CM_postproc.cpp
 	$(COMP) -c -I$(INC) CM_postproc.cpp -o $(OBJ)/CM_postproc.o
 
@@ -37,7 +34,7 @@ ui:
 grow_columns:
 	$(COMP) -c -I$(INC) $(OMP) $(SRC)/CM_growColumn.cpp -o $(OBJ)/CM_growColumn.o
 
-cmlib: datatypes xmlparser generation omp_generation postproc bmp ui grow_columns
+cmlib: datatypes xmlparser generation postproc bmp grow_columns
 	ar rcs $(LIB)/cmlib.a $(OBJ)/*.o
 
 clean:

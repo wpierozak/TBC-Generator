@@ -23,21 +23,24 @@ void createSubdomains(GeneratorConfig& config, subdomains_array& subdomains)
         subdomains[counter].dimX = config.getDimX();
         subdomains[counter].dimY = config.getDimY();
         subdomains[counter].dimZ = config.getDimZ();
-        copy(subdomains[counter].neighbourhood, config.getNeighbourhood());
-        subdomains[counter].baseNeighbourhood = config.getBaseNeighbourhood();
+
         subdomains[counter].boundryCondition = config.getBC();
+
         subdomains[counter].domain = config.getDomain();
-        subdomains[counter].statesBuffer = config.getStatesBuffer();
+
         subdomains[counter].x0 = x;
         subdomains[counter].x1 = ((x + dx) < config.getDimX())? x + dx: config.getDimX();
         subdomains[counter].y0 = y0;
         subdomains[counter].y1 = y1;
         subdomains[counter].z0 = z;
         subdomains[counter].z1 = ((z + dz) < config.getDimZ())? z + dz: config.getDimZ();   
-        subdomains[counter].grains = new Grain[config.getNucleusNum()];
-        for(int i = 0; i < config.getNucleusNum(); i++)
-            subdomains[counter].grains[i] = config.getGrains()[i];
-        subdomains[counter].grainNum = config.getNucleusNum();
+
+        std::copy(config.getGrains().begin(), config.getGrains().end(), std::back_insert_iterator(subdomains[counter].grains));   
+        subdomains[counter].maxColumnTilt = config.getMaxTilt();
+        subdomains[counter].minColumnTilt = config.getMinTilt(); 
+        subdomains[counter].referenceRadius = config.getRefRadius();
+        subdomains[counter].maxAngularWidth = config.getMaxAngularWidth();
+
         counter++;              
     }
 }
@@ -99,39 +102,6 @@ cm_state Subdomain::getState(cm_pos x, cm_pos y, cm_pos z)
     }
 }
 
-void grainGrowth(Subdomain& subdomain)
-{
-    std::minstd_rand gen(std::random_device{}());
-    std::uniform_real_distribution<> eta_dist(ETA_LOW, ETA_UP);
-    std::normal_distribution<double> phi_dist(PHI_MEAN, PHI_STD_VAR);
-    std::uniform_real_distribution<> radius_dist(RADIUS_LOW, RADIUS_UP);
-
-    double dr[3];
-    cm_pos dp[3];
-
-    for(cm_pos y = subdomain.y0; y < subdomain.y1; y++)
-    for(cm_pos z = subdomain.z0; z < subdomain.z1; z++)
-    for(cm_pos x = subdomain.x0; x < subdomain.x1; x++)
-    {
-        if(subdomain.getCell(x,y,z) == EMPTY)
-        {
-            while(true)
-            {
-                dr[PHI] = subdomain.neighbourhood.alpha + phi_dist(gen)*(M_PI - 2*subdomain.neighbourhood.alpha);
-                dr[ETA] = 2.0 * M_PIf * eta_dist(gen);
-                dr[RADIUS] = subdomain.neighbourhood.r * radius_dist(gen);
-
-                dp[1] = round(-sin(dr[PHI])*dr[RADIUS]);
-                dp[0] = round(cos(dr[PHI])*cos(dr[ETA])*dr[RADIUS]);
-                dp[2] = round(cos(dr[PHI])*sin(dr[ETA])*dr[RADIUS]);
-            
-                subdomain.accessStatesBuffer(x,y,z) = subdomain.getState(x + dp[0], y + dp[1], z + dp[2]);
-                break;
-            }
-        }
-    }
-}
-
 void nucleation(GeneratorConfig& domain)
 {
     std::minstd_rand gen(std::random_device{}());
@@ -142,13 +112,15 @@ void nucleation(GeneratorConfig& domain)
     double radius = domain.getBaseRadius();
     cm_pos nucleuses[3];
 
-    Grain* grains = new Grain[domain.getNucleusNum()];
+    grains_array grains;
+    grains.resize(domain.getGrainsNum());
 
-    for(cm_size n = 0; n < domain.getNucleusNum(); n++ )
+    for(cm_size n = 0; n < domain.getGrainsNum(); n++ )
     {
         nucleuses[0] = dist(gen)* dimX;
         nucleuses[1] = 0;
         nucleuses[2] = dist(gen)* dimZ;
+
         for(cm_pos dz = 0; nucleuses[2] + dz < dimZ && dz < radius; dz++)
         for(cm_pos dx = 0; nucleuses[0] + dx < dimX && dx < radius; dx++)
         {
@@ -157,180 +129,116 @@ void nucleation(GeneratorConfig& domain)
                 domain.getCell(nucleuses[0], nucleuses[1], nucleuses[2]) = n+1;
         }
 
-        std::cout << nucleuses[0] << ' ' << nucleuses[1] << ' ' << nucleuses[2] << '\n';
-        grains[n].center = {nucleuses[0], nucleuses[1], nucleuses[2]};
+        grains[n].center = {static_cast<double>(nucleuses[0]), static_cast<double>(nucleuses[1]), static_cast<double>(nucleuses[2])};
         grains[n].ID = n+1;
-        setGrowthTensor(&grains[n]);
-        std::cout << grains[n].growth_tensor.x << ' ' << grains[n].growth_tensor.y << ' ' << grains[n].growth_tensor.z << '\n';
-        setRPVNormBound(&grains[n]);
-        setColumnWidthBound(&grains[n]);
+
+        setGrowthTensor(grains[n], domain);
+        setRPVNormBound(grains[n], domain);
+        setColumnWidthBound(grains[n], domain);
     }
 
     domain.setGrainsConfiguration(grains);
 }
 
-void fillBase(Subdomain& subdomain)
-{
-    std::minstd_rand gen(std::random_device{}());
-    std::uniform_real_distribution<> eta_dist(0, 2.0 * M_PIf);
-    std::uniform_real_distribution<> radius_dist(0, subdomain.baseNeighbourhood.r);
-
-    double dr[2];
-    cm_pos dp[3];
-    dp[1] = 0;
-
-    for(cm_pos z = subdomain.z0; z < subdomain.z1; z++)
-    for(cm_pos x = subdomain.x0; x < subdomain.x1; x++)
-    {
-        if(subdomain.getCell(x,0,z) == EMPTY)
-        {
-            while(true)
-            {
-                dr[0] = 2.0 * M_PIf * eta_dist(gen);
-                dr[1] = radius_dist(gen);
-  
-                dp[0] = round(cos(dr[0])*dr[1]);
-                dp[2] = round(sin(dr[0])*dr[1]);
-
-                if(!tryIfFit(x + dp[0], 0, z + dp[2], dp, subdomain)) continue;
-                subdomain.accessStatesBuffer(x,0,z) = subdomain.getCell(x + dp[0], 
-                0, z + dp[2]);
-                break;
-            }
-        }
-    }
-}
-
 /* Defines grow tensor with regarding in-code parameters */
-void setGrowthTensor(Grain* grain)
+void setGrowthTensor(Grain& grain, GeneratorConfig& config)
 {
-    const double BOUNDING_ANGLE = 5.0 * M_PI / 180.0;
     std::minstd_rand gen(std::random_device{}());
-    std::uniform_real_distribution<> rand_angle(0, BOUNDING_ANGLE);
+    std::uniform_real_distribution<> rand_angle(config.getMinTilt() * M_PI / 180.0, config.getMaxTilt() * M_PI / 180.0);
 
     double xy_angle = rand_angle(gen);
     double zy_angle = rand_angle(gen);
 
-    grain->growth_tensor.x = sin(xy_angle);
-    grain->growth_tensor.z = sin(zy_angle);
-    grain->growth_tensor.y = 1;
+    grain.growth_tensor.x = sin(xy_angle);
+    grain.growth_tensor.z = sin(zy_angle);
+    grain.growth_tensor.y = 1;
 
-    normalize(grain->growth_tensor);
+    normalize(grain.growth_tensor);
 }
 
 /* Defines bound for column width by bounding the angle between growth tensor and relative position vector*/
-void setColumnWidthBound(Grain* grain)
+void setColumnWidthBound(Grain& grain, GeneratorConfig& config)
 {
-    const double BOUNDING_ANGLE = 178.0 * M_PI / 180.0;
-    grain->cos_phi_ub = cos(BOUNDING_ANGLE);
+    grain.cos_phi_ub = cos((180.0 - config.getMaxAngularWidth() * 0.5) * M_PI / 180.0);
 }
 
 /* Defines reference bound for a RPV norm */
-void setRPVNormBound(Grain* grain)
+void setRPVNormBound(Grain& grain, GeneratorConfig& config)
 {
-    const double BOUNDING_NORM = 100;
-    grain->rpv_norm_ub = BOUNDING_NORM;
+    const double BOUNDING_NORM = std::rand()%20 + 80;
+    grain.rpv_norm_ub = BOUNDING_NORM;
 }
 
 /* Calculates a relative position vector (RPV) */
-cm_pos_vec calculateRPV(const Grain* grain, cm_pos x0, cm_pos y0, cm_pos z0)
+cm_pos_vec calculateRPV(const Grain& grain, cm_pos x0, cm_pos y0, cm_pos z0)
 {
-    cm_pos_vec rpv = {grain->center.x - x0,  grain->center.y - y0, grain->center.z - z0 };
+    cm_pos_vec rpv = {grain.center.x - x0,  grain.center.y - y0, grain.center.z - z0 };
     return rpv;
 }
 
 /* Calculates a cosine of an angle between GT and RPV */
-double cosGTRPV(cm_pos_vec rpv, const Grain* grain)
+double cosGTRPV(cm_pos_vec rpv, const Grain& grain)
 {
-    return (double(rpv.x)*grain->growth_tensor.x + double(rpv.y)*grain->growth_tensor.y + double(rpv.z)*grain->growth_tensor.z) / 
-        ( rpv.norm() * grain->growth_tensor.norm());
+    return (double(rpv.x)*grain.growth_tensor.x + double(rpv.y)*grain.growth_tensor.y + double(rpv.z)*grain.growth_tensor.z) / 
+        ( rpv.norm() * grain.growth_tensor.norm());
 }
 
 /* Calculates the P parameter */
-double calculateP(double cos_phi, const Grain* grain)
+double calculateP(double cos_phi, const Grain& grain)
 {
-    if(cos_phi > grain->cos_phi_ub) return 0.0f;
-    else return 1.0f;
+    if(cos_phi > grain.cos_phi_ub) return 0.0;
+    else return 1.0;
 }
 
 /* Calculates the R parameter */
-double calculateR(cm_pos_vec RPV, const Grain* grain)
+double calculateR(f_vec RPV, const Grain& grain)
 {
-    if(RPV.norm() > grain->rpv_norm_ub) return 0.0f;
-    else return 1.0f;
+    if(RPV.norm() > grain.rpv_norm_ub) return 0.0;
+    else return 1.0;
 }
 
-/* Search for grains in neighbourhood */
-void scanNeighbourhood(cm_pos x0, cm_pos y0, cm_pos z0, Subdomain& subdomain, std::list<Grain*>& grain_id)
+
+f_vec calculateH0(f_vec& pos, const Grain& grain)
 {
-    for(int n = 0; n < subdomain.neighbourhood.size; n++)
+    return {grain.growth_tensor.x * pos.y/grain.growth_tensor.y + grain.center.x, pos.y, grain.growth_tensor.z * pos.y/grain.growth_tensor.y + grain.center.z};
+}
+
+void assignCell(f_vec position, Subdomain& subdomain)
+{
+    for(Grain grain: subdomain.grains)
     {
-        /*cm_state neighbour = subdomain.getState(x0 + subdomain.neighbourhood.relative_pos[n*3 + 0],
-                                                y0 + subdomain.neighbourhood.relative_pos[n*3 + 1],
-                                                z0 + subdomain.neighbourhood.relative_pos[n*3 + 2]);
-        if(neighbour != EMPTY) */
-        grain_id.push_back(&subdomain.grains[n]);
+        f_vec rpv = subtractVectors(position, grain.center);
+        f_vec h0 = calculateH0(position, grain);
+            
+        double param_p = 1.0;
+
+        f_vec mv = subtractVectors(position, h0);
+        if(mv.norm() > subdomain.referenceRadius)
+        {
+            normalize(mv);
+            f_vec mrpv = rpv;
+            mrpv.x -= mv.x * subdomain.referenceRadius;
+            mrpv.z -= mv.z * subdomain.referenceRadius;
+            param_p = calculateP(cosVectors(mrpv, grain.growth_tensor), grain);
+        }
+            
+        double param_r = calculateR(rpv, grain);
+
+        if((param_p * param_r) != 0)
+        {
+            subdomain.getCell(position.x, position.y, position.z) = grain.ID;
+            break;
+        }
+
     }
-}
-
-bool isWithinRadius(cm_pos x, cm_pos y, cm_pos z, f_vec h0, const Grain* grain)
-{
-    const double REF_RADIUS = 10.0;
-    f_vec dist = {double(x) - h0.x, 0, double(z) - h0.z };
-    if(dist.norm() <= REF_RADIUS) return true;
-    else return false;
-}
-
-f_vec calculateH0(cm_pos y, const Grain* grain)
-{
-    return {grain->growth_tensor.x * double(y)/grain->growth_tensor.y + grain->center.x, y, grain->growth_tensor.z * double(y)/grain->growth_tensor.y + grain->center.z};
-}
-
-double cosCircleRPV(cm_pos x, cm_pos y, cm_pos z, cm_pos_vec rpv, f_vec h0, const Grain* grain)
-{
-    const double REF_RADIUS = 10.0;
-    f_vec mv = {h0.x - double(x), 0, h0.z - double(z) };
-    normalize(mv);
-    mv.x = mv.x * REF_RADIUS;
-    mv.z = mv.z * REF_RADIUS;
-
-    rpv.x -= mv.x;
-    rpv.z -= mv.z;
-
-    return cosGTRPV(rpv, grain);
 }
 
 void growColumns(Subdomain& subdomain)
 {
-    //const double LB_PROBABILITY = 0.7;
-
     for(cm_pos y = subdomain.y0; y < subdomain.y1; y++)
     for(cm_pos z = subdomain.z0; z < subdomain.z1; z++)
     for(cm_pos x = subdomain.x0; x < subdomain.x1; x++)
     {
-        for(int g = 0; g < subdomain.grainNum; g++)
-        {
-            cm_pos_vec rpv = calculateRPV(&subdomain.grains[g], x, y, z);
-            double cos_rpvgt = cosGTRPV(rpv, &subdomain.grains[g]);
-            f_vec h0 = calculateH0(y, &subdomain.grains[g]);
-            
-            double param_p = 1.0;
-
-            if(isWithinRadius(x,y,z, h0, &subdomain.grains[g]) == false)
-            {
-                double cosC = cosCircleRPV(x,y,z,rpv, h0, &subdomain.grains[g]);
-                param_p = calculateP(cosC, &subdomain.grains[g]);
-            }
-            
-            double param_r = calculateR(rpv, &subdomain.grains[g]);
-
-            bool classification = param_p * param_r;
-            if(classification)
-            {
-                subdomain.getCell(x,y,z) = subdomain.grains[g].ID;
-                break;
-            }
-
-        }
+        assignCell({x,y,z}, subdomain);
     }
 }
