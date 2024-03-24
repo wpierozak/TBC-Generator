@@ -1,8 +1,7 @@
 #include<iostream>
 #include<omp.h>
 #include<chrono>
-#include"CM_datatypes.hpp"
-#include"CM_generationOMP.hpp"
+#include"CM_growColumn.hpp"
 #include"CM_xmlparser.hpp"
 #include"CM_postproc.hpp"
 
@@ -11,15 +10,9 @@ int main(int argc, const char* argv[])
     clock_t t0, t1;
     GeneratorConfig* d0 = nullptr;
 
-    if(argc == 1)
-    {
-        std::cout <<"Configuration file has been not passed to the program!" <<std::endl;
-        return -1;
-    }
-
     try
     {
-         d0 = parseConfiguration(argv[1]);
+         d0 = parseConfiguration("../xml/3D.xml");
     }
     catch(const std::runtime_error& e)
     {
@@ -30,7 +23,7 @@ int main(int argc, const char* argv[])
     d0->printConfiguration();
 
     auto start_time = std::chrono::high_resolution_clock::now();
-    generate(*d0, d0->getThreadsNumber());
+    generate_columns(*d0);
     auto end_time = std::chrono::high_resolution_clock::now();
 
     std::chrono::duration<double, std::milli> elapsed = end_time - start_time;
@@ -43,6 +36,7 @@ int main(int argc, const char* argv[])
     elapsed = end_time - start_time;
     std::cout<<"Time of the bitmap creation process: " << elapsed.count() << " milliseconds" <<std::endl;
 
+    saveMicrostructureFile(*d0);
     //saveMicrostructureFile(*d0);
 
     delete d0;

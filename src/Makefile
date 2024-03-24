@@ -34,7 +34,10 @@ bmp: $(INC)/BMP/libbmp.h $(SRC)/BMP/EasyBMP.cpp
 ui:
 	$(COMP) -c -I$(INC) $(SRC)/CM_ui.cpp -o $(OBJ)/CM_ui.o
 
-cmlib: datatypes xmlparser generation omp_generation postproc bmp ui
+grow_columns:
+	$(COMP) -c -I$(INC) $(OMP) $(SRC)/CM_growColumn.cpp -o $(OBJ)/CM_growColumn.o
+
+cmlib: datatypes xmlparser generation omp_generation postproc bmp ui grow_columns
 	ar rcs $(LIB)/cmlib.a $(OBJ)/*.o
 
 clean:

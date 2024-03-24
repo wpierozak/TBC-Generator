@@ -14,6 +14,5 @@
 #define RADIUS_LOW 0.1
 #define RADIUS_UP 1.0
 
-
 // Constants //
 #define DEG_90 1.5708

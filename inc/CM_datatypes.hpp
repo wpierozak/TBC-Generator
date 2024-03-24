@@ -1,5 +1,5 @@
 #pragma once
-
+#include<cmath>
 #include <cstdint>
 #include<string>
 
@@ -12,38 +12,68 @@ typedef uint8_t cm_colorampl;
 typedef uint8_t cm_smallsize;
 typedef size_t cm_size;
 
+struct cm_pos_vec
+{
+    cm_pos x,y,z;
+
+    double norm() const {
+        return sqrt(x*x + y*y + z*z);
+    }
+};
+
+struct f_vec
+{
+    double x,y,z;
+    double norm() const {
+        return sqrt(x*x + y*y + z*z);
+    }
+};
+
+void normalize(f_vec& vec);
+
 enum class BC{absorption, bouncy, periodic};
 enum class MsFileFormat{xyz, xyzrgb};
-
-/* Class Field represents single field of a cellular automata domain */
-struct Field
-{
-    cm_state state;
-    cm_colorampl r,g,b;
-};
 
 /* Struct Neighbourhood contains information about neighboorhood type and parameters*/
 struct Neighbourhood
 {
-    float alpha;
-    float beta;
-    float r;
+    double alpha;
+    double beta;
+    double r;
 
-    float tilt_x;
-    float tilt_z;
+    double tilt_x;
+    double tilt_z;
+
+    cm_pos* relative_pos;
+    cm_size size;
 };
+
+void copy(Neighbourhood& dest, const Neighbourhood& src);
 
 /* Struct NeighbourhoodPlane contains information about neighboorhood type and parameters for a flat field*/
 struct NeighbourhoodPlane
 {
-    float r;
+    double r;
 };
 
 struct Grain
 {
-    cm_pos cx, cy, cz;
-    cm_pos gx, gy, gz;
+    cm_size ID;
+
+    /* Coordinates of the center cell of the base of a column*/
+    cm_pos_vec center;
+
+    /* Growth tensor' coordinates */
+    f_vec growth_tensor;
+
+    /* Reference bound for the angle between growth vector and relative position vector, stored as its cos value */
+    double cos_phi_ub;
+
+    /* Reference bound for the RPV norm */
+    double rpv_norm_ub;
 };
+
+void copy(Grain& dest, const Grain& src);
 
 /* Class GeneratorConfig contains all data necessary to start a microstructure generating process */
 class GeneratorConfig
@@ -74,8 +104,8 @@ class GeneratorConfig
 
     Grain* _grains;
     cm_size _grainsNumber;
-    float _baseRadius;
-    float _maxRadius;
+    double _baseRadius;
+    double _maxRadius;
 
     // For CPU parallel execution //
 
@@ -100,9 +130,10 @@ class GeneratorConfig
     BC getBC() const { return _boundryCondition; }
 
     cm_size getNucleusNum() const { return _grainsNumber; }
+    Grain* getGrains() {return _grains; }
     cm_size getCellsNum() const {return static_cast<size_t>(_dimX) * static_cast<size_t>(_dimY) * static_cast<size_t>(_dimZ);  }
 
-    float getBaseRadius() const { return _baseRadius; }
+    double getBaseRadius() const { return _baseRadius; }
     cm_smallsize getThreadsNumber() const { return _threadsNum; }
 
     std::string getOutputFile() const { return _outputFile; }
@@ -122,13 +153,14 @@ class GeneratorConfig
     void setDimY(cm_pos dimY) { _dimY = dimY; }
     void setDimZ(cm_pos dimZ) { _dimZ = dimZ; }
     void setGrainsNumber(cm_size nucleusNum) { _grainsNumber = nucleusNum; }
-    void setBaseRadius(float radius) { _baseRadius = radius; }
+    void setBaseRadius(double radius) { _baseRadius = radius; }
     void setThreadsNumber(cm_smallsize num) {_threadsNum = num;}
     void setNeighbourhood(const Neighbourhood& neighbourhood) { _neighbourhood = neighbourhood; }
     void setBaseNeighbourhood(const NeighbourhoodPlane& neighbourhood) { _baseNeighbourhood = neighbourhood; }
     void setIfFillBase(bool fillBase) { _fillBase = fillBase; }
     void setBC(BC bc){ _boundryCondition = bc; }
     void setMsFileFormat(MsFileFormat ms) { _msFileFormat = ms; }
+    void setGrainsConfiguration(Grain* grains) { _grains = grains; }
 
     void printConfiguration() const;
 

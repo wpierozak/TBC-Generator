@@ -55,7 +55,7 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
     Neighbourhood neighbourhood;
     NeighbourhoodPlane base_neighbourhood;
     cm_size grains_number;
-    float base_radius;
+    double base_radius;
     cm_smallsize threads_number;
     bool fill_base;
     BC boundry_conditon;
@@ -175,6 +175,22 @@ Neighbourhood parseNeighbourhood(rapidxml::xml_node<>* node)
     child_node = node->first_node(TILT_Z.c_str());
     if(child_node != nullptr) neighbourhood.tilt_z = strtof(child_node->value(), nullptr);
     else neighbourhood.tilt_z = 0;
+
+    neighbourhood.size = 25*3;
+    neighbourhood.relative_pos = new cm_pos[3*25*3];
+    
+    int counter = 0;
+    for(int y = -2; y <= 0; y++)
+    for(int z = -2; z <= 2; z++)
+    for(int x = -2; x <= 2; x++)
+    {
+        if(x == 0 && y == 0 && z == 0) continue;
+        neighbourhood.relative_pos[counter] = x;
+        neighbourhood.relative_pos[counter + 1] = y;
+        neighbourhood.relative_pos[counter + 2] = z;
+        std::cout<< neighbourhood.relative_pos[counter] << ' ' << neighbourhood.relative_pos[counter+1] << ' ' << neighbourhood.relative_pos[counter+2] <<std::endl;
+        counter+=3;
+    }
 
     return neighbourhood;
 }

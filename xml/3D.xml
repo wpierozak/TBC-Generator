@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <Configuration>
 
-    <dimX>1000</dimX>
-    <dimY>1000</dimY>
-    <dimZ>1000</dimZ>
+    <dimX>100</dimX>
+    <dimY>100</dimY>
+    <dimZ>100</dimZ>
 
     <output_dir>../res/3D</output_dir>
     <output_filename>test</output_filename>
@@ -16,15 +16,15 @@
     <fill_base>true</fill_base>
 
     <base_neighbourhood>
-       <radius>1.5</radius>
+       <radius>20</radius>
     </base_neighbourhood>
 
-    <grains_number>100</grains_number>
+    <grains_number>10</grains_number>
     
-    <base_radius>20</base_radius>
+    <base_radius>10</base_radius>
 
     <threads_number>12</threads_number>
 
-    <boundry_conditions>bouncy</boundry_conditions>
+    <boundry_conditions>absorption</boundry_conditions>
 
 </Configuration>
