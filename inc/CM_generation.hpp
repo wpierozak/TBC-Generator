@@ -69,9 +69,6 @@ void setColumnWidthBound(Grain& grain, GeneratorConfig& config);
 /* Defines reference bound for a RPV norm */
 void setRPVNormBound(Grain& grain, GeneratorConfig& config);
 
-/* Calculates a relative position vector (RPV) */
-cm_pos_vec calculateRPV(const Grain* grain, cm_pos x0, cm_pos y0, cm_pos z0);
-
 /* Calculates the P parameter */
 double calculateP(double phi, const Grain& grain);
 

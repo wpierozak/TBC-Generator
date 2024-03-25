@@ -151,7 +151,7 @@ void setGrowthTensor(Grain& grain, GeneratorConfig& config)
 
     grain.growth_tensor.x = sin(xy_angle);
     grain.growth_tensor.z = sin(zy_angle);
-    grain.growth_tensor.y = 1;
+    grain.growth_tensor.y = 1.0;
 
     normalize(grain.growth_tensor);
 }
@@ -165,15 +165,8 @@ void setColumnWidthBound(Grain& grain, GeneratorConfig& config)
 /* Defines reference bound for a RPV norm */
 void setRPVNormBound(Grain& grain, GeneratorConfig& config)
 {
-    const double BOUNDING_NORM = std::rand()%20 + 80;
+    const double BOUNDING_NORM = std::rand()%config.getDimY()*0.2 + config.getDimY()*0.8;
     grain.rpv_norm_ub = BOUNDING_NORM;
-}
-
-/* Calculates a relative position vector (RPV) */
-cm_pos_vec calculateRPV(const Grain& grain, cm_pos x0, cm_pos y0, cm_pos z0)
-{
-    cm_pos_vec rpv = {grain.center.x - x0,  grain.center.y - y0, grain.center.z - z0 };
-    return rpv;
 }
 
 /* Calculates a cosine of an angle between GT and RPV */
@@ -239,6 +232,6 @@ void growColumns(Subdomain& subdomain)
     for(cm_pos z = subdomain.z0; z < subdomain.z1; z++)
     for(cm_pos x = subdomain.x0; x < subdomain.x1; x++)
     {
-        assignCell({x,y,z}, subdomain);
+        assignCell({static_cast<double>(x),static_cast<double>(y), static_cast<double>(z)}, subdomain);
     }
 }

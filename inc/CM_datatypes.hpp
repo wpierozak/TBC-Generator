@@ -73,6 +73,36 @@ struct Grain
     /* Reference bound for the RPV norm */
     double rpv_norm_ub;
 
+    /* Reference bound for h0 norm of smooth region */
+    double h0_norm_smooth_region;
+
+    /* Reference bound for h0 norm of feathered region */
+    double h0_norm_feathered_region;
+
+    /* Reference bound for h0 norm of top region */
+    double h0_norm_top_region;
+
+    /* 
+        Definition of the column shape within feathered region
+        Shape is defined by two cubic functions:
+            -> gap function - determines the width of gap between main column and a feather and an inner edge of a feather 
+            -> feather function - determines the shape and width of the outer edge of a feather 
+    */
+    bool (*feathered_region_function)(const f_vec&, const Grain&);
+    #define FEATHERED_FUNCTION_OREDER 3
+    double feathered_region_function_coeff[FEATHERED_FUNCTION_OREDER + 1];
+
+    /* 
+        Definition of the column shape within top region
+        Shape is defined by splain of two linear function. Definition of the shape demands three parameters:
+            -> gradient of the "left" function
+            -> connecting point coordinate
+            -> gradient of the "right" function 
+    */
+    bool (*top_region_function)(const f_vec&, const Grain&);
+    #define TOP_REGION_PARAM_NUM 3
+    double top_region_function_param[TOP_REGION_PARAM_NUM];
+    
     /* Reference column radius */
     double ref_column_rad;
 };
