@@ -25,19 +25,6 @@ void GeneratorConfig::printConfiguration() const
     std::cout << "Output file name:\t" << _outputFile << std::endl;
     std::cout << "Output directory:\t" << _outputDir << std::endl;
     std::cout << "Dimension:\t" << _dimX << '\t' << _dimY << '\t' << _dimZ << std::endl;
-    std::cout << "Boundry condition:\t";
-    if (_boundryCondition == BC::absorption)
-        std::cout << "absorption" << std::endl;
-    else if (_boundryCondition == BC::bouncy)
-        std::cout << "bouncy" << std::endl;
-    else if (_boundryCondition == BC::periodic)
-        std::cout << "periodic" << std::endl;
-    std::cout << "Neighbourhood:\n";
-    std::cout << "Max column tilt: " << _maxTilt << std::endl;
-    std::cout << "Min column tilt: " << _minTilt << std::endl;
-    std::cout << "Base neighbourhood:\n";
-    std::cout << "\tradius:\t" << _baseNeighbourhood.r << std::endl;
-    std::cout << "Grains number:\t" << _grainsNumber << std::endl;
     std::cout << "Runnig on: " << (int)_threadsNum << " threads" << std::endl;
 }
 
@@ -105,14 +92,6 @@ void normalize(f_vec &vec)
     vec.x = vec.x / v_norm;
     vec.y = vec.y / v_norm;
     vec.z = vec.z / v_norm;
-}
-
-void copy(Neighbourhood &dest, const Neighbourhood &src)
-{
-    dest.size = src.size;
-    dest.relative_pos = new cm_pos[3 * src.size];
-
-    std::memcpy(dest.relative_pos, src.relative_pos, sizeof(cm_pos) * src.size * 3);
 }
 
 void copy(Grain &dest, const Grain &src)

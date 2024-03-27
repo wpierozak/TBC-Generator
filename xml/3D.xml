@@ -2,7 +2,7 @@
 <Configuration>
 
     <dimX>100</dimX>
-    <dimY>100</dimY>
+    <dimY>400</dimY>
     <dimZ>100</dimZ>
 
     <output_dir>../res/3D</output_dir>
@@ -23,14 +23,43 @@
     </neighbourhood>
 
     <grains_number>30</grains_number>
-    
-    <ref_radius>8</ref_radius>
 
-    <max_tilt>0</max_tilt>
+    <Grain>    
+        <ref_radius>8</ref_radius>
 
-    <min_tilt>8</min_tilt>
+        <!-- In degrees -->
+        <max_tilt>3</max_tilt>
 
-    <max_angular_width>6</max_angular_width>
+        <!-- In degrees -->
+        <min_tilt>0</min_tilt>
+
+        <!-- In degrees -->
+        <max_angle_of_widen>6</max_angle_of_widen>
+
+        <!-- As % of total length -->
+        <smooth_region_length></smooth_region_length>
+
+        <!-- In % of total length -->
+        <smooth_region_length_var><smooth_region_length_var>
+
+        <!-- As % of total length -->
+        <feathered_region_length></feathered_region_length>
+
+        <!-- In % of total length -->
+        <feathered_region_length_var></feathered_region_length_var>
+
+        <!-- As % of total length -->
+        <top_region_length></top_region_length>
+
+        <!-- In % of total length -->
+        <top_region_lenght_var></top_region_lenght_var>
+
+        <min_length></min_length>
+
+        <max_length></max_length>
+
+        <total_number></total_number>
+    </Grain>
 
     <threads_number>12</threads_number>
 

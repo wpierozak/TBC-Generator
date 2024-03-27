@@ -35,27 +35,6 @@ void normalize(f_vec& vec);
 enum class BC{absorption, bouncy, periodic};
 enum class MsFileFormat{xyz, xyzrgb};
 
-/* Struct Neighbourhood contains information about neighboorhood type and parameters*/
-struct Neighbourhood
-{
-    cm_pos x0, x1;
-    cm_pos y0, y1;
-    cm_pos z0, z1;
-
-    double radius;
-
-    cm_pos* relative_pos;
-    cm_size size;
-};
-
-void copy(Neighbourhood& dest, const Neighbourhood& src);
-
-/* Struct NeighbourhoodPlane contains information about neighboorhood type and parameters for a flat field*/
-struct NeighbourhoodPlane
-{
-    double r;
-};
-
 struct Grain
 {
     /* Grain global ID */
@@ -111,6 +90,46 @@ typedef std::vector<Grain> grains_array;
 
 void copy(Grain& dest, const Grain& src);
 
+/* Contains information needed to define grain properties */
+struct Microstructure_Properties
+{
+    /* Maximum value of angle widen of a column */
+    double max_angle_of_widen;
+
+    /* Maximum tilt of a column in the YZ and XY plane */
+    double max_tilt;
+
+    /* Minimum tilt of a column in the YZ and XY plane */
+    double min_tilt;
+
+    /* Length of the smooth region in % of total length*/
+    double smooth_region_length;
+    
+    /* Maximum absolute variance of the smooth region in % of total length */
+    double smooth_region_length_var;
+
+    /* Length of the feathered region in % of total length*/
+    double feathered_region_length;
+
+    /* Maximum absolute variance of the feathered region in % of total length */
+    double feathered_region_length_var;
+
+    /* Length of the top region in % of total length*/
+    double top_region_length;
+
+    /* Maximum absolute variance of the top region in % of total length */
+    double top_region_length_var;
+
+    /* Minimum length of a column */
+    double min_length;
+
+    /* Maximum length of a column */
+    double max_length;
+
+    /* Maximum value for the reference radius */
+    double max_reference_radius;
+};
+
 /* Class GeneratorConfig contains all data necessary to start a microstructure generating process */
 class GeneratorConfig
 {
@@ -129,12 +148,6 @@ class GeneratorConfig
     // Boundry conditions //
     BC _boundryCondition;
 
-    // Neighbourhood //
-
-    Neighbourhood _neighbourhood;
-    NeighbourhoodPlane _baseNeighbourhood;
-    bool _fillBase;
-
     // Grains //
 
     grains_array _grains;
@@ -145,7 +158,9 @@ class GeneratorConfig
     double _referenceRadius;
     double _minTilt;
     double _maxTilt;
-    double _maxAngularWidth;
+    double _maxAngleOfWiden;
+
+    Microstructure_Properties _msp;
 
     // For CPU parallel execution //
 
@@ -174,7 +189,7 @@ class GeneratorConfig
     double getMinTilt() const { return _minTilt; }
     double getMaxTilt() const { return _maxTilt; }
     double getRefRadius() const { return _referenceRadius; }
-    double getMaxAngularWidth() const { return _maxAngularWidth; }
+    double getMaxAngleOfWiden() const { return _maxAngleOfWiden; }
 
     double getBaseRadius() const { return _baseRadius; }
     cm_smallsize getThreadsNumber() const { return _threadsNum; }
@@ -183,11 +198,6 @@ class GeneratorConfig
     std::string getInputFile() const { return _inputFile; }
     std::string getOutpuDir() const { return _outputDir; }
     MsFileFormat getMsFileFormat() const {return _msFileFormat; }
-
-
-    const Neighbourhood& getNeighbourhood() { return _neighbourhood; }
-    const NeighbourhoodPlane& getBaseNeighbourhood() { return _baseNeighbourhood; }
-    bool fillBase() const { return _fillBase; }
 
     void setOutputFile(const std::string& outputFile) { _outputFile = outputFile; }
     void setInputFile(const std::string& inputFile) {_inputFile = inputFile; }
@@ -198,17 +208,16 @@ class GeneratorConfig
     void setGrainsNumber(cm_size nucleusNum) { _grainsNumber = nucleusNum; }
     void setBaseRadius(double radius) { _baseRadius = radius; }
     void setThreadsNumber(cm_smallsize num) {_threadsNum = num;}
-    void setNeighbourhood(const Neighbourhood& neighbourhood) { _neighbourhood = neighbourhood; }
-    void setBaseNeighbourhood(const NeighbourhoodPlane& neighbourhood) { _baseNeighbourhood = neighbourhood; }
-    void setIfFillBase(bool fillBase) { _fillBase = fillBase; }
     void setBC(BC bc){ _boundryCondition = bc; }
     void setMsFileFormat(MsFileFormat ms) { _msFileFormat = ms; }
     void setGrainsConfiguration(grains_array& grains) { std::copy(grains.begin(), grains.end(), std::back_insert_iterator(_grains)); }
     void setMinTilt(double min) { _minTilt = min; }
     void setMaxTilt(double max) { _maxTilt = max; }
     void setRefRadius(double ref) {_referenceRadius = ref; }
-    void setMaxAngularWidth(double maxang) {_maxAngularWidth = maxang;}
+    void setMaxAngleOfWiden(double maxang) {_maxAngleOfWiden = maxang;}
 
+    void setMSP(Microstructure_Properties msp);
+    Microstructure_Properties& getMSP();
 
     void printConfiguration() const;
 

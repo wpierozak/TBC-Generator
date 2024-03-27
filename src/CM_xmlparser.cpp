@@ -19,37 +19,28 @@ const std::string MS_FILE_FORMAT = "ms_file_format";
 const std::string MS_XYZ = "xyz";
 const std::string MS_RGB = "xyzrgb";
 
-const std::string NEIGHBOURHOOD = "neighbourhood";
-const std::string ALPHA = "alpha";
-const std::string BETA = "beta";
-const std::string RADIUS = "radius";
-const std::string TILT_X = "tilt_x";
-const std::string TILT_Z = "tilt_z";
-
-const std::string GRAIN_NUMBER = "grains_number";
+const std::string GRAIN_CONFIG = "Grain";
+const std::string GRAIN_NUMBER = "total_number";
+const std::string MAX_COLUMN_TILT = "max_tilt";
+const std::string MIN_COLUMN_TILT = "min_tilt";
+const std::string REFERENCE_RADIUS = "ref_radius";
+const std::string MAX_ANGLE_OF_WIDEN = "max_angle_of_widen";
+const std::string SMOOTH_REGION_LENGTH = "smooth_region_length";
+const std::string SMOOTH_REGION_LENGTH_VAR = "smooth_region_length_var";
+const std::string FEATHERED_REGION_LENGTH = "feathered_region_length";
+const std::string FEATHERED_REGION_LENGTH_VAR = "feathered_region_length_var";
+const std::string TOP_REGION_LENGTH = "top_region_length";
+const std::string TOP_REGION_LENGTH_VAR = "top_region_length_var";
+const std::string MAX_LENGTH = "max_length";
+const std::string MIN_LENGTH = "min_length";
 const std::string BASE_RADIUS =  "base_radius";
-const std::string THREADS_NUMBER = "threads_number";
-const std::string FILL_BASE = "fill_base";
-const std::string BASE_NEIGHBOURHOOD = "base_neighbourhood";
 
-const std::string MODE = "mode";
-const std::string DEGREES = "degrees";
-const std::string RADIANS = "radians";
-const std::string BOX = "box";
-const std::string BOX_X0 = "x0";
-const std::string BOX_X1 = "x1";
-const std::string BOX_Y0 = "y0";
-const std::string BOX_Y1 = "y1";
-const std::string BOX_Z0 = "z0";
-const std::string BOX_Z1 = "z1";
+const std::string THREADS_NUMBER = "threads_number";
 
 const std::string TRUE = "true";
 const std::string FALSE = "false";
 
-const std::string MAX_COLUMN_TILT = "max_tilt";
-const std::string MIN_COLUMN_TILT = "min_tilt";
-const std::string REFERENCE_RADIUS = "ref_radius";
-const std::string MAX_ANGULAR_WIDTH = "max_angular_width";
+
 
 GeneratorConfig* parseConfiguration(const std::string& filePath) {
     rapidxml::file<> xml_file(filePath.c_str());
@@ -65,15 +56,7 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
     std::string output_file;
     std::string output_dir;
 
-    Neighbourhood neighbourhood;
-    NeighbourhoodPlane base_neighbourhood;
-
-    cm_size grains_number;
-    double base_radius;
-    double max_tilt;
-    double min_tilt;
-    double ref_radius;
-    double max_angular_width;
+    Microstructure_Properties msp;
 
     cm_smallsize threads_number;
     bool fill_base;
@@ -99,30 +82,9 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
         {
             output_file = parseOutputFile(node);
         }
-        else if(NEIGHBOURHOOD == node->name())
-        {
-            neighbourhood = parseNeighbourhood(node);
-        }
-        else if(GRAIN_NUMBER == node->name())
-        {
-            grains_number = std::stoi(node->value());
-        }
-        else if(BASE_RADIUS == node->name())
-        {
-            base_radius = std::stoi(node->value());
-        }
         else if(THREADS_NUMBER == node->name())
         {
             threads_number = std::stoi(node->value());
-        }
-        else if(FILL_BASE == node->name())
-        {
-            if(TRUE == node->value()) fill_base = true;
-            else fill_base = false;
-        }
-        else if(BASE_NEIGHBOURHOOD == node->name())
-        {
-            base_neighbourhood = parseBaseNeighbourhood(node);
         }
         else if(OUTPUT_DIR == node->name())
         {
@@ -142,21 +104,9 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
             if(format == MS_XYZ) ms_file_format = MsFileFormat::xyz;
             else if(format == MS_RGB) ms_file_format = MsFileFormat::xyzrgb;
         }
-        else if(MAX_COLUMN_TILT == node->name())
+        else if(GRAIN_CONFIG == node->name())
         {
-            max_tilt = std::stoi(node->value());
-        }
-        else if(MIN_COLUMN_TILT == node->name())
-        {
-            min_tilt = std::stoi(node->value());
-        }
-        else if(REFERENCE_RADIUS == node->name())
-        {
-            ref_radius = std::stoi(node->value());
-        }
-        else if(MAX_ANGULAR_WIDTH == node->name())
-        {
-            max_angular_width = std::stoi(node->value());
+            parseMicrostructureProperties(node, msp);
         }
         else throw std::runtime_error("Invalid XML format - invalid node");
         node = node->next_sibling();
@@ -166,17 +116,10 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
     config->setOutputFile(output_file);
     config->setInputFile(filePath);
     config->setThreadsNumber(threads_number);
-    config->setNeighbourhood(neighbourhood);
-    config->setBaseRadius(base_radius);
-    config->setGrainsNumber(grains_number);
-    config->setBaseNeighbourhood(base_neighbourhood);
     config->setOutputDir(output_dir);
     config->setBC(boundry_conditon);
     config->setMsFileFormat(ms_file_format);
-    config->setRefRadius(ref_radius);
-    config->setMaxTilt(max_tilt);
-    config->setMinTilt(min_tilt);
-    config->setMaxAngularWidth(max_angular_width);
+    config->setMSP(msp);
 
     return config; 
 }
@@ -191,59 +134,60 @@ std::string parseOutputFile(rapidxml::xml_node<>* node)
     return node->value();
 }
 
-Neighbourhood parseNeighbourhood(rapidxml::xml_node<>* node)
+void parseMicrostructureProperties(rapidxml::xml_node<>* node, Microstructure_Properties& mscp)
 {
-    Neighbourhood neighbourhood;
-    rapidxml::xml_attribute<>* attr = node->first_attribute(MODE.c_str());
-    if(attr == nullptr ) throw std::runtime_error("Invalid XML format - neighbourhood angles mode attribute is missing");
-    std::string mode = attr->value();
-    rapidxml::xml_node<>*child_node = nullptr;
+    rapidxml::xml_node<>* child_node = node->first_node();
 
-    if(mode == BOX)
+    while(child_node)
     {
-        child_node = node->first_node();
-        while(child_node)
+        if(REFERENCE_RADIUS == child_node->name())
         {
-
-        if(child_node->name() == BOX_X0)
+            mscp.max_reference_radius = std::stoi(child_node->value());
+        }
+        else if(MAX_COLUMN_TILT == child_node->name())
         {
-            neighbourhood.x0 = std::stoi(child_node->value());
+            mscp.max_tilt = std::stoi(child_node->value());
         }
-        else if(child_node->name() == BOX_X1)
+        else if(MIN_COLUMN_TILT == child_node->name())
         {
-            neighbourhood.x1 = std::stoi(child_node->value());
+            mscp.min_tilt = std::stoi(child_node->value());
         }
-        else if(child_node->name() == BOX_Y0)
-        {  
-            neighbourhood.y0 = std::stoi(child_node->value());
-        }
-        else if(child_node->name() == BOX_Y1)
-        {   
-            neighbourhood.y1 = std::stoi(child_node->value());
-        }
-        else if(child_node->name() == BOX_Z0)
+        else if(MAX_COLUMN_TILT == child_node->name())
         {
-            neighbourhood.z0 = std::stoi(child_node->value());
+            mscp.max_tilt = std::stoi(child_node->value());
         }
-        else if(child_node->name() == BOX_Z1)
+        else if(SMOOTH_REGION_LENGTH == child_node->name())
         {
-            neighbourhood.z1 = std::stoi(child_node->value());
+            mscp.smooth_region_length = std::stoi(child_node->value());
         }
-        else throw  std::runtime_error("Invalid XML format - neighbourhood");
-
+        else if(SMOOTH_REGION_LENGTH_VAR == child_node->name())
+        {
+            mscp.smooth_region_length_var = std::stoi(child_node->value());
+        }
+        else if(FEATHERED_REGION_LENGTH == child_node->name())
+        {
+            mscp.feathered_region_length = std::stoi(child_node->value());
+        }
+        else if(FEATHERED_REGION_LENGTH_VAR == child_node->name())
+        {
+            mscp.feathered_region_length_var = std::stoi(child_node->value());
+        }
+        else if(TOP_REGION_LENGTH == child_node->name())
+        {
+            mscp.top_region_length = std::stoi(child_node->value());
+        }
+        else if(TOP_REGION_LENGTH_VAR == child_node->name())
+        {
+            mscp.top_region_length_var = std::stoi(child_node->value());
+        }
+        else if(MIN_LENGTH == child_node->name())
+        {
+            mscp.min_length = std::stoi(child_node->value());
+        }
+        else if(MAX_LENGTH == child_node->name())
+        {
+            mscp.max_length = std::stoi(child_node->value());
+        }
         child_node = child_node->next_sibling();
-        }
     }
-
-    return neighbourhood;
-}
-
-NeighbourhoodPlane parseBaseNeighbourhood(rapidxml::xml_node<>* node)
-{
-    NeighbourhoodPlane neighbourhood;
-    rapidxml::xml_node<>* child_node = node->first_node(RADIUS.c_str());
-    if(child_node == nullptr) throw std::runtime_error("Invalid XML format.");
-    neighbourhood.r = strtof(child_node->value(), nullptr);
-
-    return neighbourhood;
 }

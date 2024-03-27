@@ -16,7 +16,8 @@ class Subdomain
     double minColumnTilt;
     double referenceRadius;
     double maxAngularWidth;
-
+    
+    Microstructure_Properties msp;
     cm_pos dimX, dimY, dimZ;
 
     cm_pos x0, x1;

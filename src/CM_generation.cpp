@@ -39,7 +39,7 @@ void createSubdomains(GeneratorConfig& config, subdomains_array& subdomains)
         subdomains[counter].maxColumnTilt = config.getMaxTilt();
         subdomains[counter].minColumnTilt = config.getMinTilt(); 
         subdomains[counter].referenceRadius = config.getRefRadius();
-        subdomains[counter].maxAngularWidth = config.getMaxAngularWidth();
+        subdomains[counter].maxAngularWidth = config.getMaxAngleOfWiden();
 
         counter++;              
     }
@@ -109,7 +109,7 @@ void nucleation(GeneratorConfig& domain)
     
     cm_pos dimX = domain.getDimX();
     cm_pos dimZ = domain.getDimZ();
-    double radius = domain.getBaseRadius();
+    double radius = domain.getRefRadius();
     cm_pos nucleuses[3];
 
     grains_array grains;
@@ -159,7 +159,7 @@ void setGrowthTensor(Grain& grain, GeneratorConfig& config)
 /* Defines bound for column width by bounding the angle between growth tensor and relative position vector*/
 void setColumnWidthBound(Grain& grain, GeneratorConfig& config)
 {
-    grain.cos_phi_ub = cos((180.0 - config.getMaxAngularWidth() * 0.5) * M_PI / 180.0);
+    grain.cos_phi_ub = cos((180.0 - config.getMaxAngleOfWiden() * 0.5) * M_PI / 180.0);
 }
 
 /* Defines reference bound for a RPV norm */
