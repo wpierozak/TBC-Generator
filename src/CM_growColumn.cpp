@@ -4,7 +4,7 @@
 
 void generate_columns(GeneratorConfig& config)
 {
-    subdomains_array subdomains;
+    taskdata_array subdomains;
     nucleation(config);
     createSubdomains(config, subdomains);;
     int threadsNumber = config.getThreadsNumber();

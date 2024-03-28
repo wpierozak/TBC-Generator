@@ -4,13 +4,6 @@
 #include<vector>
 #include"CM_datatypes.hpp"
 
-/* Calculates the P parameter */
-double calculateP(double phi, const Grain& grain);
-
-/* Calculates the R parameter */
-double calculateR(f_vec RPV, const Grain& grain);
-
-f_vec calculateH0(f_vec& position, const Grain& grain);
 
 /*
     Grain generation process:

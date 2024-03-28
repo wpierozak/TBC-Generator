@@ -162,8 +162,8 @@ struct Microstructure_Properties
     double max_reference_radius;
 };
 
-/* Structure subdomain contains necessary information about part of a domain assigned to a thread */
-struct Subdomain
+/* Structure TaskData contains necessary information for executing a single subtask */
+struct TaskData
 {
     grains_array grains;
 
@@ -171,7 +171,26 @@ struct Subdomain
     cm_pos dimX, dimY, dimZ;
 };
 
-typedef std::vector<Subdomain> subdomains_array;
+typedef std::vector<TaskData> taskdata_array;
+
+struct Configuration
+{
+    cm_pos dimX;
+    cm_pos dimY;
+    cm_pos dimZ;
+
+    grains_array grains;
+    cm_size grainsNumber;
+
+    Microstructure_Properties msp;
+
+    cm_smallsize threadsNum;
+
+    std::string outputFile;
+    std::string inputFile;
+    std::string outputDir;
+    MsFileFormat msFileFormat;
+};
 
 /* Class GeneratorConfig contains all data necessary to start a microstructure generating process */
 class GeneratorConfig

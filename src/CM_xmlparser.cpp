@@ -7,11 +7,6 @@ const std::string DIM_X = "dimX";
 const std::string DIM_Y = "dimY";
 const std::string DIM_Z = "dimZ";
 
-const std::string BOUNDRY_CONDITIONS = "boundry_conditions";
-const std::string ABSORPTION = "absorption";
-const std::string BOUNCY = "bouncy";
-const std::string PERIODIC = "periodic";
-
 const std::string OUTPUT_FILE = "output_filename";
 const std::string OUTPUT_DIR = "output_dir";
 
@@ -20,7 +15,7 @@ const std::string MS_XYZ = "xyz";
 const std::string MS_RGB = "xyzrgb";
 
 const std::string GRAIN_CONFIG = "Grain";
-const std::string GRAIN_NUMBER = "total_number";
+const std::string GRAIN_NUMBER = "grain_number";
 const std::string MAX_COLUMN_TILT = "max_tilt";
 const std::string MIN_COLUMN_TILT = "min_tilt";
 const std::string REFERENCE_RADIUS = "ref_radius";
@@ -40,9 +35,7 @@ const std::string THREADS_NUMBER = "threads_number";
 const std::string TRUE = "true";
 const std::string FALSE = "false";
 
-
-
-GeneratorConfig* parseConfiguration(const std::string& filePath) {
+Configuration* parseConfiguration(const std::string& filePath) {
     rapidxml::file<> xml_file(filePath.c_str());
     rapidxml::xml_document<> doc;
     doc.parse<0>(xml_file.data());
@@ -61,8 +54,6 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
     Microstructure_Properties msp;
 
     cm_smallsize threads_number;
-    bool fill_base;
-    BC boundry_conditon;
     MsFileFormat ms_file_format;
 
     rapidxml::xml_node<>* node = domain_node->first_node();
@@ -92,14 +83,6 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
         {
             output_dir = node->value();
         }
-        else if(BOUNDRY_CONDITIONS == node->name())
-        {
-            std::string bc = node->value();
-            if(bc == ABSORPTION) boundry_conditon = BC::absorption;
-            else if(bc == BOUNCY) boundry_conditon = BC::bouncy;
-            else if(bc == PERIODIC) boundry_conditon = BC::periodic;
-            else throw std::runtime_error("Invalid XML format - invalid boundry condition");
-        }
         else if(MS_FILE_FORMAT == node->name())
         {
             std::string format = node->value();
@@ -118,15 +101,17 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
         node = node->next_sibling();
     }
 
-    GeneratorConfig* config = new GeneratorConfig(dim);
-    config->setOutputFile(output_file);
-    config->setInputFile(filePath);
-    config->setThreadsNumber(threads_number);
-    config->setGrainsNumber(grains_number);
-    config->setOutputDir(output_dir);
-    config->setBC(boundry_conditon);
-    config->setMsFileFormat(ms_file_format);
-    config->setMSP(msp);
+    Configuration* config = new Configuration;
+    config->dimX = dim[0];
+    config->dimY = dim[1];
+    config->dimZ = dim[2];
+    config->outputFile = output_file;
+    config->inputFile = filePath;
+    config->threadsNum = threads_number;
+    config->grainsNumber = grains_number;
+    config->outputDir = output_dir;
+    config->msFileFormat = ms_file_format;
+    config->msp = msp;
 
     return config; 
 }

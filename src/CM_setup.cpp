@@ -14,25 +14,25 @@ std::uniform_real_distribution<double> p_dist(0, 1);
 std::normal_distribution<double> n_dist(0.5,0.25);
 
 
-void createSubdomains(GeneratorConfig& config, subdomains_array& subdomains)
+void createSubdomains(const Configuration& config, taskdata_array& subdomains)
 {
-    int threadsNumber = config.getThreadsNumber();
+    int threadsNumber = config.threadsNum;
     subdomains.resize(threadsNumber);
 
     int counter = 0;
 
     for(int counter = 0; counter < threadsNumber; counter++)
     {
-        subdomains[counter].dimX = config.getDimX();
-        subdomains[counter].dimY = config.getDimY();
-        subdomains[counter].dimZ = config.getDimZ();
+        subdomains[counter].dimX = config.dimX;
+        subdomains[counter].dimY = config.dimY;
+        subdomains[counter].dimZ = config.dimZ;
 
-        std::copy(config.getGrains().begin(), config.getGrains().end(), std::back_insert_iterator(subdomains[counter].grains));   
+        std::copy(config.grains.begin(), config.grains.end(), std::back_insert_iterator(subdomains[counter].grains));   
         counter++;              
     }
 }
 
-void copySubdomainsArray(subdomains_array& dest, subdomains_array& src)
+void copySubdomainsArray(taskdata_array& dest, taskdata_array& src)
 {
     std::copy(src.begin(), src.end(), std::back_insert_iterator(dest));
 }
@@ -56,16 +56,16 @@ std::pair<cm_pos, cm_pos> findDiv(cm_pos dimX, cm_pos dimZ)
     return res;
 }
 
-void nucleation(GeneratorConfig& domain)
+void nucleation(const Configuration& config)
 {
     std::minstd_rand gen(std::random_device{}());
     std::uniform_real_distribution<double> dist(0, 1);
     
-    cm_pos dimX = domain.getDimX();
-    cm_pos dimZ = domain.getDimZ();
+    cm_pos dimX = config.dimX;
+    cm_pos dimZ = config.dimZ;
 
     grains_array grains;
-    grains.resize(domain.getGrainsNum());
+    grains.resize(config.grainsNumber);
     cm_size n = 0;
 
     auto div = findDiv(dimX, dimZ);
@@ -82,24 +82,24 @@ void nucleation(GeneratorConfig& domain)
             /* ID */
             grains[n].ID = n+1;
             /* Growth tensor */
-            setGrowthTensor(grains[n], domain.getMSP());
+            setGrowthTensor(grains[n], config.msp);
             /* cos_phi_ub */
-            setMaxWidenAngle(grains[n], domain.getMSP());
+            setMaxWidenAngle(grains[n], config.msp);
             /* h0_norm_smooth_region */
-            setSmoothRegionLen(grains[n], domain.getMSP());
+            setSmoothRegionLen(grains[n], config.msp);
             /* h0_norm_feathered_region */
-            setFeatheredRegionLen(grains[n], domain.getMSP());
+            setFeatheredRegionLen(grains[n], config.msp);
             /* h0_norm_top_region */
-            setTopRegionLen(grains[n], domain.getMSP());
+            setTopRegionLen(grains[n], config.msp);
             /* ref_column_rad */
-            setReferenceRadius(grains[n], domain.getMSP());
+            setReferenceRadius(grains[n], config.msp);
         }
 
-    domain.setGrainsConfiguration(grains);
+    std::copy(grains.begin(), grains.end(), std::back_insert_iterator(config.grains));
 }
 
 /* Defines grow tensor with regarding in-code parameters */
-void setGrowthTensor(Grain& grain, Microstructure_Properties& msp)
+void setGrowthTensor(Grain& grain, const Microstructure_Properties& msp)
 {
     std::minstd_rand gen(std::random_device{}());
     std::uniform_real_distribution<> rand_angle(msp.min_tilt * M_PI / 180.0, msp.max_tilt * M_PI / 180.0);
@@ -115,27 +115,27 @@ void setGrowthTensor(Grain& grain, Microstructure_Properties& msp)
 }
 
 /* Defines bound for column width by bounding the angle between growth tensor and relative position vector*/
-void setMaxWidenAngle(Grain& grain, Microstructure_Properties& msp)
+void setMaxWidenAngle(Grain& grain, const Microstructure_Properties& msp)
 {
     grain.cos_phi_ub = cos((180.0 - msp.max_angle_of_widen * 0.5) * M_PI / 180.0);
 }
 
-void setSmoothRegionLen(Grain& grain, Microstructure_Properties& msp)
+void setSmoothRegionLen(Grain& grain, const Microstructure_Properties& msp)
 {
     grain.h0_norm_smooth_region = msp.smooth_region_length + lu_dist(gl_rand_gen)*msp.smooth_region_length_var;
 }
 
-void setFeatheredRegionLen(Grain& grain, Microstructure_Properties& msp)
+void setFeatheredRegionLen(Grain& grain, const Microstructure_Properties& msp)
 {
     grain.h0_norm_feathered_region = msp.feathered_region_length + lu_dist(gl_rand_gen)*msp.feathered_region_length_var;
 }
 
-void setTopRegionLen(Grain& grain, Microstructure_Properties& msp)
+void setTopRegionLen(Grain& grain, const Microstructure_Properties& msp)
 {
     grain.h0_norm_top_region = msp.top_region_length + lu_dist(gl_rand_gen)*msp.top_region_length_var;
 }
 
-void setReferenceRadius(Grain& grain, Microstructure_Properties& msp)
+void setReferenceRadius(Grain& grain, const Microstructure_Properties& msp)
 {
     grain.ref_column_rad = msp.max_reference_radius*n_dist(gl_rand_gen);
 }
