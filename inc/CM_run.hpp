@@ -1,5 +1,5 @@
 #pragma once
 
-#include"CM_generation.hpp"
+#include"CM_datatypes.hpp"
 
 void run(Configuration& config);
