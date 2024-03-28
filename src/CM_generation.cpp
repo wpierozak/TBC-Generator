@@ -6,12 +6,15 @@
 #include"CM_generation.hpp"
 #include"CM_parameters.hpp"
 
-void growGrain(const TaskData& subdomain, const Grain& grain)
+void growGrain(Task& task, const Grain& grain)
 {
     f_vec cy = grain.center;
     const f_vec& growth_tensor = grain.growth_tensor;
 
-    while(cy.y < subdomain.dimY)
+    task.output.grains.emplace_back();
+    auto current = task.output.grains.back();
+
+    while(cy.y < task.input.dimY)
     {
         for(cm_pos z = -grain.max_column_rad/2; z < grain.max_column_rad/2; z++)
         for(cm_pos x = -grain.max_column_rad/2; x < grain.max_column_rad/2; x++)
@@ -25,21 +28,21 @@ void growGrain(const TaskData& subdomain, const Grain& grain)
             {
                 if(grain.smooth_region_function(h,r, grain.smooth_region_function_coeff))
                 {
-
+                    current.assignedCells.push_back(cm_pos_vec{x, static_cast<cm_pos>(cy.y), z});
                 }
             }
             else if( h <= grain.h0_norm_feathered_region)
             {
                 if(grain.feathered_region_function(h, r, grain.feathered_region_function_coeff))
                 {
-
+                    current.assignedCells.push_back(cm_pos_vec{x, static_cast<cm_pos>(cy.y), z});
                 }
             }
             else if( h <= grain.h0_norm_top_region)
             {
                 if(grain.top_region_function(h, r, grain.top_region_function_param))
                 {
-
+                    current.assignedCells.push_back(cm_pos_vec{x, static_cast<cm_pos>(cy.y), z});
                 }
             }
         }

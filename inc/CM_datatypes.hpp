@@ -162,17 +162,6 @@ struct Microstructure_Properties
     double max_reference_radius;
 };
 
-/* Structure TaskData contains necessary information for executing a single subtask */
-struct TaskData
-{
-    grains_array grains;
-
-    Microstructure_Properties msp;
-    cm_pos dimX, dimY, dimZ;
-};
-
-typedef std::vector<TaskData> taskdata_array;
-
 struct Configuration
 {
     cm_pos dimX;

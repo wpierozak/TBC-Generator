@@ -1,4 +1,5 @@
 #include"CM_datatypes.hpp"
+#include"CM_task.hpp"
 
 void copySubdomainsArray(taskdata_array& dest, taskdata_array& src);
 

@@ -3,7 +3,7 @@
 #include<list>
 #include<vector>
 #include"CM_datatypes.hpp"
-
+#include"CM_task.hpp"
 
 /*
     Grain generation process:
@@ -36,4 +36,4 @@
                 -> continue ->
 */
 
-void growGrain(const Grain& grain);
+void growGrain(Task& task, const Grain& grain);
