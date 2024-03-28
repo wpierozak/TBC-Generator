@@ -171,6 +171,8 @@ struct Subdomain
     cm_pos dimX, dimY, dimZ;
 };
 
+typedef std::vector<Subdomain> subdomains_array;
+
 /* Class GeneratorConfig contains all data necessary to start a microstructure generating process */
 class GeneratorConfig
 {

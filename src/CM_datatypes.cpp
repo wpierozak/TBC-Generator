@@ -95,7 +95,6 @@ void normalize(f_vec &vec)
 }
 
 
-
 void copy(Grain &dest, const Grain &src)
 {
     dest = src;
