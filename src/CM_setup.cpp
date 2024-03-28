@@ -2,10 +2,10 @@
 #include<iostream>
 #include<cmath>
 #include<algorithm>
+#include<memory>
 #include<ctime>
 #include<random>
 #include"CM_setup.hpp"
-#include"CM_parameters.hpp"
 
 /* Global variables for random number generation in the grain set up process */
 std::minstd_rand gl_rand_gen(std::random_device{}());
@@ -23,18 +23,11 @@ void createSubdomains(const Configuration& config, taskdata_array& subdomains)
 
     for(int counter = 0; counter < threadsNumber; counter++)
     {
-        subdomains[counter].dimX = config.dimX;
-        subdomains[counter].dimY = config.dimY;
-        subdomains[counter].dimZ = config.dimZ;
+        subdomains[counter].domain = std::make_unique<Domain>(*config.domain);
 
         std::copy(config.grains.begin(), config.grains.end(), std::back_insert_iterator(subdomains[counter].grains));   
         counter++;              
     }
-}
-
-void copySubdomainsArray(taskdata_array& dest, taskdata_array& src)
-{
-    std::copy(src.begin(), src.end(), std::back_insert_iterator(dest));
 }
 
 std::pair<cm_pos, cm_pos> findDiv(cm_pos dimX, cm_pos dimZ)
@@ -56,13 +49,13 @@ std::pair<cm_pos, cm_pos> findDiv(cm_pos dimX, cm_pos dimZ)
     return res;
 }
 
-void nucleation(const Configuration& config)
+void nucleation(Configuration& config)
 {
     std::minstd_rand gen(std::random_device{}());
     std::uniform_real_distribution<double> dist(0, 1);
     
-    cm_pos dimX = config.dimX;
-    cm_pos dimZ = config.dimZ;
+    cm_pos dimX = config.domain->dimX;
+    cm_pos dimZ = config.domain->dimZ;
 
     grains_array grains;
     grains.resize(config.grainsNumber);
@@ -80,7 +73,7 @@ void nucleation(const Configuration& config)
             if(grains[n].center.x >= dimX) grains[n].center.x = dimX - 1.0;
             if(grains[n].center.z >= dimZ) grains[n].center.z = dimZ - 1.0;
             /* ID */
-            grains[n].ID = n+1;
+            grains[n].ID = n;
             /* Growth tensor */
             setGrowthTensor(grains[n], config.msp);
             /* cos_phi_ub */

@@ -3,11 +3,13 @@
 #include <cstdint>
 #include<vector>
 #include<string>
+#include<memory>
 
 /* State of an empty cell */
 #define EMPTY 0
 
 typedef int32_t cm_pos;
+typedef int64_t cm_int;
 typedef uint16_t cm_state;
 typedef uint8_t cm_colorampl;
 typedef uint8_t cm_smallsize;
@@ -86,7 +88,7 @@ struct Grain
     /* Reference bound for h0 norm of top region */
     double h0_norm_top_region;
 
-    bool (*smooth_region_function)(double, double, const double*);
+    cm_int (*smooth_region_function)(double, double, const double*);
     #define SMOOTH_FUNCTION_OREDER 1
     double smooth_region_function_coeff[SMOOTH_FUNCTION_OREDER + 1];
 
@@ -96,7 +98,7 @@ struct Grain
             -> gap function - determines the width of gap between main column and a feather and an inner edge of a feather 
             -> feather function - determines the shape and width of the outer edge of a feather 
     */
-    bool (*feathered_region_function)(double, double, const double*);
+    cm_int (*feathered_region_function)(double, double, const double*);
     #define FEATHERED_FUNCTION_OREDER 3
     double feathered_region_function_coeff[FEATHERED_FUNCTION_OREDER + 1];
 
@@ -107,7 +109,7 @@ struct Grain
             -> connecting point coordinate
             -> gradient of the "right" function 
     */
-    bool (*top_region_function)(double, double, const double*);
+    cm_int (*top_region_function)(double, double, const double*);
     #define TOP_REGION_PARAM_NUM 3
     double top_region_function_param[TOP_REGION_PARAM_NUM];
     
@@ -162,11 +164,48 @@ struct Microstructure_Properties
     double max_reference_radius;
 };
 
+struct Neighbourhood
+{
+    Neighbourhood()= default;
+    Neighbourhood(const Neighbourhood& n):
+        dx0(n.dx0), dx1(n.dx1), dy0(n.dy0), dy1(n.dy1), dz0(n.dz0), dz1(n.dz1) {}
+    Neighbourhood(cm_pos x0, cm_pos x1, cm_pos y0, cm_pos y1, cm_pos z0, cm_pos z1):
+        dx0(x0), dx1(x1), dy0(y0), dy1(y1), dz0(z0), dz1(z1) {}
+    cm_pos dx0, dx1;
+    cm_pos dy0, dy1;
+    cm_pos dz0, dz1;
+};  
+
+class Domain
+{
+    private:
+    std::shared_ptr<cm_state[]> buffer;
+
+    public:
+    Domain() = delete;
+    Domain(const Domain&) = default;
+    Domain& operator=(const Domain&) = delete;
+    Domain(cm_pos dimX, cm_pos dimY, cm_pos dimZ, Neighbourhood neighbourhood);
+
+    static const cm_state VOID{static_cast<cm_state>(-1)};
+    const cm_pos dimX;
+    const cm_pos dimY;
+    const cm_pos dimZ;
+    const Neighbourhood neighbourhood;
+
+    BC bc;
+
+    cm_state& operator()(cm_pos x, cm_pos y, cm_pos z)
+    {
+        return buffer[(y*dimZ + z)*dimX + x];
+    }
+
+    cm_state state(cm_pos x, cm_pos y, cm_pos z) const; 
+};
+
 struct Configuration
 {
-    cm_pos dimX;
-    cm_pos dimY;
-    cm_pos dimZ;
+    std::unique_ptr<Domain> domain;
 
     grains_array grains;
     cm_size grainsNumber;
@@ -180,108 +219,3 @@ struct Configuration
     std::string outputDir;
     MsFileFormat msFileFormat;
 };
-
-/* Class GeneratorConfig contains all data necessary to start a microstructure generating process */
-class GeneratorConfig
-{
-    private:
-
-    // Buffers //
-
-    cm_state* _domain;
-
-    // Dimensions //
-
-    cm_pos _dimX;
-    cm_pos _dimY;
-    cm_pos _dimZ;
-
-    // Boundry conditions //
-    BC _boundryCondition;
-
-    // Grains //
-
-    grains_array _grains;
-    cm_size _grainsNumber;
-    double _baseRadius;
-    double _maxRadius;
-
-    double _referenceRadius;
-    double _minTilt;
-    double _maxTilt;
-    double _maxAngleOfWiden;
-
-    Microstructure_Properties _msp;
-
-    // For CPU parallel execution //
-
-    cm_smallsize _threadsNum;
-
-    // Files //
-
-    std::string _outputFile;
-    std::string _inputFile;
-    std::string _outputDir;
-    MsFileFormat _msFileFormat;
-
-    public:
-    GeneratorConfig(cm_pos dim[]);
-    ~GeneratorConfig();
-
-    cm_pos getDimX() const { return _dimX; }
-    cm_pos getDimY() const { return _dimY; }
-    cm_pos getDimZ() const { return _dimZ; }
-    cm_state* getDomain()  { return _domain; }
-    BC getBC() const { return _boundryCondition; }
-
-    cm_size getGrainsNum() const { return _grainsNumber; }
-    grains_array& getGrains() {return _grains; }
-    cm_size getCellsNum() const {return static_cast<size_t>(_dimX) * static_cast<size_t>(_dimY) * static_cast<size_t>(_dimZ);  }
-    double getMinTilt() const { return _minTilt; }
-    double getMaxTilt() const { return _maxTilt; }
-    double getRefRadius() const { return _referenceRadius; }
-    double getMaxAngleOfWiden() const { return _maxAngleOfWiden; }
-
-    double getBaseRadius() const { return _baseRadius; }
-    cm_smallsize getThreadsNumber() const { return _threadsNum; }
-
-    std::string getOutputFile() const { return _outputFile; }
-    std::string getInputFile() const { return _inputFile; }
-    std::string getOutpuDir() const { return _outputDir; }
-    MsFileFormat getMsFileFormat() const {return _msFileFormat; }
-
-    void setOutputFile(const std::string& outputFile) { _outputFile = outputFile; }
-    void setInputFile(const std::string& inputFile) {_inputFile = inputFile; }
-    void setOutputDir(const std::string& dir) { _outputDir = dir; }
-    void setDimX(cm_pos dimX) { _dimX = dimX; }
-    void setDimY(cm_pos dimY) { _dimY = dimY; }
-    void setDimZ(cm_pos dimZ) { _dimZ = dimZ; }
-    void setGrainsNumber(cm_size nucleusNum) { _grainsNumber = nucleusNum; }
-    void setBaseRadius(double radius) { _baseRadius = radius; }
-    void setThreadsNumber(cm_smallsize num) {_threadsNum = num;}
-    void setBC(BC bc){ _boundryCondition = bc; }
-    void setMsFileFormat(MsFileFormat ms) { _msFileFormat = ms; }
-    void setGrainsConfiguration(grains_array& grains) { std::copy(grains.begin(), grains.end(), std::back_insert_iterator(_grains)); }
-    void setMinTilt(double min) { _minTilt = min; }
-    void setMaxTilt(double max) { _maxTilt = max; }
-    void setRefRadius(double ref) {_referenceRadius = ref; }
-    void setMaxAngleOfWiden(double maxang) {_maxAngleOfWiden = maxang;}
-
-    void setMSP(Microstructure_Properties msp);
-    Microstructure_Properties& getMSP();
-
-    void printConfiguration() const;
-
-    cm_size getIdx(cm_pos x, cm_pos y, cm_pos z)
-    {
-        return cm_size(y)*(_dimX * _dimZ) + cm_size(z)*_dimX + cm_size(x);;
-    }
-
-    cm_state& getCell(cm_pos x, cm_pos y, cm_pos z)
-    {
-        return _domain[cm_size(y)*(_dimX * _dimZ) + cm_size(z)*_dimX + cm_size(x)];
-    }
-
-    cm_state getState(cm_pos x, cm_pos y, cm_pos z);
-};
-

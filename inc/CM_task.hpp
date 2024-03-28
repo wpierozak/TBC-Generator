@@ -1,4 +1,5 @@
 #include<list>
+#include<memory>
 #include"CM_datatypes.hpp"
 
 /* Structure TaskData contains necessary information for executing a single subtask */
@@ -6,16 +7,19 @@ struct TaskData
 {
     grains_array grains;
 
+    cm_pos x0, x1;
+    cm_pos y0, y1;
+    cm_pos z0, z1;
+
     Microstructure_Properties msp;
-    cm_pos dimX, dimY, dimZ;
+    std::unique_ptr<Domain> domain;
 };
 
 typedef std::vector<TaskData> taskdata_array;
 
 struct TaskResult
 {
-    struct Grain{cm_size ID; std::list<cm_pos_vec> assignedCells;};
-    std::list<Grain> grains;
+    cm_int code;
 };
 
 struct Task

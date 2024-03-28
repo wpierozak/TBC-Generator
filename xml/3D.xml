@@ -11,7 +11,7 @@
 
     <ms_file_format>xyz</ms_file_format>
 
-    <neighbourhood mode="box">   
+    <neighbourhood>   
         <x0>-2</x0>
         <x1>2</x1>
 
@@ -57,8 +57,6 @@
         <min_length></min_length>
 
         <max_length></max_length>
-
-        <total_number></total_number>
     </Grain>
 
     <threads_number>12</threads_number>

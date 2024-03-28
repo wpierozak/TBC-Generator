@@ -7,6 +7,14 @@ const std::string DIM_X = "dimX";
 const std::string DIM_Y = "dimY";
 const std::string DIM_Z = "dimZ";
 
+const std::string NEIGHBOURHOOD = "neighbourhood";
+const std::string X0 = "x0";
+const std::string X1 = "x1";
+const std::string Y0 = "y0";
+const std::string Y1 = "y1";
+const std::string Z0 = "z0";
+const std::string Z1 = "z1";
+
 const std::string OUTPUT_FILE = "output_filename";
 const std::string OUTPUT_DIR = "output_dir";
 
@@ -46,6 +54,7 @@ Configuration* parseConfiguration(const std::string& filePath) {
     if (!domain_node) throw std::runtime_error("Invalid XML format.");
 
     cm_pos dim[3];
+    Neighbourhood neighbourhood;
     std::string output_file;
     std::string output_dir;
 
@@ -61,19 +70,19 @@ Configuration* parseConfiguration(const std::string& filePath) {
     {
         if(DIM_X == node->name())
         {
-            dim[0] = parseDimension(node);
+            dim[0] = std::stoi(node->value());
         }
         else if(DIM_Y == node->name())
         {
-            dim[1] = parseDimension(node);
+            dim[1] = std::stoi(node->value());
         }
         else if(DIM_Z == node->name())
         {
-            dim[2] = parseDimension(node);
+            dim[2] = std::stoi(node->value());
         }
         else if(OUTPUT_FILE == node->name())
         {
-            output_file = parseOutputFile(node);
+            output_file = node->value();
         }
         else if(THREADS_NUMBER == node->name())
         {
@@ -97,14 +106,17 @@ Configuration* parseConfiguration(const std::string& filePath) {
         {
             grains_number = std::stoi(node->value());
         }
+        else if(NEIGHBOURHOOD == node->name())
+        {
+            parseNeighbourhood(node, neighbourhood);
+        }
         else throw std::runtime_error("Invalid XML format - invalid node");
         node = node->next_sibling();
     }
 
     Configuration* config = new Configuration;
-    config->dimX = dim[0];
-    config->dimY = dim[1];
-    config->dimZ = dim[2];
+
+    config->domain = std::make_unique<Domain>(dim[0], dim[1], dim[2], neighbourhood);
     config->outputFile = output_file;
     config->inputFile = filePath;
     config->threadsNum = threads_number;
@@ -114,16 +126,6 @@ Configuration* parseConfiguration(const std::string& filePath) {
     config->msp = msp;
 
     return config; 
-}
-
-cm_pos parseDimension(rapidxml::xml_node<>* node)
-{
-    return std::stoi(node->value());
-}
-
-std::string parseOutputFile(rapidxml::xml_node<>* node)
-{
-    return node->value();
 }
 
 void parseMicrostructureProperties(rapidxml::xml_node<>* node, Microstructure_Properties& mscp)
@@ -180,6 +182,42 @@ void parseMicrostructureProperties(rapidxml::xml_node<>* node, Microstructure_Pr
         {
             mscp.max_length = std::stoi(child_node->value());
         }
+        else throw std::runtime_error("Invalid XML format - invalid node");
+        child_node = child_node->next_sibling();
+    }
+}
+
+void parseNeighbourhood(rapidxml::xml_node<>* node, Neighbourhood& neighbourhood)
+{
+    rapidxml::xml_node<>* child_node = node->first_node();
+
+    while(child_node)
+    {
+        if(X0 == child_node->name())
+        {
+            neighbourhood.dx0 = std::stoi(child_node->value());
+        }
+        else if(X1 == child_node->name())
+        {
+            neighbourhood.dx1 = std::stoi(child_node->value());
+        }
+        else if(Y0 == child_node->name())
+        {
+            neighbourhood.dy0 = std::stoi(child_node->value());
+        }
+        else if(Y1 == child_node->name())
+        {
+            neighbourhood.dy1 = std::stoi(child_node->value());
+        }
+        else if(Z0 == child_node->name())
+        {
+            neighbourhood.dz0 = std::stoi(child_node->value());
+        }
+        else if(Z1 == child_node->name())
+        {
+            neighbourhood.dz1 = std::stoi(child_node->value());
+        }
+        else throw std::runtime_error("Invalid XML format - invalid node");
         child_node = child_node->next_sibling();
     }
 }

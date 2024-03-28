@@ -6,7 +6,5 @@
 
 Configuration* parseConfiguration(const std::string& filePath);
 
-cm_pos parseDimension(rapidxml::xml_node<>* node);
-std::string parseOutputFile(rapidxml::xml_node<>* node);
-
 void parseMicrostructureProperties(rapidxml::xml_node<>* node, Microstructure_Properties& mscp);
+void parseNeighbourhood(rapidxml::xml_node<>* node, Neighbourhood& neighbourhood);

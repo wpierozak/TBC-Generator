@@ -28,13 +28,13 @@ postproc: datatypes $(INC)/CM_postproc.hpp $(SRC)/CM_postproc.cpp
 bmp: $(INC)/BMP/libbmp.h $(SRC)/BMP/EasyBMP.cpp
 	$(COMP) -c -I$(INC)/BMP BMP/EasyBMP.cpp -o $(OBJ)/bmp.o
 
+setup:
+	$(COMP) -c -I$(INC) $(SRC)/CM_setup.cpp -o $(OBJ)/CM_setup.o
+
 ui:
 	$(COMP) -c -I$(INC) $(SRC)/CM_ui.cpp -o $(OBJ)/CM_ui.o
 
-grow_columns:
-	$(COMP) -c -I$(INC) $(OMP) $(SRC)/CM_growColumn.cpp -o $(OBJ)/CM_growColumn.o
-
-cmlib: datatypes xmlparser generation postproc bmp grow_columns
+cmlib: datatypes xmlparser generation setup
 	ar rcs $(LIB)/cmlib.a $(OBJ)/*.o
 
 clean:
