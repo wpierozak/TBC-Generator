@@ -94,6 +94,8 @@ void normalize(f_vec &vec)
     vec.z = vec.z / v_norm;
 }
 
+
+
 void copy(Grain &dest, const Grain &src)
 {
     dest = src;

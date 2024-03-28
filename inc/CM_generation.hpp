@@ -4,38 +4,7 @@
 #include<vector>
 #include"CM_datatypes.hpp"
 
-/* Structure subdomain contains necessary information about part of a domain assigned to a thread */
-class Subdomain
-{
-    public:
-    cm_state* domain;
-    BC boundryCondition;
 
-    grains_array grains;
-    double maxColumnTilt;
-    double minColumnTilt;
-    double referenceRadius;
-    double maxAngularWidth;
-    
-    Microstructure_Properties msp;
-    cm_pos dimX, dimY, dimZ;
-
-    cm_pos x0, x1;
-    cm_pos y0, y1;
-    cm_pos z0, z1;
-
-    cm_size getIdx(cm_pos x, cm_pos y, cm_pos z)
-    {
-        return cm_size(y)*(dimX*dimZ) + cm_size(z)*dimX + cm_size(x);
-    }
-
-    cm_state& getCell(cm_pos x, cm_pos y, cm_pos z)
-    {
-        return domain[cm_size(y)*(dimX*dimZ) + cm_size(z)*dimX + cm_size(x)];
-    }
-
-    cm_state getState(cm_pos x, cm_pos y, cm_pos z);
-};
 
 typedef std::vector<Subdomain> subdomains_array;
 
@@ -58,17 +27,24 @@ void copySubdomainsArray(subdomains_array& dest, subdomains_array& src);
 
 void createSubdomains(GeneratorConfig& config, subdomains_array& subdomains);
 
+std::pair<cm_pos, cm_pos> findDiv(cm_pos dimX, cm_pos dimZ);
+
 /* Function sets all cells to a default value and performs a nucleation */
 void nucleation(GeneratorConfig& domain);
 
 /* Defines grow tensor with regarding in-code parameters */
-void setGrowthTensor(Grain& grain, GeneratorConfig& config);
+void setGrowthTensor(Grain& grain, Microstructure_Properties& msp);
 
 /* Defines reference bound for column width by bounding the angle between growth tensor and relative position vector*/
-void setColumnWidthBound(Grain& grain, GeneratorConfig& config);
+void setMaxWidenAngle(Grain& grain, Microstructure_Properties& msp);
 
-/* Defines reference bound for a RPV norm */
-void setRPVNormBound(Grain& grain, GeneratorConfig& config);
+void setSmoothRegionLen(Grain& grain, Microstructure_Properties& msp);
+
+void setFeatheredRegionLen(Grain& grain, Microstructure_Properties& msp);
+
+void setTopRegionLen(Grain& grain, Microstructure_Properties& msp);
+
+void setReferenceRadius(Grain& grain, Microstructure_Properties& msp);
 
 /* Calculates the P parameter */
 double calculateP(double phi, const Grain& grain);
@@ -78,7 +54,35 @@ double calculateR(f_vec RPV, const Grain& grain);
 
 f_vec calculateH0(f_vec& position, const Grain& grain);
 
-void assignCell(f_vec position, Subdomain& subdomain);
+/*
+    Grain generation process:
+    -> move along g direction up to the next layer (y + 1)
+    -> for each cell within square with side equals to max_column_radius
+        -> calculate correspondig H0
+            ->calculate H0 = c - cos(rpv, gt) * gt 
+        -> calculate distance to H0
+        -> if dist(cell, H0) < ref_radius + angular_widen(H0)
+            -> accept cell
+            -> continue ->
+        -> calculate H0 norm
+        -> indentify region: smooth, feathered, top
+        -> for smooth region
+            -> reject
+            -> continue
+        -> for feathered region:
+            -> if shape_function(cell, H0) == true
+                -> accept cell
+                -> continue ->
+            -> else
+                -> reject
+                -> continue ->
+        -> for top region:
+            -> if shape_function(cell, H0) == true
+                -> accept cell
+                -> continue ->
+            -> else
+                -> reject
+                -> continue ->
+*/
 
-/* Grain growth */
-void growColumns(Subdomain& subdomain);
+void growGrain(const Grain& grain);

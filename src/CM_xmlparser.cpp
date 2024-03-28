@@ -56,6 +56,8 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
     std::string output_file;
     std::string output_dir;
 
+    cm_size grains_number;
+
     Microstructure_Properties msp;
 
     cm_smallsize threads_number;
@@ -108,6 +110,10 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
         {
             parseMicrostructureProperties(node, msp);
         }
+        else if(GRAIN_NUMBER == node->name())
+        {
+            grains_number = std::stoi(node->value());
+        }
         else throw std::runtime_error("Invalid XML format - invalid node");
         node = node->next_sibling();
     }
@@ -116,6 +122,7 @@ GeneratorConfig* parseConfiguration(const std::string& filePath) {
     config->setOutputFile(output_file);
     config->setInputFile(filePath);
     config->setThreadsNumber(threads_number);
+    config->setGrainsNumber(grains_number);
     config->setOutputDir(output_dir);
     config->setBC(boundry_conditon);
     config->setMsFileFormat(ms_file_format);

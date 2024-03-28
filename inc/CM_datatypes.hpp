@@ -28,9 +28,34 @@ struct f_vec
     double norm() const {
         return sqrt(x*x + y*y + z*z);
     }
+
+    f_vec operator*(double f) const
+    {
+        return {x*f, y*f, z*f};
+    }
 };
 
 void normalize(f_vec& vec);
+
+inline f_vec crossProduct(const f_vec& a, const f_vec& b)
+{
+    return {a.y*b.z - a.z*b.y, a.z*b.x - a.x*b.z, a.x*b.y - a.y*b.x};
+}
+
+inline double cos(const f_vec& a, const f_vec& b)
+{
+    return (a.x*b.x + a.y*b.y)/(a.norm()*b.norm());
+}
+
+inline f_vec add(const f_vec& a, const f_vec& b)
+{
+    return {a.x + b.x, a.y + b.y, a.z + b.z};
+}
+
+inline f_vec substract(const f_vec& a, const f_vec& b)
+{
+    return {a.x - b.x, a.y - b.y, a.z - b.z};
+}
 
 enum class BC{absorption, bouncy, periodic};
 enum class MsFileFormat{xyz, xyzrgb};
@@ -61,13 +86,17 @@ struct Grain
     /* Reference bound for h0 norm of top region */
     double h0_norm_top_region;
 
+    bool (*smooth_region_function)(double, double, const double*);
+    #define SMOOTH_FUNCTION_OREDER 1
+    double smooth_region_function_coeff[SMOOTH_FUNCTION_OREDER + 1];
+
     /* 
         Definition of the column shape within feathered region
         Shape is defined by two cubic functions:
             -> gap function - determines the width of gap between main column and a feather and an inner edge of a feather 
             -> feather function - determines the shape and width of the outer edge of a feather 
     */
-    bool (*feathered_region_function)(const f_vec&, const Grain&);
+    bool (*feathered_region_function)(double, double, const double*);
     #define FEATHERED_FUNCTION_OREDER 3
     double feathered_region_function_coeff[FEATHERED_FUNCTION_OREDER + 1];
 
@@ -78,12 +107,15 @@ struct Grain
             -> connecting point coordinate
             -> gradient of the "right" function 
     */
-    bool (*top_region_function)(const f_vec&, const Grain&);
+    bool (*top_region_function)(double, double, const double*);
     #define TOP_REGION_PARAM_NUM 3
     double top_region_function_param[TOP_REGION_PARAM_NUM];
     
     /* Reference column radius */
     double ref_column_rad;
+
+    /* Maximum column radius */
+    double max_column_rad;
 };
 
 typedef std::vector<Grain> grains_array;
@@ -128,6 +160,15 @@ struct Microstructure_Properties
 
     /* Maximum value for the reference radius */
     double max_reference_radius;
+};
+
+/* Structure subdomain contains necessary information about part of a domain assigned to a thread */
+struct Subdomain
+{
+    grains_array grains;
+
+    Microstructure_Properties msp;
+    cm_pos dimX, dimY, dimZ;
 };
 
 /* Class GeneratorConfig contains all data necessary to start a microstructure generating process */
