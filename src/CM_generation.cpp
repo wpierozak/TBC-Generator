@@ -26,6 +26,8 @@ cm_int singleFieldCalculation(f_vec pos, const Grain& grain)
     {
         return grain.top_region_function(h, r, grain.top_region_function_param);
     }
+
+    return __INT64_MAX__;
 }
 
 void runTask(Task& task)
@@ -35,7 +37,7 @@ void runTask(Task& task)
     for(cm_pos z = task.input.z0; z < task.input.z1; z++)
     for(cm_pos x = task.input.x0; x < task.input.x1; x++)
     {
-        f_vec pos = {x,y,z};
+        f_vec pos = {static_cast<double>(x), static_cast<double>(y), static_cast<double>(z)};
         cm_int bestfit = __INT64_MAX__;
         scanNeighbourhood(pos, *task.input.domain, grains_neighbourhood);
         for(cm_state grain_idx: grains_neighbourhood)

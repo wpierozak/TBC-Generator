@@ -17,28 +17,22 @@ cm_colorampl* defineColors(cm_size grainNum)
     return colorsArray;
 }
 
-void createBitmap(GeneratorConfig& caDomain, const int threadsNum)
+void createBitmap(Configuration& config, const int threadsNum)
 {
-    cm_state * domain = caDomain.getDomain();
-    cm_size grainNum = caDomain.getGrainsNum();
-    cm_size cellsNum = caDomain.getCellsNum();
-    cm_size dimX = caDomain.getDimX();
-    cm_size dimY = caDomain.getDimY();
-    cm_size dimZ = caDomain.getDimZ();
-    cm_colorampl* colorsArray = defineColors(grainNum);
-    std::string filename = caDomain.getOutputFile();
-    std::string dir = caDomain.getOutpuDir();
+    cm_colorampl* colorsArray = defineColors(config.grainsNumber);
+    std::string filename = config.outputFile;
+    std::string dir = config.outputDir;
 
    #pragma omp parallel for schedule(static) num_threads(threads_num) firstprivate(dimX, dimY, domain, colorsArray, domain, filename, dir)
-    for(cm_pos z = 0; z < dimZ; z++)
+    for(cm_pos z = 0; z < config.domain->dimZ; z++)
     {
         BMP bmp;
-        bmp.SetSize(dimX, dimY);    
-        for(cm_pos y = 0; y < dimY; y++)
-        for(cm_pos x = 0; x < dimX; x++)
+        bmp.SetSize(config.domain->dimX, config.domain->dimY);    
+        for(cm_pos y = 0; y < config.domain->dimY; y++)
+        for(cm_pos x = 0; x < config.domain->dimX; x++)
         {
             RGBApixel pixel;
-            cm_state grain = domain[caDomain.getIdx(x, y, z)];
+            cm_state grain = (*config.domain)(x, y, z);
             if( grain != EMPTY)
             {
                 pixel.Red =  colorsArray[(grain-1)*3];
@@ -50,7 +44,7 @@ void createBitmap(GeneratorConfig& caDomain, const int threadsNum)
                 pixel.Red = pixel.Green = pixel.Blue = 0;
             }
        
-            bmp.SetPixel(x,dimY - y - 1, pixel);
+            bmp.SetPixel(x,config.domain->dimY - y - 1, pixel);
     }
 
     std::string output = dir + std::string("/") + filename + std::string("_") + std::to_string(z) + std::string(".bmp");
@@ -60,16 +54,10 @@ void createBitmap(GeneratorConfig& caDomain, const int threadsNum)
     delete[] colorsArray;
 }
 
-void saveMicrostructureFile(GeneratorConfig& caDomain)
+void saveMicrostructureFile(Configuration& config)
 {
-    cm_state * domain = caDomain.getDomain();
-    cm_size grainNum = caDomain.getGrainsNum();
-    cm_size cellsNum = caDomain.getCellsNum();
-    cm_size dimX = caDomain.getDimX();
-    cm_size dimY = caDomain.getDimY();
-    cm_size dimZ = caDomain.getDimZ();
-    cm_colorampl* colorsArray = defineColors(grainNum);
-    std::string filename = caDomain.getOutpuDir() + "/" + caDomain.getOutputFile();
+    cm_colorampl* colorsArray = defineColors(config.grainsNumber);
+    std::string filename = config.outputDir + "/" + config.outputFile;
 
     std::ofstream file;
     file.open(filename);
@@ -77,40 +65,40 @@ void saveMicrostructureFile(GeneratorConfig& caDomain)
     if(file.is_open() == false)
         throw std::runtime_error("Output file cannot be created/loade\n");
 
-    file << caDomain.getCellsNum() << std::endl << std::endl;
-    size_t step = caDomain.getCellsNum() / 10;
+    file << cm_int(config.domain->dimX) * cm_int(config.domain->dimY) * cm_int(config.domain->dimZ) << std::endl << std::endl;
+    size_t step = cm_int(config.domain->dimX) * cm_int(config.domain->dimY) * cm_int(config.domain->dimZ) / 10;
     int counter = 0; 
 
     msg_header("", "Microstructure TXT file generation", "");
 
-    switch (caDomain.getMsFileFormat())
+    switch (config.msFileFormat)
     {
     case MsFileFormat::xyz:
-        for(cm_pos y = 0; y < dimY; y++)
-        for(cm_pos z = 0; z < dimZ; z++)
-        for(cm_pos x = 0; x < dimX; x++)
+        for(cm_pos y = 0; y < config.domain->dimY; y++)
+        for(cm_pos z = 0; z < config.domain->dimZ; z++)
+        for(cm_pos x = 0; x < config.domain->dimX; x++)
         {
-            if(caDomain.getIdx(x,y,z) % step == 0)
+            if((*config.domain)(x,y,z) % step == 0)
             {
                 msg_header("", counter*10,"%"); 
                 counter++;
             }
-            file << x << ' ' << y << ' ' << z << ' ' << caDomain.getCell(x, y, z) << std::endl;
+            file << x << ' ' << y << ' ' << z << ' ' << (*config.domain)(x, y, z) << std::endl;
         }
         break;
 
     case MsFileFormat::xyzrgb:
-        for(cm_pos y = 0; y < dimY; y++)
-        for(cm_pos z = 0; z < dimZ; z++)
-        for(cm_pos x = 0; x < dimX; x++)
+        for(cm_pos y = 0; y < config.domain->dimY; y++)
+        for(cm_pos z = 0; z < config.domain->dimZ; z++)
+        for(cm_pos x = 0; x < config.domain->dimX; x++)
         {
-            if(caDomain.getIdx(x,y,z) % step == 0)
+            if((*config.domain)(x,y,z) % step == 0)
             {
                 msg_header("", counter*10,"%"); 
                 counter++;
             }
-            file << x << ' ' << y << ' ' << z << ' ' << colorsArray[caDomain.getCell(x, y, z)] << 
-            colorsArray[caDomain.getCell(x, y, z) + 1] << colorsArray[caDomain.getCell(x, y, z) + 2] << caDomain.getCell(x, y, z) << std::endl;
+            file << x << ' ' << y << ' ' << z << ' ' << colorsArray[(*config.domain)(x, y, z)] << 
+            colorsArray[(*config.domain)(x, y, z) + 1] << colorsArray[(*config.domain)(x, y, z) + 2] << (*config.domain)(x, y, z) << std::endl;
         }
         break;
     

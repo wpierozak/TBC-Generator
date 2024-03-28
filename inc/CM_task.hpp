@@ -27,3 +27,5 @@ struct Task
     TaskData input;
     TaskResult output;
 };
+
+typedef std::vector<Task> tasks_array;

@@ -1,14 +1,14 @@
 #include<iostream>
 #include<omp.h>
 #include<chrono>
-#include"CM_growColumn.hpp"
+#include<CM_generation.hpp>
 #include"CM_xmlparser.hpp"
 #include"CM_postproc.hpp"
 
 int main(int argc, const char* argv[])
 {
     clock_t t0, t1;
-    GeneratorConfig* d0 = nullptr;
+    Configuration* d0 = nullptr;
 
     try
     {
@@ -19,8 +19,6 @@ int main(int argc, const char* argv[])
         std::cerr << e.what() << '\n';
         return -1;
     }
-    
-    d0->printConfiguration();
 
     auto start_time = std::chrono::high_resolution_clock::now();
     generate_columns(*d0);

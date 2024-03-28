@@ -14,18 +14,32 @@ std::uniform_real_distribution<double> p_dist(0, 1);
 std::normal_distribution<double> n_dist(0.5,0.25);
 
 
-void createSubdomains(const Configuration& config, taskdata_array& subdomains)
+void defineTasks(const Configuration& config, tasks_array& tasks)
 {
     int threadsNumber = config.threadsNum;
-    subdomains.resize(threadsNumber);
+    tasks.resize(threadsNumber);
 
-    int counter = 0;
+    cm_pos dx = (config.domain->dimX + threadsNumber - 1)/ceil(sqrt(threadsNumber));
+    cm_pos dz = (config.domain->dimZ + threadsNumber - 1)/floor(sqrt(threadsNumber));
+    cm_pos y0 = 1;
+    cm_pos y1 = 2;
 
-    for(int counter = 0; counter < threadsNumber; counter++)
+    cm_int counter = 0;
+
+    for(cm_pos z = 0; z < config.domain->dimZ; z+=dz)
+    for(cm_pos x = 0; x < config.domain->dimX; x+=dx)
     {
-        subdomains[counter].domain = std::make_unique<Domain>(*config.domain);
+        tasks[counter].input.domain = std::make_unique<Domain>(*config.domain);
 
-        std::copy(config.grains.begin(), config.grains.end(), std::back_insert_iterator(subdomains[counter].grains));   
+        tasks[counter].input.x0 = x;
+        tasks[counter].input.x1 = ((x + dx) < config.domain->dimX)? x + dx: config.domain->dimX;
+        tasks[counter].input.y0 = y0;
+        tasks[counter].input.y1 = y1;
+        tasks[counter].input.z0 = z;
+        tasks[counter].input.z1 = ((z + dz) < config.domain->dimZ)? z + dz: config.domain->dimZ; 
+
+
+        std::copy(config.grains.begin(), config.grains.end(), std::back_insert_iterator(tasks[counter].input.grains));   
         counter++;              
     }
 }

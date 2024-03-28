@@ -34,7 +34,7 @@ setup:
 ui:
 	$(COMP) -c -I$(INC) $(SRC)/CM_ui.cpp -o $(OBJ)/CM_ui.o
 
-cmlib: datatypes xmlparser generation setup
+cmlib: datatypes xmlparser generation setup postproc
 	ar rcs $(LIB)/cmlib.a $(OBJ)/*.o
 
 clean:
