@@ -17,8 +17,9 @@ cm_colorampl* defineColors(cm_size grainNum)
     return colorsArray;
 }
 
-void createBitmap(Configuration& config, const int threadsNum)
+void createBitmap(Configuration& config)
 {
+    int threads_num = config.threadsNum;
     cm_colorampl* colorsArray = defineColors(config.grainsNumber);
     std::string filename = config.outputFile;
     std::string dir = config.outputDir;
@@ -33,11 +34,11 @@ void createBitmap(Configuration& config, const int threadsNum)
         {
             RGBApixel pixel;
             cm_state grain = (*config.domain)(x, y, z);
-            if( grain != EMPTY)
+            if( grain != Domain::VOID)
             {
-                pixel.Red =  colorsArray[(grain-1)*3];
-                pixel.Green = colorsArray[(grain-1)*3 + 1];
-                pixel.Blue =  colorsArray[(grain-1)*3 + 2];
+                pixel.Red =  colorsArray[(grain)*3];
+                pixel.Green = colorsArray[(grain)*3 + 1];
+                pixel.Blue =  colorsArray[(grain)*3 + 2];
             }
             else
             {
@@ -78,10 +79,10 @@ void saveMicrostructureFile(Configuration& config)
         for(cm_pos z = 0; z < config.domain->dimZ; z++)
         for(cm_pos x = 0; x < config.domain->dimX; x++)
         {
-            if((*config.domain)(x,y,z) % step == 0)
+            if(x*y*z % step == 0)
             {
-                msg_header("", counter*10,"%"); 
-                counter++;
+                //msg_header("", counter*10,"%"); 
+                //counter++;
             }
             file << x << ' ' << y << ' ' << z << ' ' << (*config.domain)(x, y, z) << std::endl;
         }

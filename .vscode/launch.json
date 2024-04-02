@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-        "name": "Launch test",
+        "name": "Launch single column test",
         "type": "cppdbg",
         "request": "launch",
-        "program": "${workspaceFolder}/bin/cmtest",
+        "program": "${workspaceFolder}/bin/tests/single_column_test",
         "args": [],
         "stopAtEntry": true,
         "cwd": "${workspaceFolder}/src",
@@ -18,7 +18,9 @@
             {
                 "description": "Enable pretty-printing for gdb",
                 "text": "-enable-pretty-printing",
-                "ignoreFailures": true
+                "ignoreFailures": true,
+                "justMyCode": false,
+                "trace": true
             }
         ]
     }]

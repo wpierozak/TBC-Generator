@@ -18,3 +18,5 @@ void setFeatheredRegionLen(Grain& grain, const Microstructure_Properties& msp);
 void setTopRegionLen(Grain& grain, const Microstructure_Properties& msp);
 
 void setReferenceRadius(Grain& grain, const Microstructure_Properties& msp);
+
+void setReferenceLength(Grain& grain, const Microstructure_Properties& msp);

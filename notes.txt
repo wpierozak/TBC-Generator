@@ -14,3 +14,10 @@ Wydajnościowo:
 	-> przetestowanie obecnego sąsiedztwa z wypełnieniem podstawy
 	-> przetestowanie dolnego sąsiedztwa z wypełnieniem podstawy
 	-> wyciagnięcie wniosków z testów, przygotowanie modelu nowego sąsiedztwa i implementacja
+
+--> 25.03.2024 14:06
+	-> Dodanie równomiernego rozmieszczenia ziaren
+	-> Dostosowanie parsera do wymagań XML
+	-> Dostosowanie GeneratorConfig do wymagań GeneratorConfig
+	-> Generalne porządki w kodzie
+	-> generacja ziaren - ruch wzdłuż g?

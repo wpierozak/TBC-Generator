@@ -1,4 +1,5 @@
 #pragma once
+#include<iostream>
 #include<cmath>
 #include <cstdint>
 #include<vector>
@@ -77,7 +78,7 @@ struct Grain
     double cos_phi_ub;
 
     /* Reference bound for the RPV norm */
-    double rpv_norm_ub;
+    double ref_length;
 
     /* Reference bound for h0 norm of smooth region */
     double h0_norm_smooth_region;
@@ -88,7 +89,9 @@ struct Grain
     /* Reference bound for h0 norm of top region */
     double h0_norm_top_region;
 
-    cm_int (*smooth_region_function)(double, double, const double*);
+    static const cm_int NON_VALID = __INT64_MAX__;
+
+    cm_int (*smooth_region_function)(double, double, const Grain&);
     #define SMOOTH_FUNCTION_OREDER 1
     double smooth_region_function_coeff[SMOOTH_FUNCTION_OREDER + 1];
 
@@ -98,7 +101,7 @@ struct Grain
             -> gap function - determines the width of gap between main column and a feather and an inner edge of a feather 
             -> feather function - determines the shape and width of the outer edge of a feather 
     */
-    cm_int (*feathered_region_function)(double, double, const double*);
+    cm_int (*feathered_region_function)(double, double, const Grain&);
     #define FEATHERED_FUNCTION_OREDER 3
     double feathered_region_function_coeff[FEATHERED_FUNCTION_OREDER + 1];
 
@@ -109,7 +112,7 @@ struct Grain
             -> connecting point coordinate
             -> gradient of the "right" function 
     */
-    cm_int (*top_region_function)(double, double, const double*);
+    cm_int (*top_region_function)(double, double, const Grain&);
     #define TOP_REGION_PARAM_NUM 3
     double top_region_function_param[TOP_REGION_PARAM_NUM];
     
@@ -119,6 +122,8 @@ struct Grain
     /* Maximum column radius */
     double max_column_rad;
 };
+
+void printGrain(const Grain& grain);
 
 typedef std::vector<Grain> grains_array;
 
@@ -163,6 +168,11 @@ struct Microstructure_Properties
     /* Maximum value for the reference radius */
     double max_reference_radius;
 };
+
+
+
+void printMicrostructureProperties(const Microstructure_Properties& properties);
+
 
 struct Neighbourhood
 {

@@ -1,4 +1,5 @@
 #include<iostream>
+#include<omp.h>
 #include<cmath>
 #include<algorithm>
 #include<ctime>
@@ -13,21 +14,20 @@ cm_int singleFieldCalculation(f_vec pos, const Grain& grain)
 
     double h = (growth_tensor.x * rpv.x + growth_tensor.y * rpv.y + growth_tensor.z * rpv.z);
     double r = crossProduct(rpv, growth_tensor).norm();
+    if( h <= grain.h0_norm_smooth_region * grain.ref_length)
+    {
+        return grain.smooth_region_function(h,r, grain);
+    }
+    else if( h <= (grain.h0_norm_smooth_region + grain.h0_norm_feathered_region) * grain.ref_length)
+    {
+        return grain.feathered_region_function(h, r, grain);
+    }
+    else if( h <= (grain.h0_norm_smooth_region + grain.h0_norm_feathered_region + grain.h0_norm_top_region)* grain.ref_length)
+    {
+        return grain.top_region_function(h, r, grain);
+    }
 
-    if( h <= grain.h0_norm_smooth_region)
-    {
-        return grain.smooth_region_function(h,r, grain.smooth_region_function_coeff);
-    }
-    else if( h <= grain.h0_norm_feathered_region)
-    {
-        return grain.feathered_region_function(h, r, grain.feathered_region_function_coeff);
-    }
-    else if( h <= grain.h0_norm_top_region)
-    {
-        return grain.top_region_function(h, r, grain.top_region_function_param);
-    }
-
-    return __INT64_MAX__;
+    return Grain::NON_VALID;
 }
 
 void runTask(Task& task)
@@ -38,7 +38,7 @@ void runTask(Task& task)
     for(cm_pos x = task.input.x0; x < task.input.x1; x++)
     {
         f_vec pos = {static_cast<double>(x), static_cast<double>(y), static_cast<double>(z)};
-        cm_int bestfit = __INT64_MAX__;
+        cm_int bestfit = Grain::NON_VALID;
         scanNeighbourhood(pos, *task.input.domain, grains_neighbourhood);
         for(cm_state grain_idx: grains_neighbourhood)
         {

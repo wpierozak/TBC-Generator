@@ -8,7 +8,7 @@ void run(Configuration& config)
     tasks_array tasks;
     nucleation(config);
     defineTasks(config, tasks);
-    #pragma omp parallel num_threads(config.threadsNum) shared(tasks)
+    #pragma omp parallel default(none) num_threads(config.threadsNum) shared(tasks)
     {
         cm_int idx = omp_get_thread_num();
         Task& my_task = tasks[idx];

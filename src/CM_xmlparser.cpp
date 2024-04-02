@@ -14,6 +14,10 @@ const std::string Y0 = "y0";
 const std::string Y1 = "y1";
 const std::string Z0 = "z0";
 const std::string Z1 = "z1";
+const std::string BOUNDRY_CONDITION = "boundry_conditions";
+const std::string ABSORPTION = "absorption";
+const std::string BOUNCY = "bouncy";
+const std::string PERIODIC = "periodic";
 
 const std::string OUTPUT_FILE = "output_filename";
 const std::string OUTPUT_DIR = "output_dir";
@@ -23,7 +27,7 @@ const std::string MS_XYZ = "xyz";
 const std::string MS_RGB = "xyzrgb";
 
 const std::string GRAIN_CONFIG = "Grain";
-const std::string GRAIN_NUMBER = "grain_number";
+const std::string GRAIN_NUMBER = "grains_number";
 const std::string MAX_COLUMN_TILT = "max_tilt";
 const std::string MIN_COLUMN_TILT = "min_tilt";
 const std::string REFERENCE_RADIUS = "ref_radius";
@@ -43,7 +47,7 @@ const std::string THREADS_NUMBER = "threads_number";
 const std::string TRUE = "true";
 const std::string FALSE = "false";
 
-Configuration* parseConfiguration(const std::string& filePath) {
+Configuration* parseConfiguration(std::string filePath) {
     rapidxml::file<> xml_file(filePath.c_str());
     rapidxml::xml_document<> doc;
     doc.parse<0>(xml_file.data());
@@ -57,7 +61,7 @@ Configuration* parseConfiguration(const std::string& filePath) {
     Neighbourhood neighbourhood;
     std::string output_file;
     std::string output_dir;
-
+    BC boundry_condition;
     cm_size grains_number;
 
     Microstructure_Properties msp;
@@ -68,6 +72,7 @@ Configuration* parseConfiguration(const std::string& filePath) {
     rapidxml::xml_node<>* node = domain_node->first_node();
     while(node)
     {
+        std::cout << "Parsing " << node->name() << std::endl;
         if(DIM_X == node->name())
         {
             dim[0] = std::stoi(node->value());
@@ -110,6 +115,14 @@ Configuration* parseConfiguration(const std::string& filePath) {
         {
             parseNeighbourhood(node, neighbourhood);
         }
+        else if(BOUNDRY_CONDITION == node->name())
+        {
+            std::string bc = node->value();
+            if(bc == ABSORPTION) boundry_condition = BC::absorption;
+            else if(bc == BOUNCY) boundry_condition = BC::bouncy;
+            else if(bc == PERIODIC) boundry_condition = BC::periodic;
+            else throw std::runtime_error("Invalid XML format - invalid boundry condition");
+        }
         else throw std::runtime_error("Invalid XML format - invalid node");
         node = node->next_sibling();
     }
@@ -124,7 +137,7 @@ Configuration* parseConfiguration(const std::string& filePath) {
     config->outputDir = output_dir;
     config->msFileFormat = ms_file_format;
     config->msp = msp;
-
+    config->domain->bc = boundry_condition;
     return config; 
 }
 
@@ -134,6 +147,7 @@ void parseMicrostructureProperties(rapidxml::xml_node<>* node, Microstructure_Pr
 
     while(child_node)
     {
+        std::cout<< "MSP - Parsing " << child_node->name() << std::endl;
         if(REFERENCE_RADIUS == child_node->name())
         {
             mscp.max_reference_radius = std::stoi(child_node->value());
@@ -152,27 +166,27 @@ void parseMicrostructureProperties(rapidxml::xml_node<>* node, Microstructure_Pr
         }
         else if(SMOOTH_REGION_LENGTH == child_node->name())
         {
-            mscp.smooth_region_length = std::stoi(child_node->value());
+            mscp.smooth_region_length = std::stod(child_node->value());
         }
         else if(SMOOTH_REGION_LENGTH_VAR == child_node->name())
         {
-            mscp.smooth_region_length_var = std::stoi(child_node->value());
+            mscp.smooth_region_length_var = std::stod(child_node->value());
         }
         else if(FEATHERED_REGION_LENGTH == child_node->name())
         {
-            mscp.feathered_region_length = std::stoi(child_node->value());
+            mscp.feathered_region_length = std::stod(child_node->value());
         }
         else if(FEATHERED_REGION_LENGTH_VAR == child_node->name())
         {
-            mscp.feathered_region_length_var = std::stoi(child_node->value());
+            mscp.feathered_region_length_var = std::stod(child_node->value());
         }
         else if(TOP_REGION_LENGTH == child_node->name())
         {
-            mscp.top_region_length = std::stoi(child_node->value());
+            mscp.top_region_length = std::stod(child_node->value());
         }
         else if(TOP_REGION_LENGTH_VAR == child_node->name())
         {
-            mscp.top_region_length_var = std::stoi(child_node->value());
+            mscp.top_region_length_var = std::stod(child_node->value());
         }
         else if(MIN_LENGTH == child_node->name())
         {
@@ -182,7 +196,11 @@ void parseMicrostructureProperties(rapidxml::xml_node<>* node, Microstructure_Pr
         {
             mscp.max_length = std::stoi(child_node->value());
         }
-        else throw std::runtime_error("Invalid XML format - invalid node");
+        else if(MAX_ANGLE_OF_WIDEN == child_node->name())
+        {
+            mscp.max_angle_of_widen = std::stoi(child_node->value());
+        }
+        else throw std::runtime_error("MSP - Invalid XML format - invalid node");
         child_node = child_node->next_sibling();
     }
 }
@@ -217,7 +235,7 @@ void parseNeighbourhood(rapidxml::xml_node<>* node, Neighbourhood& neighbourhood
         {
             neighbourhood.dz1 = std::stoi(child_node->value());
         }
-        else throw std::runtime_error("Invalid XML format - invalid node");
+        else throw std::runtime_error("N - Invalid XML format - invalid node");
         child_node = child_node->next_sibling();
     }
 }

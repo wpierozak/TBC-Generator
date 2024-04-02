@@ -1,3 +1,5 @@
+#pragma once
+
 #include<list>
 #include<memory>
 #include"CM_datatypes.hpp"
@@ -12,7 +14,7 @@ struct TaskData
     cm_pos z0, z1;
 
     Microstructure_Properties msp;
-    std::unique_ptr<Domain> domain;
+    std::unique_ptr<Domain> domain{nullptr};
 };
 
 typedef std::vector<TaskData> taskdata_array;

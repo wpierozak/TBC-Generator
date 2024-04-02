@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<Configuration>
+
+    <dimX>100</dimX>
+    <dimY>300</dimY>
+    <dimZ>100</dimZ>
+
+    <output_dir>../res/single_column_test</output_dir>
+
+    <output_filename>single_column</output_filename>
+
+    <ms_file_format>xyz</ms_file_format>
+
+    <neighbourhood>   
+        <x0>-1</x0>
+        <x1>1</x1>
+
+        <y0>-1</y0>
+        <y1>0</y1>
+
+        <z0>-1</z0>
+        <z1>1</z1>
+    </neighbourhood>
+
+    <grains_number>5</grains_number>
+
+    <Grain>    
+        <ref_radius>15</ref_radius>
+
+        <!-- In degrees -->
+        <max_tilt>3</max_tilt>
+
+        <!-- In degrees -->
+        <min_tilt>0</min_tilt>
+
+        <!-- In degrees -->
+        <max_angle_of_widen>4</max_angle_of_widen>
+
+        <!-- As % of total length -->
+        <smooth_region_length>0.6</smooth_region_length>
+
+        <!-- In % of total length -->
+        <smooth_region_length_var>0.05</smooth_region_length_var>
+
+        <!-- As % of total length -->
+        <feathered_region_length>0.2</feathered_region_length>
+
+        <!-- In % of total length -->
+        <feathered_region_length_var>0.05</feathered_region_length_var>
+
+        <!-- As % of total length -->
+        <top_region_length>0.2</top_region_length>
+
+        <!-- In % of total length -->
+        <top_region_length_var>0.05</top_region_length_var>
+
+        <min_length>100</min_length>
+
+        <max_length>200</max_length>
+    </Grain>
+
+    <threads_number>12</threads_number>
+
+    <boundry_conditions>absorption</boundry_conditions>
+
+</Configuration>
