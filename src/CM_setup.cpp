@@ -76,11 +76,11 @@ void nucleation(Configuration& config)
     cm_size grain_ID = 0;
 
     auto div = findDiv(dimX, dimZ);
-    double dX = (config.domain->dimX + config.grainsNumber - 1)/ceil(sqrt(config.grainsNumber));
-    double dZ = (config.domain->dimZ + config.grainsNumber - 1)/floor(sqrt(config.grainsNumber));
+    cm_pos dX = (config.domain->dimX + config.grainsNumber - 1)/ceil(sqrt(config.grainsNumber));
+    cm_pos dZ = (config.domain->dimZ + config.grainsNumber - 1)/floor(sqrt(config.grainsNumber));
 
-    for(double z = 0; z < dimZ; z+=dZ)
-        for(double x = 0; x < dimX; x+=dX)
+    for(cm_pos z = 0; z < dimZ; z+=dZ)
+        for(cm_pos x = 0; x < dimX; x+=dX)
         {
             /* center */
             config.grains[grain_ID].center = {round(dist(gen)*dX + x), 0.0, round(dist(gen)*dZ + z)};
@@ -118,6 +118,7 @@ void nucleation(Configuration& config)
             config.grains[grain_ID].top_region_function = t_tp;
 
             grain_ID++;
+            if(grain_ID == config.grainsNumber) return;
         }
 
         printMicrostructureProperties(config.msp);
