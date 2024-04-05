@@ -11,7 +11,7 @@
 std::minstd_rand gl_rand_gen(std::random_device{}());
 std::uniform_real_distribution<double> lu_dist(-1, 1);
 std::uniform_real_distribution<double> p_dist(0, 1);
-std::normal_distribution<double> n_dist(0.5,0.25);
+std::normal_distribution<double> n_dist(0.7,0.2);
 
 
 void defineTasks(const Configuration& config, tasks_array& tasks)
@@ -115,10 +115,10 @@ void nucleation(Configuration& config)
 
             config.grains[grain_ID].smooth_region_function = t_smth;
             config.grains[grain_ID].feathered_region_function = t_fth;
-            config.grains[grain_ID].top_region_function = t_tp;
+            config.grains[grain_ID].top_region_function = bsf::top_test;
 
             grain_ID++;
-            if(grain_ID == config.grainsNumber) return;
+            if(grain_ID == config.grainsNumber) break;
         }
 
         printMicrostructureProperties(config.msp);
@@ -166,7 +166,7 @@ void setTopRegionLen(Grain& grain, const Microstructure_Properties& msp)
 
 void setReferenceRadius(Grain& grain, const Microstructure_Properties& msp)
 {
-    grain.ref_column_rad = msp.max_reference_radius*p_dist(gl_rand_gen);
+    grain.ref_column_rad = msp.max_reference_radius*n_dist(gl_rand_gen);
 }
 
 void setReferenceLength(Grain& grain, const Microstructure_Properties& msp)
