@@ -5,7 +5,7 @@
 
 class  GeneratorConfig;
 typedef std::vector<std::string> vec_string;
-typedef void(*ui_cmd)(vec_string&, GeneratorConfig**);
+typedef void(*ui_cmd)(vec_string&, Configuration**);
 
 class cm_error
 {
@@ -28,14 +28,14 @@ void msg_header(std::string pre, T arg, std::string post)
 }
 
 void init_ui();
-void interpreter(const std::string& command, GeneratorConfig** config);
-void load(vec_string& arg, GeneratorConfig** config);
-void tobmp(vec_string& arg, GeneratorConfig** config);
-void totxt(vec_string& arg, GeneratorConfig** config);
-void config(vec_string& arg, GeneratorConfig** config);
-void clear(vec_string& arg, GeneratorConfig** config);
-void run(vec_string& arg, GeneratorConfig** config);
-void exports(vec_string& arg, GeneratorConfig** config);
+void interpreter(const std::string& command, Configuration** config);
+void load(vec_string& arg, Configuration** config);
+void tobmp(vec_string& arg, Configuration** config);
+void totxt(vec_string& arg, Configuration** config);
+void config(vec_string& arg, Configuration** config);
+void clear(vec_string& arg, Configuration** config);
+void rungen(vec_string& arg, Configuration** config);
+void exports(vec_string& arg, Configuration** config);
 
 template <typename Out>
 void split(const std::string &s, char delim, Out result) {

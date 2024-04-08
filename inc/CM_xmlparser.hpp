@@ -2,7 +2,7 @@
 
 #include"rapidxml/rapidxml.hpp"
 #include"rapidxml/rapidxml_utils.hpp"
-#include"CM_datatypes.hpp"
+#include"CM_config.hpp"
 
 Configuration* parseConfiguration(std::string filePath);
 

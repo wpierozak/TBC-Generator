@@ -2,7 +2,7 @@
 
 #include<list>
 #include<memory>
-#include"CM_datatypes.hpp"
+#include"CM_config.hpp"
 
 /* Structure TaskData contains necessary information for executing a single subtask */
 struct TaskData

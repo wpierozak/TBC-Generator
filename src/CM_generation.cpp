@@ -16,15 +16,15 @@ cm_int singleFieldCalculation(f_vec pos, const Grain& grain)
     double r = crossProduct(rpv, growth_tensor).norm();
     if( h <= grain.h0_norm_smooth_region * grain.ref_length)
     {
-        return grain.smooth_region_function(h,r, grain);
+        return grain.smooth_section_function(h,r, grain);
     }
     else if( h <= (grain.h0_norm_smooth_region + grain.h0_norm_feathered_region) * grain.ref_length)
     {
-        return grain.feathered_region_function(h, r, grain);
+        return grain.feathered_section_function(h, r, grain);
     }
     else if( h <= (grain.h0_norm_smooth_region + grain.h0_norm_feathered_region + grain.h0_norm_top_region)* grain.ref_length)
     {
-        return grain.top_region_function(h, r, grain);
+        return grain.top_section_function(h, r, grain);
     }
 
     return Grain::NON_VALID;

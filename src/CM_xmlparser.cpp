@@ -72,7 +72,6 @@ Configuration* parseConfiguration(std::string filePath) {
     rapidxml::xml_node<>* node = domain_node->first_node();
     while(node)
     {
-        std::cout << "Parsing " << node->name() << std::endl;
         if(DIM_X == node->name())
         {
             dim[0] = std::stoi(node->value());
@@ -147,7 +146,6 @@ void parseMicrostructureProperties(rapidxml::xml_node<>* node, Microstructure_Pr
 
     while(child_node)
     {
-        std::cout<< "MSP - Parsing " << child_node->name() << std::endl;
         if(REFERENCE_RADIUS == child_node->name())
         {
             mscp.max_reference_radius = std::stoi(child_node->value());

@@ -6,7 +6,7 @@
 #include"CM_ui.hpp"
 #include"CM_xmlparser.hpp"
 #include"CM_postproc.hpp"
-#include"CM_generationOMP.hpp"
+#include"CM_run.hpp"
 
 const std::string RUN = "run";
 const std::string CONFIG = "config";
@@ -31,10 +31,10 @@ void init_ui()
 {
     cmd_map.emplace(EXPORT, exports);
     cmd_map.emplace(CONFIG, config);
-    cmd_map.emplace(RUN, run);
+    cmd_map.emplace(RUN, rungen);
 }
 
-void interpreter(const std::string& input, GeneratorConfig** config)
+void interpreter(const std::string& input, Configuration** config)
 {
     std::stringstream stream(input);
     vec_string command;
@@ -44,14 +44,15 @@ void interpreter(const std::string& input, GeneratorConfig** config)
     cmd->second(command, config);
 }
 
-void load(vec_string& arg, GeneratorConfig** config)
+void load(vec_string& arg, Configuration** config)
 {
+    *config = new Configuration;
     if(arg.size() == 1) throw cm_error("Configuration file was not specified", "load");
     if(*config != nullptr) throw cm_error("Configuration need to be explicitly cleared", "load");
     *config = parseConfiguration(arg[1]);
 }
 
-void exports(vec_string& arg, GeneratorConfig** config)
+void exports(vec_string& arg, Configuration** config)
 {
     if(*config == nullptr) throw cm_error("Configuration is not specified", "export");
     if(arg.size() == 1) throw cm_error("Invalid argument", "export");
@@ -64,23 +65,23 @@ void exports(vec_string& arg, GeneratorConfig** config)
     else throw cm_error("Invalid argument", "export");
 }
 
-void tobmp(vec_string& arg, GeneratorConfig** config)
+void tobmp(vec_string& arg, Configuration** config)
 {
     if(*config == nullptr) throw cm_error("Configuration is not specified", "tobmp");
     if(arg.size() != 1) throw cm_error("Invalid argument", "tobmp");
-    createBitmap(*(*config), (*config)->getThreadsNumber());
+    createBitmap(*(*config));
 }
 
-void totxt(vec_string& arg, GeneratorConfig** config)
+void totxt(vec_string& arg, Configuration** config)
 {
     if(*config == nullptr) throw cm_error("Configuration is not specified", "totxt");
     if(arg.size() != 1) throw cm_error("Invalid argument", "totxt");
     saveMicrostructureFile(**config);
 }
 
-void config(vec_string& arg, GeneratorConfig** config)
+void config(vec_string& arg, Configuration** config)
 {
-    if(arg.size() == 1 && *config) (*config)->printConfiguration();
+    if(arg.size() == 1 && *config) printConfiguration(**config);
     else if(arg.size() == 1) throw cm_error("Configuration is not specified", "config");
 
     vec_string args;
@@ -91,7 +92,7 @@ void config(vec_string& arg, GeneratorConfig** config)
     else throw cm_error("Invalid argument", "config");
 }
 
-void clear(vec_string& arg, GeneratorConfig** config)
+void clear(vec_string& arg, Configuration** config)
 {
     if(*config == nullptr) throw cm_error("Configuration is already cleared", "clear");
     if(arg.size() != 1) throw cm_error("Invalid argument", "clear");
@@ -99,10 +100,8 @@ void clear(vec_string& arg, GeneratorConfig** config)
     *config = nullptr;
 }
 
-void run(vec_string& arg, GeneratorConfig** config)
+void run(vec_string& arg, Configuration** config)
 {
     if(*config == nullptr) throw cm_error("Configuration is not specified", "run");
-    if(arg.size() == 1) throw cm_error("Invalid argument", "run");
-
-    if(arg[1] == "-omp") generate(*(*config), (*config)->getThreadsNumber());
+    run(**config);
 }

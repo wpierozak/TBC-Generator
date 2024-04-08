@@ -113,17 +113,13 @@ void nucleation(Configuration& config)
                 (*config.domain)(config.grains[grain_ID].center.x + dx, 0, config.grains[grain_ID].center.z + dz) = grain_ID;
             }
 
-            config.grains[grain_ID].smooth_region_function = t_smth;
-            config.grains[grain_ID].feathered_region_function = t_fth;
-            config.grains[grain_ID].top_region_function = bsf::top_test;
+            config.grains[grain_ID].smooth_section_function = bsf::smooth::radius_bound_w;
+            config.grains[grain_ID].feathered_section_function = bsf::smooth::radius_bound_w;
+            config.grains[grain_ID].top_section_function = bsf::parabolic_top_test;
 
             grain_ID++;
             if(grain_ID == config.grainsNumber) break;
         }
-
-        printMicrostructureProperties(config.msp);
-        for(Grain& grain: config.grains)
-        printGrain(grain);
     //std::copy(grains.begin(), grains.end(), std::back_inserter(config.grains));
 }
 
@@ -146,7 +142,7 @@ void setGrowthTensor(Grain& grain, const Microstructure_Properties& msp)
 /* Defines bound for column width by bounding the angle between growth tensor and relative position vector*/
 void setMaxWidenAngle(Grain& grain, const Microstructure_Properties& msp)
 {
-    grain.cos_phi_ub = cos((180.0 - msp.max_angle_of_widen * 0.5) * M_PI / 180.0);
+    grain.angle_of_widen =  msp.max_angle_of_widen * 0.5 * M_PI / 180.0;
 }
 
 void setSmoothRegionLen(Grain& grain, const Microstructure_Properties& msp)
@@ -172,4 +168,9 @@ void setReferenceRadius(Grain& grain, const Microstructure_Properties& msp)
 void setReferenceLength(Grain& grain, const Microstructure_Properties& msp)
 {
     grain.ref_length = (msp.max_length - msp.min_length)*p_dist(gl_rand_gen) + msp.min_length;
+}
+
+void correctRefLen(Grain& grain)
+{
+    grain.ref_length = (grain.h0_norm_feathered_region + grain.h0_norm_smooth_region + grain.h0_norm_top_region);
 }

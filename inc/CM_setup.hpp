@@ -1,4 +1,4 @@
-#include"CM_datatypes.hpp"
+#include"CM_config.hpp"
 #include"CM_task.hpp"
 
 std::pair<cm_pos, cm_pos> findDiv(cm_pos dimX, cm_pos dimZ);
@@ -20,3 +20,5 @@ void setTopRegionLen(Grain& grain, const Microstructure_Properties& msp);
 void setReferenceRadius(Grain& grain, const Microstructure_Properties& msp);
 
 void setReferenceLength(Grain& grain, const Microstructure_Properties& msp);
+
+void correctRefLen(Grain& grain);
