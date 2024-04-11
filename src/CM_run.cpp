@@ -14,7 +14,7 @@ void run(Configuration& config)
     defineTasks(config, tasks);
     if(LogManager::Manager().logmode()) LogManager::Manager().close("Task definition");
 
-    if(LogManager::Manager().logmode()) LogManager::Manager().open("RUN");
+    if(LogManager::Manager().logmode()) LogManager::Manager().open("Run tasks");
     #pragma omp parallel default(none) num_threads(config.threadsNum) shared(tasks)
     {
         cm_int idx = omp_get_thread_num();
@@ -30,5 +30,5 @@ void run(Configuration& config)
             tasks[idx].input.y1 += 1;
         }
     }
-    if(LogManager::Manager().logmode()) LogManager::Manager().close("RUN");
+    if(LogManager::Manager().logmode()) LogManager::Manager().close("Run tasks");
 }

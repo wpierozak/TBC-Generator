@@ -1,303 +1,331 @@
 
 		---> BEGIN Parsing <---
-../xml/test_single_column.xml
 
-		---> BEGIN CONFIGURATION <---
-Output dir../res/single_column_test
+Input file: ../xml/test_single_column.xml
+
+		---> BEGIN Configuration <---
+
+Output dir../res
 Number of threads to be used: 
 Domain: allocated
 Grains number: 20
-	=== Microstructure Properties ===
-	Maximum Angle of Widening: 4
-	Maximum Tilt (YZ, XY Plane): 2
-	Minimum Tilt (YZ, XY Plane): -2
-	Smooth Region Length (%): 0.6
-	Smooth Region Length Variance (%): 0.05
-	Feathered Region Length (%): 0.2
-	Feathered Region Length Variance (%): 0.05
-	Top Region Length (%): 0.2
-	Top Region Length Variance (%): 0.05
-	Minimum Column Length: 395
-	Maximum Column Length: 400
-	Maximum Reference Radius: 10
+=== Microstructure Properties ===
+Maximum Angle of Widening: 4
+Maximum Tilt (YZ, XY Plane): 2
+Minimum Tilt (YZ, XY Plane): -2
+Smooth Region Length (%): 0.6
+Smooth Region Length Variance (%): 0.05
+Feathered Region Length (%): 0.2
+Feathered Region Length Variance (%): 0.05
+Top Region Length (%): 0.2
+Top Region Length Variance (%): 0.05
+Minimum Column Length: 395
+Maximum Column Length: 400
+Maximum Reference Radius: 10
+
+		---> END Configuration <---
+
 
 		---> END Parsing <---
-	=== TIME MEASURMENTRUN ===
+
+=== Time measurment - Run - start ===
 
 		---> BEGIN Nucleation <---
-	=== Grain 0 ===
-	=== Grain ===
-	ID: 0
-	Center: (17, 0, 0)
-	Growth Tensor: (-0.00465351, 0.999453, -0.032727)
-	Cos Phi Upper Bound: 0.0349066
-	RPV Norm Upper Bound: 398.463
-	h0 Norm Bounds:
-		Smooth Region: 0.61572
-		Feathered Region: 0.228342
-		Top Region: 0.155938
-	Reference Column Radius: 6.81909
-	Maximum Column Radius: 0
-	=== Grain 1 ===
-	=== Grain ===
-	ID: 1
-	Center: (45, 0, 21)
-	Growth Tensor: (-0.0102917, 0.999689, 0.0227342)
-	Cos Phi Upper Bound: 0.0349066
-	RPV Norm Upper Bound: 398.565
-	h0 Norm Bounds:
-		Smooth Region: 0.620776
-		Feathered Region: 0.231861
-		Top Region: 0.147363
-	Reference Column Radius: 9.32069
-	Maximum Column Radius: 0
-	=== Grain 2 ===
-	=== Grain ===
-	ID: 2
-	Center: (55, 0, 11)
-	Growth Tensor: (0.0311136, 0.999422, -0.0136878)
-	Cos Phi Upper Bound: 0.0349066
-	RPV Norm Upper Bound: 398.138
-	h0 Norm Bounds:
-		Smooth Region: 0.612768
-		Feathered Region: 0.175222
-		Top Region: 0.212011
-	Reference Column Radius: 5.54532
-	Maximum Column Radius: 0
-	=== Grain 3 ===
-	=== Grain ===
-	ID: 3
-	Center: (92, 0, 3)
-	Growth Tensor: (-0.010555, 0.999594, -0.0264605)
-	Cos Phi Upper Bound: 0.0349066
-	RPV Norm Upper Bound: 398.653
-	h0 Norm Bounds:
-		Smooth Region: 0.646899
-		Feathered Region: 0.217646
-		Top Region: 0.135456
-	Reference Column Radius: 5.11306
-	Maximum Column Radius: 0
-	=== Grain 4 ===
-	=== Grain ===
-	ID: 4
-	Center: (94, 0, 5)
-	Growth Tensor: (0.0305223, 0.999135, -0.0282391)
-	Cos Phi Upper Bound: 0.0349066
-	RPV Norm Upper Bound: 396.763
-	h0 Norm Bounds:
-		Smooth Region: 0.589341
-		Feathered Region: 0.210037
-		Top Region: 0.200622
-	Reference Column Radius: 7.67669
-	Maximum Column Radius: 0
-	=== Grain 5 ===
-	=== Grain ===
-	ID: 5
-	Center: (20, 0, 43)
-	Growth Tensor: (0.000178993, 0.999967, 0.00806433)
-	Cos Phi Upper Bound: 0.0349066
-	RPV Norm Upper Bound: 397.861
-	h0 Norm Bounds:
-		Smooth Region: 0.644921
-		Feathered Region: 0.209465
-		Top Region: 0.145614
-	Reference Column Radius: 8.09962
-	Maximum Column Radius: 0
-	=== Grain 6 ===
-	=== Grain ===
-	ID: 6
-	Center: (23, 0, 46)
-	Growth Tensor: (-0.00733896, 0.999935, -0.00874132)
-	Cos Phi Upper Bound: 0.0349066
-	RPV Norm Upper Bound: 398.966
-	h0 Norm Bounds:
-		Smooth Region: 0.582237
-		Feathered Region: 0.161131
-		Top Region: 0.256632
-	Reference Column Radius: 8.84343
-	Maximum Column Radius: 0
-	=== Grain 7 ===
-	=== Grain ===
-	ID: 7
-	Center: (47, 0, 32)
-	Growth Tensor: (-0.0305049, 0.999392, -0.0168942)
-	Cos Phi Upper Bound: 0.0349066
-	RPV Norm Upper Bound: 398.002
-	h0 Norm Bounds:
-		Smooth Region: 0.621277
-		Feathered Region: 0.214527
-		Top Region: 0.164196
-	Reference Column Radius: 7.33686
-	Maximum Column Radius: 0
-	=== Grain 8 ===
-	=== Grain ===
-	ID: 8
-	Center: (79, 0, 51)
-	Growth Tensor: (-0.0236006, 0.999693, -0.00758063)
-	Cos Phi Upper Bound: 0.0349066
-	RPV Norm Upper Bound: 395.335
-	h0 Norm Bounds:
-		Smooth Region: 0.594921
-		Feathered Region: 0.21806
-		Top Region: 0.187019
-	Reference Column Radius: 7.06276
-	Maximum Column Radius: 0
-	=== Grain 9 ===
-	=== Grain ===
-	ID: 9
-	Center: (99, 0, 31)
-	Growth Tensor: (-0.0133741, 0.99989, 0.0064029)
-	Cos Phi Upper Bound: 0.0349066
-	RPV Norm Upper Bound: 395.417
-	h0 Norm Bounds:
-		Smooth Region: 0.631677
-		Feathered Region: 0.156146
-		Top Region: 0.212176
-	Reference Column Radius: 10.3879
-	Maximum Column Radius: 0
-	=== Grain 10 ===
-	=== Grain ===
-	ID: 10
-	Center: (1, 0, 76)
-	Growth Tensor: (-0.00980529, 0.999768, -0.0191756)
-	Cos Phi Upper Bound: 0.0349066
-	RPV Norm Upper Bound: 397.431
-	h0 Norm Bounds:
-		Smooth Region: 0.612078
-		Feathered Region: 0.224776
-		Top Region: 0.163147
-	Reference Column Radius: 8.96692
-	Maximum Column Radius: 0
-	=== Grain 11 ===
-	=== Grain ===
-	ID: 11
-	Center: (29, 0, 62)
-	Growth Tensor: (0.00198014, 0.99999, 0.00392555)
-	Cos Phi Upper Bound: 0.0349066
-	RPV Norm Upper Bound: 397.581
-	h0 Norm Bounds:
-		Smooth Region: 0.629559
-		Feathered Region: 0.197141
-		Top Region: 0.1733
-	Reference Column Radius: 5.64075
-	Maximum Column Radius: 0
-	=== Grain 12 ===
-	=== Grain ===
-	ID: 12
-	Center: (50, 0, 72)
-	Growth Tensor: (0.0160197, 0.999868, -0.00275621)
-	Cos Phi Upper Bound: 0.0349066
-	RPV Norm Upper Bound: 395.855
-	h0 Norm Bounds:
-		Smooth Region: 0.597789
-		Feathered Region: 0.226845
-		Top Region: 0.175366
-	Reference Column Radius: 6.0252
-	Maximum Column Radius: 0
-	=== Grain 13 ===
-	=== Grain ===
-	ID: 13
-	Center: (86, 0, 73)
-	Growth Tensor: (0.0166984, 0.999785, 0.0123107)
-	Cos Phi Upper Bound: 0.0349066
-	RPV Norm Upper Bound: 396.073
-	h0 Norm Bounds:
-		Smooth Region: 0.563905
-		Feathered Region: 0.195508
-		Top Region: 0.240587
-	Reference Column Radius: 8.28711
-	Maximum Column Radius: 0
-	=== Grain 14 ===
-	=== Grain ===
-	ID: 14
-	Center: (94, 0, 84)
-	Growth Tensor: (0.0234915, 0.999524, -0.0199912)
-	Cos Phi Upper Bound: 0.0349066
-	RPV Norm Upper Bound: 397.45
-	h0 Norm Bounds:
-		Smooth Region: 0.55251
-		Feathered Region: 0.214775
-		Top Region: 0.232715
-	Reference Column Radius: 7.87086
-	Maximum Column Radius: 0
-	=== Grain 15 ===
-	=== Grain ===
-	ID: 15
-	Center: (11, 0, 99)
-	Growth Tensor: (0.0150063, 0.999763, -0.0157794)
-	Cos Phi Upper Bound: 0.0349066
-	RPV Norm Upper Bound: 396.887
-	h0 Norm Bounds:
-		Smooth Region: 0.624668
-		Feathered Region: 0.169556
-		Top Region: 0.205777
-	Reference Column Radius: 9.09937
-	Maximum Column Radius: 0
-	=== Grain 16 ===
-	=== Grain ===
-	ID: 16
-	Center: (33, 0, 99)
-	Growth Tensor: (0.00589529, 0.999728, -0.0225825)
-	Cos Phi Upper Bound: 0.0349066
-	RPV Norm Upper Bound: 395.891
-	h0 Norm Bounds:
-		Smooth Region: 0.571526
-		Feathered Region: 0.243688
-		Top Region: 0.184787
-	Reference Column Radius: 7.05837
-	Maximum Column Radius: 0
-	=== Grain 17 ===
-	=== Grain ===
-	ID: 17
-	Center: (64, 0, 99)
-	Growth Tensor: (-0.0204911, 0.999423, 0.0270888)
-	Cos Phi Upper Bound: 0.0349066
-	RPV Norm Upper Bound: 396.608
-	h0 Norm Bounds:
-		Smooth Region: 0.591172
-		Feathered Region: 0.165269
-		Top Region: 0.243559
-	Reference Column Radius: 6.94024
-	Maximum Column Radius: 0
-	=== Grain 18 ===
-	=== Grain ===
-	ID: 18
-	Center: (79, 0, 96)
-	Growth Tensor: (-0.0127608, 0.999593, 0.0255273)
-	Cos Phi Upper Bound: 0.0349066
-	RPV Norm Upper Bound: 398.315
-	h0 Norm Bounds:
-		Smooth Region: 0.590931
-		Feathered Region: 0.154819
-		Top Region: 0.25425
-	Reference Column Radius: 7.38836
-	Maximum Column Radius: 0
-	=== Grain 19 ===
-	=== Grain ===
-	ID: 19
-	Center: (99, 0, 99)
-	Growth Tensor: (0.00436525, 0.999934, -0.0106038)
-	Cos Phi Upper Bound: 0.0349066
-	RPV Norm Upper Bound: 396.722
-	h0 Norm Bounds:
-		Smooth Region: 0.597717
-		Feathered Region: 0.201387
-		Top Region: 0.200896
-	Reference Column Radius: 3.34352
-	Maximum Column Radius: 0
+
+=== Grain 0 ===
+=== Grain ===
+ID: 0
+Center: (23, 0, 2)
+Growth Tensor: (-0.0230618, 0.999615, -0.0154101)
+Cos Phi Upper Bound: 0.0349066
+RPV Norm Upper Bound: 398.561
+h0 Norm Bounds:
+	Smooth Region: 0.60421
+	Feathered Region: 0.154159
+	Top Region: 0.241631
+Reference Column Radius: 9.70895
+Maximum Column Radius: 0
+=== Grain 1 ===
+=== Grain ===
+ID: 1
+Center: (26, 0, 7)
+Growth Tensor: (-0.0193933, 0.999583, 0.0214145)
+Cos Phi Upper Bound: 0.0349066
+RPV Norm Upper Bound: 395.843
+h0 Norm Bounds:
+	Smooth Region: 0.644333
+	Feathered Region: 0.171779
+	Top Region: 0.183888
+Reference Column Radius: 8.36173
+Maximum Column Radius: 0
+=== Grain 2 ===
+=== Grain ===
+ID: 2
+Center: (62, 0, 20)
+Growth Tensor: (0.00989388, 0.999945, 0.0034901)
+Cos Phi Upper Bound: 0.0349066
+RPV Norm Upper Bound: 395.087
+h0 Norm Bounds:
+	Smooth Region: 0.574007
+	Feathered Region: 0.194889
+	Top Region: 0.231104
+Reference Column Radius: 8.29643
+Maximum Column Radius: 0
+=== Grain 3 ===
+=== Grain ===
+ID: 3
+Center: (85, 0, 21)
+Growth Tensor: (-0.0329716, 0.999453, -0.00238132)
+Cos Phi Upper Bound: 0.0349066
+RPV Norm Upper Bound: 397.561
+h0 Norm Bounds:
+	Smooth Region: 0.577238
+	Feathered Region: 0.224527
+	Top Region: 0.198235
+Reference Column Radius: 6.98914
+Maximum Column Radius: 0
+=== Grain 4 ===
+=== Grain ===
+ID: 4
+Center: (99, 0, 21)
+Growth Tensor: (0.00264097, 0.999845, 0.0174318)
+Cos Phi Upper Bound: 0.0349066
+RPV Norm Upper Bound: 398.615
+h0 Norm Bounds:
+	Smooth Region: 0.620042
+	Feathered Region: 0.220526
+	Top Region: 0.159433
+Reference Column Radius: 5.37116
+Maximum Column Radius: 0
+=== Grain 5 ===
+=== Grain ===
+ID: 5
+Center: (2, 0, 44)
+Growth Tensor: (0.0116107, 0.99975, -0.0190876)
+Cos Phi Upper Bound: 0.0349066
+RPV Norm Upper Bound: 397.135
+h0 Norm Bounds:
+	Smooth Region: 0.584111
+	Feathered Region: 0.214613
+	Top Region: 0.201277
+Reference Column Radius: 7.4425
+Maximum Column Radius: 0
+=== Grain 6 ===
+=== Grain ===
+ID: 6
+Center: (37, 0, 36)
+Growth Tensor: (-0.0219421, 0.999317, 0.0297276)
+Cos Phi Upper Bound: 0.0349066
+RPV Norm Upper Bound: 397.917
+h0 Norm Bounds:
+	Smooth Region: 0.602907
+	Feathered Region: 0.208689
+	Top Region: 0.188405
+Reference Column Radius: 7.55265
+Maximum Column Radius: 0
+=== Grain 7 ===
+=== Grain ===
+ID: 7
+Center: (67, 0, 45)
+Growth Tensor: (-0.00546098, 0.999563, 0.0290519)
+Cos Phi Upper Bound: 0.0349066
+RPV Norm Upper Bound: 399.114
+h0 Norm Bounds:
+	Smooth Region: 0.629251
+	Feathered Region: 0.197141
+	Top Region: 0.173608
+Reference Column Radius: 9.24553
+Maximum Column Radius: 0
+=== Grain 8 ===
+=== Grain ===
+ID: 8
+Center: (81, 0, 52)
+Growth Tensor: (-0.0252911, 0.999126, -0.0332688)
+Cos Phi Upper Bound: 0.0349066
+RPV Norm Upper Bound: 398.319
+h0 Norm Bounds:
+	Smooth Region: 0.636865
+	Feathered Region: 0.168834
+	Top Region: 0.1943
+Reference Column Radius: 7.89753
+Maximum Column Radius: 0
+=== Grain 9 ===
+=== Grain ===
+ID: 9
+Center: (99, 0, 41)
+Growth Tensor: (0.0245448, 0.999635, -0.011306)
+Cos Phi Upper Bound: 0.0349066
+RPV Norm Upper Bound: 399.991
+h0 Norm Bounds:
+	Smooth Region: 0.620294
+	Feathered Region: 0.211104
+	Top Region: 0.168602
+Reference Column Radius: 2.88454
+Maximum Column Radius: 0
+=== Grain 10 ===
+=== Grain ===
+ID: 10
+Center: (2, 0, 64)
+Growth Tensor: (-0.0109232, 0.999586, 0.0266097)
+Cos Phi Upper Bound: 0.0349066
+RPV Norm Upper Bound: 396.505
+h0 Norm Bounds:
+	Smooth Region: 0.648907
+	Feathered Region: 0.240851
+	Top Region: 0.110242
+Reference Column Radius: 4.7783
+Maximum Column Radius: 0
+=== Grain 11 ===
+=== Grain ===
+ID: 11
+Center: (44, 0, 59)
+Growth Tensor: (0.00673388, 0.9997, 0.0235392)
+Cos Phi Upper Bound: 0.0349066
+RPV Norm Upper Bound: 396.3
+h0 Norm Bounds:
+	Smooth Region: 0.580597
+	Feathered Region: 0.247029
+	Top Region: 0.172374
+Reference Column Radius: 4.32917
+Maximum Column Radius: 0
+=== Grain 12 ===
+=== Grain ===
+ID: 12
+Center: (48, 0, 69)
+Growth Tensor: (-0.00999712, 0.999868, 0.012803)
+Cos Phi Upper Bound: 0.0349066
+RPV Norm Upper Bound: 399.899
+h0 Norm Bounds:
+	Smooth Region: 0.580052
+	Feathered Region: 0.169134
+	Top Region: 0.250814
+Reference Column Radius: 3.55798
+Maximum Column Radius: 0
+=== Grain 13 ===
+=== Grain ===
+ID: 13
+Center: (88, 0, 86)
+Growth Tensor: (0.0208946, 0.999763, 0.00613636)
+Cos Phi Upper Bound: 0.0349066
+RPV Norm Upper Bound: 398.051
+h0 Norm Bounds:
+	Smooth Region: 0.621668
+	Feathered Region: 0.174301
+	Top Region: 0.204031
+Reference Column Radius: 11.6348
+Maximum Column Radius: 0
+=== Grain 14 ===
+=== Grain ===
+ID: 14
+Center: (99, 0, 61)
+Growth Tensor: (-0.00722288, 0.999952, -0.00667849)
+Cos Phi Upper Bound: 0.0349066
+RPV Norm Upper Bound: 398.433
+h0 Norm Bounds:
+	Smooth Region: 0.586337
+	Feathered Region: 0.156441
+	Top Region: 0.257222
+Reference Column Radius: 9.76516
+Maximum Column Radius: 0
+=== Grain 15 ===
+=== Grain ===
+ID: 15
+Center: (17, 0, 99)
+Growth Tensor: (0.0121872, 0.999904, 0.00656017)
+Cos Phi Upper Bound: 0.0349066
+RPV Norm Upper Bound: 395.48
+h0 Norm Bounds:
+	Smooth Region: 0.625084
+	Feathered Region: 0.158951
+	Top Region: 0.215965
+Reference Column Radius: 7.36441
+Maximum Column Radius: 0
+=== Grain 16 ===
+=== Grain ===
+ID: 16
+Center: (30, 0, 99)
+Growth Tensor: (0.019247, 0.999723, -0.0135208)
+Cos Phi Upper Bound: 0.0349066
+RPV Norm Upper Bound: 395.731
+h0 Norm Bounds:
+	Smooth Region: 0.646297
+	Feathered Region: 0.177255
+	Top Region: 0.176447
+Reference Column Radius: 6.60072
+Maximum Column Radius: 0
+=== Grain 17 ===
+=== Grain ===
+ID: 17
+Center: (65, 0, 99)
+Growth Tensor: (-0.0165292, 0.999626, 0.0217718)
+Cos Phi Upper Bound: 0.0349066
+RPV Norm Upper Bound: 396.758
+h0 Norm Bounds:
+	Smooth Region: 0.585997
+	Feathered Region: 0.208936
+	Top Region: 0.205067
+Reference Column Radius: 6.30218
+Maximum Column Radius: 0
+=== Grain 18 ===
+=== Grain ===
+ID: 18
+Center: (79, 0, 99)
+Growth Tensor: (0.0175592, 0.999476, 0.0271967)
+Cos Phi Upper Bound: 0.0349066
+RPV Norm Upper Bound: 398.247
+h0 Norm Bounds:
+	Smooth Region: 0.55275
+	Feathered Region: 0.206701
+	Top Region: 0.240549
+Reference Column Radius: 13.0792
+Maximum Column Radius: 0
+=== Grain 19 ===
+=== Grain ===
+ID: 19
+Center: (99, 0, 99)
+Growth Tensor: (-0.0037341, 0.999912, -0.0126957)
+Cos Phi Upper Bound: 0.0349066
+RPV Norm Upper Bound: 399.349
+h0 Norm Bounds:
+	Smooth Region: 0.588262
+	Feathered Region: 0.152485
+	Top Region: 0.259252
+Reference Column Radius: 6.39247
+Maximum Column Radius: 0
 
 		---> END Nucleation <---
 
+
 		---> BEGIN Task definition <---
+
 
 		---> END Task definition <---
 
-		---> BEGIN RUN <---
 
-		---> END RUN <---
-[T] ELAPSED TIME: 492
-	=== STOP TIME MEASURMENTRUN ENDED ===
+		---> BEGIN Run tasks <---
 
-		---> BEGIN SAVING RESULTS <---
 
-		---> END SAVING RESULTS <---
+		---> END Run tasks <---
+
+=== Time measurment - Run - stop ===
+[T] Elapsed time: 532
+
+		---> BEGIN Results saving <---
+
+=== Time measurment - File generation - start ===
+Non void fields: 2081357
+Progress: 400000/4000000
+Progress: 800000/4000000
+Progress: 1200000/4000000
+Progress: 1600000/4000000
+Progress: 2000000/4000000
+Progress: 2400000/4000000
+Progress: 2800000/4000000
+Progress: 3200000/4000000
+Progress: 3600000/4000000
+Progress: 4000000/4000000
+=== Time measurment - File generation - stop ===
+[T] Elapsed time: 3755
+
+		---> END Results saving <---
+

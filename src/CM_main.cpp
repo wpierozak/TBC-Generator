@@ -17,23 +17,24 @@ int main(int argc, const char** argv)
     try
     {
         if(LogManager::Manager().logmode()) LogManager::Manager().open("Parsing");
-        if(LogManager::Manager().logmode()) LogManager::Manager().text(inputFile);
+        if(LogManager::Manager().logmode()) LogManager::Manager().text(std::string("Input file: ") + inputFile);
         parseConfiguration(inputFile, config);
         if(LogManager::Manager().logmode()) LogManager::Manager().printConfigData(config);
         if(LogManager::Manager().logmode()) LogManager::Manager().close("Parsing");
    
-        if(LogManager::Manager().logmode()) LogManager::Manager().timeStart("RUN");
+        if(LogManager::Manager().logmode()) LogManager::Manager().timeStart("Run");
         run(config);
-        if(LogManager::Manager().logmode()) LogManager::Manager().recordTimeElapsed("RUN ENDED");
+        if(LogManager::Manager().logmode()) LogManager::Manager().recordTimeElapsed("Run");
 
-        if(LogManager::Manager().logmode()) LogManager::Manager().open("SAVING RESULTS");
+        if(LogManager::Manager().logmode()) LogManager::Manager().open("Results saving");
+        if(LogManager::Manager().logmode()) LogManager::Manager().timeStart("File generation");
         saveMicrostructureFile(&config);
-        if(LogManager::Manager().logmode()) LogManager::Manager().close("SAVING RESULTS");
+        if(LogManager::Manager().logmode()) LogManager::Manager().recordTimeElapsed("File generation");
+        if(LogManager::Manager().logmode()) LogManager::Manager().close("Results saving");
     }
     catch(const std::exception& e)
     {
-        if(LogManager::Manager().logmode()) LogManager::Manager().header("EXCEPTION");
-        if(LogManager::Manager().logmode()) LogManager::Manager().text(e.what());
+        if(LogManager::Manager().logmode()) LogManager::Manager().exception(e.what());
         else e.what();
         return -1;
     }

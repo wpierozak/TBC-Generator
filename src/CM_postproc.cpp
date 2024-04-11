@@ -1,5 +1,6 @@
 #include<iostream>
 #include<fstream>
+#include"CM_logs.hpp"
 #include"CM_postproc.hpp"
 #include"BMP/libbmp.h"
 #include"BMP/EasyBMP.h"
@@ -77,9 +78,10 @@ void saveMicrostructureFile(Configuration* config)
     if(file.is_open() == false)
         throw std::runtime_error("Output file cannot be created/loade\n");
 
+    if(LogManager::Manager().logmode()) LogManager::Manager().text(std::string("Non void fields: ") + std::to_string(nonVoid));
     file << nonVoid << std::endl << std::endl;
     size_t step = cm_int(config->domain->dimX) * cm_int(config->domain->dimY) * cm_int(config->domain->dimZ) / 10;
-    int counter = 0; 
+    cm_int counter = 0; 
 
     switch (config->msFileFormat)
     {
@@ -88,10 +90,16 @@ void saveMicrostructureFile(Configuration* config)
         for(cm_pos z = 0; z < config->domain->dimZ; z++)
         for(cm_pos x = 0; x < config->domain->dimX; x++)
         {
-           if((*config->domain)(x, y, z) != Domain::VOID)
-           {
+            if(LogManager::Manager().logmode())
+            {
+                counter++;
+                if(counter % (size/10) == 0)
+                LogManager::Manager().text(std::string("Progress: ") + std::to_string(counter) + std::string("/") + std::to_string(size));
+            }
+            if((*config->domain)(x, y, z) != Domain::VOID)
+            {
                 file << x << ' ' << y << ' ' << z << ' ' << (*config->domain)(x, y, z) << std::endl;
-           }
+            }
         }
         break;
 
