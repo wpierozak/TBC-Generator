@@ -66,6 +66,10 @@
         "__nullptr": "cpp",
         "map": "cpp",
         "list": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "queue": "cpp",
+        "stack": "cpp",
+        "__locale": "cpp",
+        "filesystem": "cpp"
     }
 }
