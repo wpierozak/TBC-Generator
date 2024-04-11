@@ -1,11 +1,12 @@
+#include<stdexcept>
 #include"CM_SFCreator.hpp"
 
-void SFCreator::initialize()
+SFCreator::SFCreator()
 {
-    creator._profiles.emplace("radius_bound", bsf::smooth::radius_bound);
-    creator._profiles.emplace("radius_bound_w", bsf::smooth::radius_bound_w);
-    creator._profiles.emplace("parabolic_profile", bsf::top::parabolic_profile);
-    creator._profiles.emplace("parabolic_profile_w", bsf::top::parabolic_profile_w);
+    _profiles.emplace("radius_bound", bsf::smooth::radius_bound);
+    _profiles.emplace("radius_bound_w", bsf::smooth::radius_bound_w);
+    _profiles.emplace("parabolic_profile", bsf::top::parabolic_profile);
+    _profiles.emplace("parabolic_profile_w", bsf::top::parabolic_profile_w);
 }
 
 void SFCreator::setParameters(std::list<std::string> coef, double* dest, int size)
@@ -19,7 +20,10 @@ void SFCreator::setParameters(std::list<std::string> coef, double* dest, int siz
     }
 }
 
-sfptr SFCreator::get(std::string profile)
+sfptr SFCreator::get(std::string profileName)
 {
-    return (*creator._profiles.find(profile)).second;
+    auto profile = _profiles.find(profileName);
+    if(profile == _profiles.end())
+        throw std::runtime_error("Profile function not found");
+    return profile->second;
 }

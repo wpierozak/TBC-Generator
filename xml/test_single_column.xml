@@ -2,7 +2,7 @@
 <Configuration>
 
     <dimX>100</dimX>
-    <dimY>300</dimY>
+    <dimY>400</dimY>
     <dimZ>100</dimZ>
 
     <output_dir>../res/single_column_test</output_dir>
@@ -22,16 +22,16 @@
         <z1>1</z1>
     </neighbourhood>
 
-    <grains_number>5</grains_number>
+    <grains_number>20</grains_number>
 
     <Grain>    
-        <ref_radius>15</ref_radius>
+        <ref_radius>10</ref_radius>
 
         <!-- In degrees -->
-        <max_tilt>3</max_tilt>
+        <max_tilt>2</max_tilt>
 
         <!-- In degrees -->
-        <min_tilt>0</min_tilt>
+        <min_tilt>-2</min_tilt>
 
         <!-- In degrees -->
         <max_angle_of_widen>4</max_angle_of_widen>
@@ -54,10 +54,31 @@
         <!-- In % of total length -->
         <top_region_length_var>0.05</top_region_length_var>
 
-        <min_length>100</min_length>
+        <min_length>395</min_length>
 
-        <max_length>200</max_length>
+        <max_length>400</max_length>
     </Grain>
+
+    <top>
+        <profile>
+        <name>parabolic_profile_w</name>
+        <a>-0.25</a>
+        <b>0</b>
+        <c>0.25</c>
+        </profile>
+    </top>
+
+    <feathered>
+        <profile>
+            <name>radius_bound_w</name>
+        </profile>
+    </feathered>
+
+    <smooth>
+        <profile>
+            <name>radius_bound_w</name>
+        </profile>
+    </smooth>
 
     <threads_number>12</threads_number>
 

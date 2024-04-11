@@ -7,4 +7,4 @@
 
 void scanNeighbourhood(f_vec pos, const Domain& domain, std::list<cm_state>& grains);
 cm_int singleFieldCalculation(f_vec pos, const Grain& grain);
-void runTask(Task& task);
+void runTask(Task* task);

@@ -1,7 +1,6 @@
 #include<iostream>
 #include<fstream>
 #include"CM_postproc.hpp"
-#include"CM_ui.hpp"
 #include"BMP/libbmp.h"
 #include"BMP/EasyBMP.h"
 
@@ -55,10 +54,22 @@ void createBitmap(Configuration& config)
     delete[] colorsArray;
 }
 
-void saveMicrostructureFile(Configuration& config)
+void saveMicrostructureFile(Configuration* config)
 {
-    cm_colorampl* colorsArray = defineColors(config.grainsNumber);
-    std::string filename = config.outputDir + "/" + config.outputFile;
+    cm_colorampl* colorsArray = defineColors(config->grainsNumber);
+    std::string filename = config->outputDir + "/" + config->outputFile;
+
+    cm_int nonVoid = 0;
+    cm_int size = cm_int(config->domain->dimX)*cm_int(config->domain->dimY)*cm_int(config->domain->dimZ);
+    
+    #pragma omp parallel for num_threads(config->threadsNumber) reduction(+= nonVoid)
+    for(cm_int idx = 0; idx < size; idx++)
+    {
+        if((*config->domain)(idx) != Domain::VOID)
+        {
+            nonVoid++;
+        }
+    }
 
     std::ofstream file;
     file.open(filename);
@@ -66,40 +77,34 @@ void saveMicrostructureFile(Configuration& config)
     if(file.is_open() == false)
         throw std::runtime_error("Output file cannot be created/loade\n");
 
-    file << cm_int(config.domain->dimX) * cm_int(config.domain->dimY) * cm_int(config.domain->dimZ) << std::endl << std::endl;
-    size_t step = cm_int(config.domain->dimX) * cm_int(config.domain->dimY) * cm_int(config.domain->dimZ) / 10;
+    file << nonVoid << std::endl << std::endl;
+    size_t step = cm_int(config->domain->dimX) * cm_int(config->domain->dimY) * cm_int(config->domain->dimZ) / 10;
     int counter = 0; 
 
-    msg_header("", "Microstructure TXT file generation", "");
-
-    switch (config.msFileFormat)
+    switch (config->msFileFormat)
     {
     case MsFileFormat::xyz:
-        for(cm_pos y = 0; y < config.domain->dimY; y++)
-        for(cm_pos z = 0; z < config.domain->dimZ; z++)
-        for(cm_pos x = 0; x < config.domain->dimX; x++)
+        for(cm_pos y = 0; y < config->domain->dimY; y++)
+        for(cm_pos z = 0; z < config->domain->dimZ; z++)
+        for(cm_pos x = 0; x < config->domain->dimX; x++)
         {
-            if(x*y*z % step == 0)
-            {
-                //msg_header("", counter*10,"%"); 
-                //counter++;
-            }
-            file << x << ' ' << y << ' ' << z << ' ' << (*config.domain)(x, y, z) << std::endl;
+           if((*config->domain)(x, y, z) != Domain::VOID)
+           {
+                file << x << ' ' << y << ' ' << z << ' ' << (*config->domain)(x, y, z) << std::endl;
+           }
         }
         break;
 
     case MsFileFormat::xyzrgb:
-        for(cm_pos y = 0; y < config.domain->dimY; y++)
-        for(cm_pos z = 0; z < config.domain->dimZ; z++)
-        for(cm_pos x = 0; x < config.domain->dimX; x++)
+        for(cm_pos y = 0; y < config->domain->dimY; y++)
+        for(cm_pos z = 0; z < config->domain->dimZ; z++)
+        for(cm_pos x = 0; x < config->domain->dimX; x++)
         {
-            if((*config.domain)(x,y,z) % step == 0)
+            if((*config->domain)(x, y, z) != Grain::NON_VALID)
             {
-                msg_header("", counter*10,"%"); 
-                counter++;
+                file << x << ' ' << y << ' ' << z << ' ' << colorsArray[(*config->domain)(x, y, z)] << 
+                colorsArray[(*config->domain)(x, y, z) + 1] << colorsArray[(*config->domain)(x, y, z) + 2] << (*config->domain)(x, y, z) << std::endl;
             }
-            file << x << ' ' << y << ' ' << z << ' ' << colorsArray[(*config.domain)(x, y, z)] << 
-            colorsArray[(*config.domain)(x, y, z) + 1] << colorsArray[(*config.domain)(x, y, z) + 2] << (*config.domain)(x, y, z) << std::endl;
         }
         break;
     

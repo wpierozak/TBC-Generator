@@ -4,4 +4,4 @@
 
 void createBitmap(Configuration& caDomain);
 cm_colorampl* defineColors(cm_size grainNum);
-void saveMicrostructureFile(Configuration& caDomain);
+void saveMicrostructureFile(Configuration* config);

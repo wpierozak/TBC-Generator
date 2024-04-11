@@ -2,9 +2,11 @@
 
 #include"rapidxml/rapidxml.hpp"
 #include"rapidxml/rapidxml_utils.hpp"
+#include"CM_SFCreator.hpp"
 #include"CM_config.hpp"
 
-Configuration* parseConfiguration(std::string filePath);
+void parseConfiguration(std::string filePath, Configuration& configuration);
 
 void parseMicrostructureProperties(rapidxml::xml_node<>* node, Microstructure_Properties& mscp);
 void parseNeighbourhood(rapidxml::xml_node<>* node, Neighbourhood& neighbourhood);
+void parseSection(rapidxml::xml_node<>* node, SectionProfile& section, SFCreator& sfcreator);

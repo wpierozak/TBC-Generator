@@ -6,7 +6,7 @@ LOADER = g++ -fopenmp
 DEBUG = -g
 OPT = -O2
 OMP = -fopenmp 
-COMP_FLAGS = -c $(DEBUG)
+COMP_FLAGS = $(DEBUG)
 
 # Directories #
 
@@ -69,6 +69,14 @@ $(OBJ_CM_DIR)/CM_shapefun.o: $(SRC_DIR)/CM_shapefun.cpp
 	$(COMP) $(CM_COMP_FLAGS) $(INC) $(SRC_DIR)/CM_shapefun.cpp -o $(OBJ_CM_DIR)/CM_shapefun.o
 CM_DEPENDENCIES += $(OBJ_CM_DIR)/CM_shapefun.o
 
+$(OBJ_CM_DIR)/CM_logs.o: $(SRC_DIR)/CM_logs.cpp
+	$(COMP) $(CM_COMP_FLAGS) $(INC) $(SRC_DIR)/CM_logs.cpp -o $(OBJ_CM_DIR)/CM_logs.o
+CM_DEPENDENCIES += $(OBJ_CM_DIR)/CM_logs.o
+
+$(OBJ_CM_DIR)/CM_SFCreator.o: $(SRC_DIR)/CM_SFCreator.cpp
+	$(COMP) $(CM_COMP_FLAGS) $(INC) $(SRC_DIR)/CM_SFCreator.cpp -o $(OBJ_CM_DIR)/CM_SFCreator.o
+CM_DEPENDENCIES += $(OBJ_CM_DIR)/CM_SFCreator.o
+
 $(LIB_DIR)/cmlib.a: $(CM_DEPENDENCIES)
 	ar rcs $(LIB_DIR)/cmlib.a $(OBJ_CM_DIR)/*.o
 
@@ -86,3 +94,13 @@ $(BIN_TEST_DIR)/single_column: $(OBJ_TEST_DIR)/single_column.o
 	$(LOADER) $(OBJ_TEST_DIR)/single_column.o $(LIB_DIR)/cmlib.a -o $(BIN_TEST_DIR)/single_column
 
 single_column: $(LIB_DIR)/cmlib.a $(BIN_TEST_DIR)/single_column
+
+# Program #
+$(OBJ_DIR)/CM_main.o: $(SRC_DIR)/CM_main.cpp
+	$(COMP) $(COMP_FLAGS) $(INC) $(SRC_DIR)/CM_main.cpp -o $(OBJ_DIR)/CM_main.o
+
+build: $(OBJ_DIR)/CM_main.o $(LIB_DIR)/cmlib.a
+	$(LOADER) $(OMP) $(OBJ_DIR)/CM_main.o $(LIB_DIR)/cmlib.a -o $(BIN_DIR)/clmgen
+
+clean:
+	rm $(OBJ_DIR)/clmgen

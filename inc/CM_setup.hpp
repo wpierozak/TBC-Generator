@@ -21,4 +21,10 @@ void setReferenceRadius(Grain& grain, const Microstructure_Properties& msp);
 
 void setReferenceLength(Grain& grain, const Microstructure_Properties& msp);
 
+void assignSmoothProfile(Grain& grain, const std::vector<SectionProfile> profiles);
+
+void assignFeatheredProfile(Grain& grain, const std::vector<SectionProfile> profiles);
+
+void assignTopProfile(Grain& grain, const std::vector<SectionProfile> profiles);
+
 void correctRefLen(Grain& grain);

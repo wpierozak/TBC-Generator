@@ -6,6 +6,7 @@
 #include<random>
 #include"CM_setup.hpp"
 #include"CM_shapefun.hpp"
+#include"CM_logs.hpp"
 
 /* Global variables for random number generation in the grain set up process */
 std::minstd_rand gl_rand_gen(std::random_device{}());
@@ -82,6 +83,8 @@ void nucleation(Configuration& config)
     for(cm_pos z = 0; z < dimZ; z+=dZ)
         for(cm_pos x = 0; x < dimX; x+=dX)
         {
+            if(LogManager::Manager().logmode()) 
+            LogManager::Manager().header(std::string("Grain ") + std::to_string(grain_ID));
             /* center */
             config.grains[grain_ID].center = {round(dist(gen)*dX + x), 0.0, round(dist(gen)*dZ + z)};
             if(config.grains[grain_ID].center.x >= dimX) config.grains[grain_ID].center.x = dimX - 1.0;
@@ -98,6 +101,7 @@ void nucleation(Configuration& config)
             setFeatheredRegionLen(config.grains[grain_ID], config.msp);
             /* h0_norm_top_region */
             setTopRegionLen(config.grains[grain_ID], config.msp);
+            config.grains[grain_ID].h0_norm_top_region = 1.0 - config.grains[grain_ID].h0_norm_smooth_region - config.grains[grain_ID].h0_norm_feathered_region;
             /* ref_column_rad */
             setReferenceRadius(config.grains[grain_ID], config.msp);
             /* ref_length */
@@ -113,14 +117,15 @@ void nucleation(Configuration& config)
                 (*config.domain)(config.grains[grain_ID].center.x + dx, 0, config.grains[grain_ID].center.z + dz) = grain_ID;
             }
 
-            config.grains[grain_ID].smooth_section_function = bsf::smooth::radius_bound_w;
-            config.grains[grain_ID].feathered_section_function = bsf::smooth::radius_bound_w;
-            config.grains[grain_ID].top_section_function = bsf::parabolic_top_test;
+            assignSmoothProfile(config.grains[grain_ID], config.profilesSmooth);
+            assignFeatheredProfile(config.grains[grain_ID], config.profilesFeathered);
+            assignTopProfile(config.grains[grain_ID], config.profilesTop);
 
             grain_ID++;
+            if(LogManager::Manager().logmode()) LogManager::Manager().printGrainData(config.grains[grain_ID-1]);
             if(grain_ID == config.grainsNumber) break;
         }
-    //std::copy(grains.begin(), grains.end(), std::back_inserter(config.grains));
+    
 }
 
 /* Defines grow tensor with regarding in-code parameters */
@@ -173,4 +178,49 @@ void setReferenceLength(Grain& grain, const Microstructure_Properties& msp)
 void correctRefLen(Grain& grain)
 {
     grain.ref_length = (grain.h0_norm_feathered_region + grain.h0_norm_smooth_region + grain.h0_norm_top_region);
+}
+
+void assignSmoothProfile(Grain& grain, const std::vector<SectionProfile> profiles)
+{
+    if(profiles.size() == 1)
+    {
+        grain.smooth_section_function = profiles[0].profile;
+        std::copy(profiles[0].coeff.begin(), profiles[0].coeff.end(), std::back_inserter(grain.smooth_section_function_coeff));
+    }
+    else
+    {
+        int idx = p_dist(gl_rand_gen) * profiles.size();
+         grain.smooth_section_function = profiles[idx].profile;
+        std::copy(profiles[idx].coeff.begin(), profiles[idx].coeff.end(), std::back_inserter(grain.smooth_section_function_coeff));
+    }
+}
+
+void assignFeatheredProfile(Grain& grain, const std::vector<SectionProfile> profiles)
+{
+     if(profiles.size() == 1)
+    {
+        grain.feathered_section_function = profiles[0].profile;
+        std::copy(profiles[0].coeff.begin(), profiles[0].coeff.end(), std::back_inserter(grain.feathered_section_function_coeff));
+    }
+    else
+    {
+        int idx = p_dist(gl_rand_gen) * profiles.size();
+         grain.feathered_section_function = profiles[idx].profile;
+        std::copy(profiles[idx].coeff.begin(), profiles[idx].coeff.end(), std::back_inserter(grain.feathered_section_function_coeff));
+    }
+}
+
+void assignTopProfile(Grain& grain, const std::vector<SectionProfile> profiles)
+{
+     if(profiles.size() == 1)
+    {
+        grain.top_section_function = profiles[0].profile;
+        std::copy(profiles[0].coeff.begin(), profiles[0].coeff.end(), std::back_inserter(grain.top_section_function_param));
+    }
+    else
+    {
+        int idx = p_dist(gl_rand_gen) * profiles.size();
+         grain.top_section_function = profiles[idx].profile;
+        std::copy(profiles[idx].coeff.begin(), profiles[idx].coeff.end(), std::back_inserter(grain.top_section_function_param));
+    }
 }

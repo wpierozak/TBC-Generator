@@ -2,26 +2,33 @@
 #include"CM_run.hpp"
 #include"CM_setup.hpp"
 #include"CM_generation.hpp"
+#include"CM_logs.hpp"
 
 void run(Configuration& config)
 {
     tasks_array tasks;
+    if(LogManager::Manager().logmode()) LogManager::Manager().open("Nucleation");
     nucleation(config);
+    if(LogManager::Manager().logmode()) LogManager::Manager().close("Nucleation");
+    if(LogManager::Manager().logmode()) LogManager::Manager().open("Task definition");
     defineTasks(config, tasks);
+    if(LogManager::Manager().logmode()) LogManager::Manager().close("Task definition");
+
+    if(LogManager::Manager().logmode()) LogManager::Manager().open("RUN");
     #pragma omp parallel default(none) num_threads(config.threadsNum) shared(tasks)
     {
         cm_int idx = omp_get_thread_num();
-        Task& my_task = tasks[idx];
 
-        while (my_task.input.y0 != my_task.input.domain->dimY)
+        while (tasks[idx].input.y0 != tasks[idx].input.domain->dimY)
         {
             #pragma omp barrier
-            runTask(my_task);
+            runTask(&tasks[idx]);
 
             #pragma omp barrier
 
-            my_task.input.y0 += 1;
-            my_task.input.y1 += 1;
+            tasks[idx].input.y0 += 1;
+            tasks[idx].input.y1 += 1;
         }
     }
+    if(LogManager::Manager().logmode()) LogManager::Manager().close("RUN");
 }

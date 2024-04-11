@@ -4,8 +4,9 @@
 
 struct Grain
 {
-    /* Methods */
-    void print() const;
+    Grain() = default;
+    Grain(const Grain&);
+    Grain(Grain&&) = delete;
 
     /* Grain global ID */
     cm_size ID;
@@ -34,8 +35,7 @@ struct Grain
     static const cm_int NON_VALID = __INT64_MAX__;
 
     cm_int (*smooth_section_function)(double, double, const Grain&);
-    #define SMOOTH_FUNCTION_OREDER 1
-    double smooth_section_function_coeff[SMOOTH_FUNCTION_OREDER + 1];
+    std::vector<double> smooth_section_function_coeff;
 
     /* 
         Definition of the column shape within feathered region
@@ -44,8 +44,7 @@ struct Grain
             -> feather function - determines the shape and width of the outer edge of a feather 
     */
     cm_int (*feathered_section_function)(double, double, const Grain&);
-    #define FEATHERED_FUNCTION_OREDER 3
-    double feathered_section_function_coeff[FEATHERED_FUNCTION_OREDER + 1];
+    std::vector<double> feathered_section_function_coeff;
 
     /* 
         Definition of the column shape within top region
@@ -55,8 +54,7 @@ struct Grain
             -> gradient of the "right" function 
     */
     cm_int (*top_section_function)(double, double, const Grain&);
-    #define TOP_REGION_PARAM_NUM 3
-    double top_section_function_param[TOP_REGION_PARAM_NUM];
+    std::vector<double> top_section_function_param;
     
     /* Reference column radius */
     double ref_column_rad;
@@ -72,9 +70,6 @@ void copy(Grain& dest, const Grain& src);
 /* Contains information needed to define grain properties */
 struct Microstructure_Properties
 {
-    /* Methods */
-    void print() const;
-
     /* Maximum value of angle widen of a column */
     double max_angle_of_widen;
 

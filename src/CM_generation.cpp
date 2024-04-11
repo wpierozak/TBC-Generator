@@ -30,22 +30,22 @@ cm_int singleFieldCalculation(f_vec pos, const Grain& grain)
     return Grain::NON_VALID;
 }
 
-void runTask(Task& task)
+void runTask(Task* task)
 {
     std::list<cm_state> grains_neighbourhood;
-    for(cm_pos y = task.input.y0; y < task.input.y1; y++)
-    for(cm_pos z = task.input.z0; z < task.input.z1; z++)
-    for(cm_pos x = task.input.x0; x < task.input.x1; x++)
+    for(cm_pos y = task->input.y0; y < task->input.y1; y++)
+    for(cm_pos z = task->input.z0; z < task->input.z1; z++)
+    for(cm_pos x = task->input.x0; x < task->input.x1; x++)
     {
         f_vec pos = {static_cast<double>(x), static_cast<double>(y), static_cast<double>(z)};
         cm_int bestfit = Grain::NON_VALID;
-        scanNeighbourhood(pos, *task.input.domain, grains_neighbourhood);
+        scanNeighbourhood(pos, *task->input.domain, grains_neighbourhood);
         for(cm_state grain_idx: grains_neighbourhood)
         {
-            Grain& grain = task.input.grains[grain_idx];
+            Grain& grain = task->input.grains[grain_idx];
             cm_int fit = singleFieldCalculation(pos, grain);
             if(fit >= bestfit) continue;
-            (*task.input.domain)(x,y,z) = grain_idx;
+            (*task->input.domain)(x,y,z) = grain_idx;
             bestfit = fit;
         }
     }

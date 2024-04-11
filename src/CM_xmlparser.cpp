@@ -1,6 +1,7 @@
 #include<iostream>
 #include<cmath>
 #include"CM_xmlparser.hpp"
+#include"CM_SFCreator.hpp"
 
 const std::string MAIN_NODE = "Configuration";
 const std::string DIM_X = "dimX";
@@ -42,12 +43,20 @@ const std::string MAX_LENGTH = "max_length";
 const std::string MIN_LENGTH = "min_length";
 const std::string BASE_RADIUS =  "base_radius";
 
+const std::string TOP = "top";
+const std::string FEATHERED = "feathered";
+const std::string SMOOTH = "smooth";
+const std::string PROFILE = "profile";
+const std::string PROFILE_NAME = "name";
+const std::string PROFILE_COEF = "coef";
+
 const std::string THREADS_NUMBER = "threads_number";
 
 const std::string TRUE = "true";
 const std::string FALSE = "false";
 
-Configuration* parseConfiguration(std::string filePath) {
+void parseConfiguration(std::string filePath, Configuration& configuration) {
+    configuration.inputFile = filePath;
     rapidxml::file<> xml_file(filePath.c_str());
     rapidxml::xml_document<> doc;
     doc.parse<0>(xml_file.data());
@@ -57,17 +66,11 @@ Configuration* parseConfiguration(std::string filePath) {
 
     if (!domain_node) throw std::runtime_error("Invalid XML format.");
 
+    SFCreator sfcreator;
     cm_pos dim[3];
     Neighbourhood neighbourhood;
-    std::string output_file;
-    std::string output_dir;
     BC boundry_condition;
-    cm_size grains_number;
-
-    Microstructure_Properties msp;
-
-    cm_smallsize threads_number;
-    MsFileFormat ms_file_format;
+    SectionProfile profile;
 
     rapidxml::xml_node<>* node = domain_node->first_node();
     while(node)
@@ -86,29 +89,29 @@ Configuration* parseConfiguration(std::string filePath) {
         }
         else if(OUTPUT_FILE == node->name())
         {
-            output_file = node->value();
+            configuration.outputFile = node->value();
         }
         else if(THREADS_NUMBER == node->name())
         {
-            threads_number = std::stoi(node->value());
+            configuration.threadsNum = std::stoi(node->value());
         }
         else if(OUTPUT_DIR == node->name())
         {
-            output_dir = node->value();
+            configuration.outputDir = node->value();
         }
         else if(MS_FILE_FORMAT == node->name())
         {
             std::string format = node->value();
-            if(format == MS_XYZ) ms_file_format = MsFileFormat::xyz;
-            else if(format == MS_RGB) ms_file_format = MsFileFormat::xyzrgb;
+            if(format == MS_XYZ) configuration.msFileFormat = MsFileFormat::xyz;
+            else if(format == MS_RGB) configuration.msFileFormat = MsFileFormat::xyzrgb;
         }
         else if(GRAIN_CONFIG == node->name())
         {
-            parseMicrostructureProperties(node, msp);
+            parseMicrostructureProperties(node, configuration.msp);
         }
         else if(GRAIN_NUMBER == node->name())
         {
-            grains_number = std::stoi(node->value());
+            configuration.grainsNumber = std::stoi(node->value());
         }
         else if(NEIGHBOURHOOD == node->name())
         {
@@ -122,22 +125,27 @@ Configuration* parseConfiguration(std::string filePath) {
             else if(bc == PERIODIC) boundry_condition = BC::periodic;
             else throw std::runtime_error("Invalid XML format - invalid boundry condition");
         }
+        else if(TOP == node->name())
+        {
+            parseSection(node, profile, sfcreator);
+            configuration.profilesTop.push_back(profile);
+        }
+        else if (FEATHERED == node->name())
+        {
+            parseSection(node, profile, sfcreator);
+            configuration.profilesFeathered.push_back(profile);
+        }
+        else if(SMOOTH == node->name())
+        {
+            parseSection(node, profile, sfcreator);
+            configuration.profilesSmooth.push_back(profile);
+        }
         else throw std::runtime_error("Invalid XML format - invalid node");
         node = node->next_sibling();
     }
 
-    Configuration* config = new Configuration;
-
-    config->domain = std::make_unique<Domain>(dim[0], dim[1], dim[2], neighbourhood);
-    config->outputFile = output_file;
-    config->inputFile = filePath;
-    config->threadsNum = threads_number;
-    config->grainsNumber = grains_number;
-    config->outputDir = output_dir;
-    config->msFileFormat = ms_file_format;
-    config->msp = msp;
-    config->domain->bc = boundry_condition;
-    return config; 
+    configuration.domain = std::make_unique<Domain>(dim[0], dim[1], dim[2], neighbourhood);
+    configuration.domain->bc = boundry_condition;
 }
 
 void parseMicrostructureProperties(rapidxml::xml_node<>* node, Microstructure_Properties& mscp)
@@ -235,5 +243,25 @@ void parseNeighbourhood(rapidxml::xml_node<>* node, Neighbourhood& neighbourhood
         }
         else throw std::runtime_error("N - Invalid XML format - invalid node");
         child_node = child_node->next_sibling();
+    }
+}
+
+void parseSection(rapidxml::xml_node<>* node, SectionProfile& section, SFCreator& sfcreator)
+{
+    rapidxml::xml_node<>* profile_node = node->first_node();
+    while(profile_node)
+    {
+        if(PROFILE != profile_node->name()) throw std::runtime_error("Invalid profile data");
+        rapidxml::xml_node<>* child_node = profile_node->first_node();
+        while(child_node)
+        {
+            if(child_node->name() == PROFILE_NAME)
+            {
+                section.profile = sfcreator.get(child_node->value());
+            }
+            else section.coeff.push_back(std::stod(child_node->value()));
+            child_node = child_node->next_sibling();
+        }
+        profile_node = profile_node->next_sibling();
     }
 }
