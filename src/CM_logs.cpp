@@ -84,7 +84,7 @@ void LogManager::printGrainData(const Grain& grain)
 
 void LogManager::printConfigData(const Configuration& config)
 {
-    open("CONFIGURATION");
+    open("Configuration");
    // _outstream << "Input file: " << config.inputFile << std::endl;
     _outstream << "Output dir" << config.outputDir << std::endl;
     _outstream << "Number of threads to be used: " << config.threadsNum << std::endl;
@@ -93,6 +93,7 @@ void LogManager::printConfigData(const Configuration& config)
     else _outstream << "not allocated";
     _outstream << "Grains number: " << config.grainsNumber << std::endl;
     printMspData(config.msp);
+    close("Configuration");
 }
 
 void LogManager::printMspData(const Microstructure_Properties& msp)
@@ -110,4 +111,11 @@ void LogManager::printMspData(const Microstructure_Properties& msp)
     _outstream << "\tMinimum Column Length: " << msp.min_length << std::endl;
     _outstream << "\tMaximum Column Length: " << msp.max_length << std::endl;
     _outstream << "\tMaximum Reference Radius: " << msp.max_reference_radius << std::endl;
+}
+
+void LogManager::exception(std::string mess)
+{
+    open("Exception");
+    _outstream << "Message: " << mess << std::endl;
+    close("Exception");
 }

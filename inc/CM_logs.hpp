@@ -27,6 +27,8 @@ class LogManager
     bool logmode() { return _logmode; }
     void changeMode(bool mode) { _logmode = mode; }
 
+    void exception(std::string);
+
     private:
 
     LogManager();
