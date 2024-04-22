@@ -93,6 +93,7 @@ void nucleation(Configuration& config)
             config.grains[grain_ID].ID = grain_ID;
             /* Growth tensor */
             setGrowthTensor(config.grains[grain_ID], config.msp);
+            setRVector(config.grains[grain_ID]);
             /* cos_phi_ub */
             setMaxWidenAngle(config.grains[grain_ID], config.msp);
             /* h0_norm_smooth_region */
@@ -184,14 +185,14 @@ void assignSmoothProfile(Grain& grain, const std::vector<SectionProfile> profile
 {
     if(profiles.size() == 1)
     {
-        grain.smooth_section_function = profiles[0].profile;
-        std::copy(profiles[0].coeff.begin(), profiles[0].coeff.end(), std::back_inserter(grain.smooth_section_function_coeff));
+        grain.s_profile = profiles[0].profile;
+        std::copy(profiles[0].coeff.begin(), profiles[0].coeff.end(), std::back_inserter(grain.s_param));
     }
     else
     {
         int idx = p_dist(gl_rand_gen) * profiles.size();
-         grain.smooth_section_function = profiles[idx].profile;
-        std::copy(profiles[idx].coeff.begin(), profiles[idx].coeff.end(), std::back_inserter(grain.smooth_section_function_coeff));
+         grain.s_profile = profiles[idx].profile;
+        std::copy(profiles[idx].coeff.begin(), profiles[idx].coeff.end(), std::back_inserter(grain.s_param));
     }
 }
 
@@ -199,14 +200,14 @@ void assignFeatheredProfile(Grain& grain, const std::vector<SectionProfile> prof
 {
      if(profiles.size() == 1)
     {
-        grain.feathered_section_function = profiles[0].profile;
-        std::copy(profiles[0].coeff.begin(), profiles[0].coeff.end(), std::back_inserter(grain.feathered_section_function_coeff));
+        grain.f_profile = profiles[0].profile;
+        std::copy(profiles[0].coeff.begin(), profiles[0].coeff.end(), std::back_inserter(grain.f_param));
     }
     else
     {
         int idx = p_dist(gl_rand_gen) * profiles.size();
-         grain.feathered_section_function = profiles[idx].profile;
-        std::copy(profiles[idx].coeff.begin(), profiles[idx].coeff.end(), std::back_inserter(grain.feathered_section_function_coeff));
+         grain.f_profile = profiles[idx].profile;
+        std::copy(profiles[idx].coeff.begin(), profiles[idx].coeff.end(), std::back_inserter(grain.f_param));
     }
 }
 
@@ -214,13 +215,20 @@ void assignTopProfile(Grain& grain, const std::vector<SectionProfile> profiles)
 {
      if(profiles.size() == 1)
     {
-        grain.top_section_function = profiles[0].profile;
-        std::copy(profiles[0].coeff.begin(), profiles[0].coeff.end(), std::back_inserter(grain.top_section_function_param));
+        grain.t_profile = profiles[0].profile;
+        std::copy(profiles[0].coeff.begin(), profiles[0].coeff.end(), std::back_inserter(grain.t_param));
     }
     else
     {
         int idx = p_dist(gl_rand_gen) * profiles.size();
-         grain.top_section_function = profiles[idx].profile;
-        std::copy(profiles[idx].coeff.begin(), profiles[idx].coeff.end(), std::back_inserter(grain.top_section_function_param));
+         grain.t_profile = profiles[idx].profile;
+        std::copy(profiles[idx].coeff.begin(), profiles[idx].coeff.end(), std::back_inserter(grain.t_param));
     }
+}
+
+void setRVector(Grain& grain)
+{
+    f_vec i = {1,0,0};
+    grain.r_vector = crossProduct(i, grain.growth_tensor);
+    normalize(grain.r_vector);
 }

@@ -129,16 +129,19 @@ void parseConfiguration(std::string filePath, Configuration& configuration) {
         {
             parseSection(node, profile, sfcreator);
             configuration.profilesTop.push_back(profile);
+            profile.coeff.clear();
         }
         else if (FEATHERED == node->name())
         {
             parseSection(node, profile, sfcreator);
             configuration.profilesFeathered.push_back(profile);
+            profile.coeff.clear();
         }
         else if(SMOOTH == node->name())
         {
             parseSection(node, profile, sfcreator);
             configuration.profilesSmooth.push_back(profile);
+            profile.coeff.clear();
         }
         else throw std::runtime_error("Invalid XML format - invalid node");
         node = node->next_sibling();

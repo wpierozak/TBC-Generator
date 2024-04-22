@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <Configuration>
 
-    <dimX>100</dimX>
-    <dimY>400</dimY>
-    <dimZ>100</dimZ>
+    <dimX>200</dimX>
+    <dimY>500</dimY>
+    <dimZ>200</dimZ>
 
     <output_dir>../res/single_column_test</output_dir>
 
@@ -16,7 +16,7 @@
         <x1>1</x1>
 
         <y0>-1</y0>
-        <y1>0</y1>
+        <y1>-1</y1>
 
         <z0>-1</z0>
         <z1>1</z1>
@@ -25,31 +25,31 @@
     <grains_number>20</grains_number>
 
     <Grain>    
-        <ref_radius>10</ref_radius>
+        <ref_radius>15</ref_radius>
 
         <!-- In degrees -->
-        <max_tilt>2</max_tilt>
+        <max_tilt>4</max_tilt>
 
         <!-- In degrees -->
-        <min_tilt>-2</min_tilt>
+        <min_tilt>-4</min_tilt>
 
         <!-- In degrees -->
         <max_angle_of_widen>4</max_angle_of_widen>
 
         <!-- As % of total length -->
-        <smooth_region_length>0.6</smooth_region_length>
+        <smooth_region_length>0.4</smooth_region_length>
 
         <!-- In % of total length -->
         <smooth_region_length_var>0.05</smooth_region_length_var>
 
         <!-- As % of total length -->
-        <feathered_region_length>0.2</feathered_region_length>
+        <feathered_region_length>0.4</feathered_region_length>
 
         <!-- In % of total length -->
         <feathered_region_length_var>0.05</feathered_region_length_var>
 
         <!-- As % of total length -->
-        <top_region_length>0.2</top_region_length>
+        <top_region_length>0.3</top_region_length>
 
         <!-- In % of total length -->
         <top_region_length_var>0.05</top_region_length_var>
@@ -62,15 +62,20 @@
     <top>
         <profile>
         <name>parabolic_profile_w</name>
-        <a>-0.25</a>
+        <a>-0.5</a>
         <b>0</b>
-        <c>0.25</c>
+        <c>0.5</c>
         </profile>
     </top>
 
     <feathered>
         <profile>
-            <name>radius_bound_w</name>
+            <name>multi_feather_w</name>
+            <p>180</p>
+            <p>30</p>
+            <p>0.3</p>
+            <p>1.0</p>
+            <p>5</p>
         </profile>
     </feathered>
 

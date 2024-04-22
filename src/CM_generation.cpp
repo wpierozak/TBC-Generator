@@ -12,19 +12,21 @@ cm_int singleFieldCalculation(f_vec pos, const Grain& grain)
 
     f_vec rpv = { pos.x - grain.center.x,  pos.y - grain.center.y, pos.z - grain.center.z};
 
-    double h = (growth_tensor.x * rpv.x + growth_tensor.y * rpv.y + growth_tensor.z * rpv.z);
+    double h = dotProduct(rpv, growth_tensor); 
     double r = crossProduct(rpv, growth_tensor).norm();
+    f_vec hg = growth_tensor*h;
+    double phi = acos(dotProduct(substract(pos, hg), grain.r_vector)/((r!=0)?r:1));
     if( h <= grain.h0_norm_smooth_region * grain.ref_length)
     {
-        return grain.smooth_section_function(h,r, grain);
+        return grain.s_profile(h,r, phi, grain);
     }
-    else if( h <= (grain.h0_norm_smooth_region + grain.h0_norm_feathered_region) * grain.ref_length)
+    else if( h <= (1.0 - grain.h0_norm_top_region) * grain.ref_length)
     {
-        return grain.feathered_section_function(h, r, grain);
+        return grain.f_profile(h, r, phi, grain);
     }
-    else if( h <= (grain.h0_norm_smooth_region + grain.h0_norm_feathered_region + grain.h0_norm_top_region)* grain.ref_length)
+    else if( h <= grain.ref_length)
     {
-        return grain.top_section_function(h, r, grain);
+        return grain.t_profile(h, r, phi, grain);
     }
 
     return Grain::NON_VALID;

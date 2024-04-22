@@ -103,4 +103,6 @@ build: $(OBJ_DIR)/CM_main.o $(LIB_DIR)/cmlib.a
 	$(LOADER) $(OMP) $(OBJ_DIR)/CM_main.o $(LIB_DIR)/cmlib.a -o $(BIN_DIR)/clmgen
 
 clean:
-	rm $(OBJ_DIR)/clmgen
+	rm $(OBJ_DIR)/cm/*
+	rm $(OBJ_DIR)/CM_main.o
+	rm $(LIB_DIR)/cmlib.a

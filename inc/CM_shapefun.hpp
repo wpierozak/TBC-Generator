@@ -1,19 +1,26 @@
 #pragma once
 #include"CM_mstypes.hpp"
 
-typedef cm_int (*sfptr)(double, double, const Grain&);
+typedef SHAPE_FUNCTION((*sfptr));
 
 namespace bsf
 {
     namespace smooth
     {
-        cm_int radius_bound(double h, double r, const Grain& grain);
-        cm_int radius_bound_w(double h, double r, const Grain& grain);
+        SHAPE_FUNCTION(radius_bound);
+        SHAPE_FUNCTION(radius_bound_w);
+    }
+
+    namespace feathered
+    {
+        SHAPE_FUNCTION(feather);
+        SHAPE_FUNCTION(feather_w);
+        SHAPE_FUNCTION(multi_feather_w);
     }
 
     namespace top
     {
-        cm_int parabolic_profile(double h, double r, const Grain& grain);
-        cm_int parabolic_profile_w(double h, double r, const Grain& grain);
+        SHAPE_FUNCTION(parabolic_profile);
+        SHAPE_FUNCTION(parabolic_profile_w);
     }
 }

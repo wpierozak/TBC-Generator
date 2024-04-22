@@ -7,6 +7,9 @@ SFCreator::SFCreator()
     _profiles.emplace("radius_bound_w", bsf::smooth::radius_bound_w);
     _profiles.emplace("parabolic_profile", bsf::top::parabolic_profile);
     _profiles.emplace("parabolic_profile_w", bsf::top::parabolic_profile_w);
+    _profiles.emplace("feather", bsf::feathered::feather);
+    _profiles.emplace("feather_w", bsf::feathered::feather_w);
+    _profiles.emplace("multi_feather_w", bsf::feathered::multi_feather_w);
 }
 
 void SFCreator::setParameters(std::list<std::string> coef, double* dest, int size)

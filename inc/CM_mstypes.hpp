@@ -2,6 +2,9 @@
 #include<vector>
 #include"CM_basictypes.hpp"
 
+#define SHAPE_FUNCTION(name) \
+cm_int name(double h, double r, double phi, const Grain& grain) \
+
 struct Grain
 {
     Grain() = default;
@@ -16,6 +19,8 @@ struct Grain
 
     /* Growth tensor' coordinates */
     f_vec growth_tensor;
+
+    f_vec r_vector;
 
     /* Reference bound for the angle between growth vector and relative position vector, stored as its cos value */
     double angle_of_widen;
@@ -34,8 +39,8 @@ struct Grain
 
     static const cm_int NON_VALID = __INT64_MAX__;
 
-    cm_int (*smooth_section_function)(double, double, const Grain&);
-    std::vector<double> smooth_section_function_coeff;
+    cm_int (*s_profile)(double, double, double, const Grain&);
+    std::vector<double> s_param;
 
     /* 
         Definition of the column shape within feathered region
@@ -43,8 +48,8 @@ struct Grain
             -> gap function - determines the width of gap between main column and a feather and an inner edge of a feather 
             -> feather function - determines the shape and width of the outer edge of a feather 
     */
-    cm_int (*feathered_section_function)(double, double, const Grain&);
-    std::vector<double> feathered_section_function_coeff;
+    cm_int (*f_profile)(double, double, double, const Grain&);
+    std::vector<double> f_param;
 
     /* 
         Definition of the column shape within top region
@@ -53,8 +58,8 @@ struct Grain
             -> connecting point coordinate
             -> gradient of the "right" function 
     */
-    cm_int (*top_section_function)(double, double, const Grain&);
-    std::vector<double> top_section_function_param;
+    cm_int (*t_profile)(double, double, double, const Grain&);
+    std::vector<double> t_param;
     
     /* Reference column radius */
     double ref_column_rad;

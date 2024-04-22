@@ -28,3 +28,5 @@ void assignFeatheredProfile(Grain& grain, const std::vector<SectionProfile> prof
 void assignTopProfile(Grain& grain, const std::vector<SectionProfile> profiles);
 
 void correctRefLen(Grain& grain);
+
+void setRVector(Grain& grain);

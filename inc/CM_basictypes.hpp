@@ -38,6 +38,11 @@ struct f_vec
 
 void normalize(f_vec& vec);
 
+inline double dotProduct(const f_vec& a, const f_vec& b)
+{
+    return (a.x * b.x + a.y * b.y + a.z * b.z);
+}
+
 inline f_vec crossProduct(const f_vec& a, const f_vec& b)
 {
     return {a.y*b.z - a.z*b.y, a.z*b.x - a.x*b.z, a.x*b.y - a.y*b.x};
