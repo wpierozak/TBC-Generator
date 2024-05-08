@@ -5,6 +5,8 @@
 #include"BMP/libbmp.h"
 #include"BMP/EasyBMP.h"
 
+#define BUFFER_LINES_NUMBER 1000
+
 cm_colorampl* defineColors(cm_size grainNum)
 {
     cm_colorampl* colorsArray = new cm_colorampl[3*grainNum];
@@ -82,10 +84,13 @@ void saveMicrostructureFile(Configuration* config)
     file << nonVoid << std::endl << std::endl;
     size_t step = cm_int(config->domain->dimX) * cm_int(config->domain->dimY) * cm_int(config->domain->dimZ) / 10;
     cm_int counter = 0; 
-
+    cm_int line_counter=0;
+    std::string buffer;
     switch (config->msFileFormat)
     {
     case MsFileFormat::xyz:
+    {
+        buffer.resize(nonVoid*10);
         for(cm_pos y = 0; y < config->domain->dimY; y++)
         for(cm_pos z = 0; z < config->domain->dimZ; z++)
         for(cm_pos x = 0; x < config->domain->dimX; x++)
@@ -98,9 +103,13 @@ void saveMicrostructureFile(Configuration* config)
             }
             if((*config->domain)(x, y, z) != Domain::VOID)
             {
-                file << x << ' ' << y << ' ' << z << ' ' << (*config->domain)(x, y, z) << std::endl;
+                //file << x << ' ' << y << ' ' << z << ' ' << (*config->domain)(x, y, z) << std::endl;
+                buffer += std::to_string(x) + ' ' + std::to_string(y) + ' ' + std::to_string(z) + ' ' + std::to_string((*config->domain)(x, y, z));
+                buffer += "\n";
             }
+         
         }
+        file.write(buffer.c_str(), buffer.size()-1);
         break;
 
     case MsFileFormat::xyzrgb:
@@ -114,6 +123,7 @@ void saveMicrostructureFile(Configuration* config)
                 colorsArray[(*config->domain)(x, y, z) + 1] << colorsArray[(*config->domain)(x, y, z) + 2] << (*config->domain)(x, y, z) << std::endl;
             }
         }
+    }
         break;
     
     default:
