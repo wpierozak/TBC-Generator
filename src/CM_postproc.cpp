@@ -1,5 +1,8 @@
 #include<iostream>
 #include<fstream>
+#include<tuple>
+#include<set>
+#include<algorithm>
 #include"CM_logs.hpp"
 #include"CM_postproc.hpp"
 #include"BMP/libbmp.h"
@@ -7,17 +10,53 @@
 
 #define BUFFER_LINES_NUMBER 1000
 
+std::tuple<cm_colorampl, cm_colorampl, cm_colorampl> generateRandomColor() {
+    return std::make_tuple(static_cast<cm_colorampl>(std::rand() % 256),
+                           static_cast<cm_colorampl>(std::rand() % 256),
+                           static_cast<cm_colorampl>(std::rand() % 256));
+}
+
+cm_colorampl* defineColors(cm_size grainNum) {
+    std::srand(static_cast<unsigned>(std::time(0))); // Seed the random generator
+    cm_colorampl* colorsArray = new cm_colorampl[3 * grainNum];
+    std::set<std::tuple<cm_colorampl, cm_colorampl, cm_colorampl>> uniqueColors;
+    for (cm_size i = 0; i < grainNum; ++i) {
+        std::tuple<cm_colorampl, cm_colorampl, cm_colorampl> color;
+        do {
+            color = generateRandomColor();
+        } while (uniqueColors.find(color) != uniqueColors.end());
+
+        uniqueColors.insert(color);
+        colorsArray[i * 3] = std::get<0>(color);
+        colorsArray[i * 3 + 1] = std::get<1>(color);
+        colorsArray[i * 3 + 2] = std::get<2>(color);
+    }
+
+    return colorsArray;
+}
+/*
 cm_colorampl* defineColors(cm_size grainNum)
 {
     cm_colorampl* colorsArray = new cm_colorampl[3*grainNum];
     for(int i = 0; i < grainNum; i++)
     {
-        colorsArray[i*3] = std::rand();
-        colorsArray[i*3+1] = std::rand();
-        colorsArray[i*3+2] = std::rand();
+        colorsArray[i*3] = std::rand()%256;
+        colorsArray[i*3+1] = std::rand()%256;
+        colorsArray[i*3+2] = std::rand()%256;
+        for(int j = 0; j < i; j++)
+        {
+            if(colorsArray[i*3] == colorsArray[j*3] && 
+                colorsArray[i*3+1] == colorsArray[j*3+2] &&
+                colorsArray[i*3+2] == colorsArray[j*3+2])
+                {
+                    i -= 1;
+                    break;
+                }
+        }
     }
     return colorsArray;
 }
+*/
 
 void createBitmap(Configuration& config)
 {

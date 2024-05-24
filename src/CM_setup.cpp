@@ -20,8 +20,9 @@ void defineTasks(Configuration& config, tasks_array& tasks)
     tasks.clear();
     tasks.resize(threadsNumber);
 
-    cm_pos dx = (config.domain->dimX + threadsNumber - 1)/ceil(sqrt(threadsNumber));
-    cm_pos dz = (config.domain->dimZ + threadsNumber - 1)/floor(sqrt(threadsNumber));
+    cm_pos dx = (config.domain->dimX + sqrt(threadsNumber) - 1)/ceil(sqrt(threadsNumber));
+    cm_pos dz = (config.domain->dimZ + sqrt(threadsNumber) - 1)/floor(sqrt(threadsNumber));
+    if(config.domain->dimZ == 1) dx = (config.domain->dimX + threadsNumber - 1 )/(threadsNumber);
     cm_pos y0 = 1;
     cm_pos y1 = 2;
 
@@ -105,8 +106,19 @@ void nucleation(Configuration& config)
 
             config.grains[grain_ID].resolution = config.msp.resolution;
 
-            for(cm_pos dz = -config.grains[grain_ID].ref_column_rad; config.grains[grain_ID].center.z + dz < dimZ && dz < config.grains[grain_ID].ref_column_rad; dz++)
-            for(cm_pos dx = -config.grains[grain_ID].ref_column_rad; config.grains[grain_ID].center.x + dx < dimX && dx < config.grains[grain_ID].ref_column_rad; dx++)
+            grain_ID++;
+            if(LogManager::Manager().logmode()) LogManager::Manager().printGrainData(config.grains[grain_ID-1]);
+            if(grain_ID == config.grainsNumber) break;
+        }
+
+    std::vector<int> idxs;
+    for(int i = 0; i < config.grainsNumber; i++) idxs.push_back(i);
+    std::minstd_rand minstd(std::random_device{}());
+    std::shuffle(idxs.begin(), idxs.end(), minstd);
+    for(int grain_ID: idxs)
+    {
+        for(cm_pos dz = -config.grains[grain_ID].ref_column_rad; config.grains[grain_ID].center.z + dz < dimZ && dz < config.grains[grain_ID].ref_column_rad; dz++)
+        for(cm_pos dx = -config.grains[grain_ID].ref_column_rad; config.grains[grain_ID].center.x + dx < dimX && dx < config.grains[grain_ID].ref_column_rad; dx++)
             {
                 if(dx*dx + dz*dz > pow(config.grains[grain_ID].ref_column_rad, 2)) continue;
                 if(config.grains[grain_ID].center.x + dx < 0 || config.grains[grain_ID].center.x + dx > dimX ||
@@ -114,12 +126,7 @@ void nucleation(Configuration& config)
                 if((*config.domain)(config.grains[grain_ID].center.x + dx, 0, config.grains[grain_ID].center.z + dz) == Domain::VOID)
                 (*config.domain)(config.grains[grain_ID].center.x + dx, 0, config.grains[grain_ID].center.z + dz) = grain_ID;
             }
-
-            grain_ID++;
-            if(LogManager::Manager().logmode()) LogManager::Manager().printGrainData(config.grains[grain_ID-1]);
-            if(grain_ID == config.grainsNumber) break;
-        }
-    
+    }
 }
 
 /* Defines grow tensor with regarding in-code parameters */

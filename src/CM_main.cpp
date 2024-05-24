@@ -29,6 +29,7 @@ int main(int argc, const char** argv)
         if(LogManager::Manager().logmode()) LogManager::Manager().open("Results saving");
         if(LogManager::Manager().logmode()) LogManager::Manager().timeStart("File generation");
         saveMicrostructureFile(&config);
+        if(config.bitmaps) createBitmap(config);
         if(LogManager::Manager().logmode()) LogManager::Manager().recordTimeElapsed("File generation");
         if(LogManager::Manager().logmode()) LogManager::Manager().close("Results saving");
     }

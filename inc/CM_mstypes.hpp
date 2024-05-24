@@ -31,7 +31,7 @@ struct Grain
     double top_parabola_coeff;
     Resolution resolution;
 
-    static const cm_int NON_VALID = __INT64_MAX__;
+    static const cm_int NON_VALID = 0;
     
     /* Reference column radius */
     double ref_column_rad;

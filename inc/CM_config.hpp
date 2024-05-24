@@ -28,4 +28,6 @@ struct Configuration
     std::string inputFile;
     std::string outputDir;
     MsFileFormat msFileFormat;
+
+    bool bitmaps{false};
 };

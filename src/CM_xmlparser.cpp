@@ -31,6 +31,7 @@ const std::string GRAIN_NUMBER = "grains_number";
 
 const std::string THREADS_NUMBER = "threads_number";
 
+const std::string BITMAPS = "bitmaps";
 const std::string TRUE = "true";
 const std::string FALSE = "false";
 
@@ -112,6 +113,11 @@ void parseConfiguration(std::string filePath, Configuration& configuration) {
             else if(bc == BOUNCY) boundry_condition = BC::bouncy;
             else if(bc == PERIODIC) boundry_condition = BC::periodic;
             else throw std::runtime_error("Invalid XML format - invalid boundry condition");
+        }
+        else if(BITMAPS == node->name())
+        {
+            if(node->value() == TRUE) configuration.bitmaps = true;
+            else configuration.bitmaps = false;
         }
         else throw std::runtime_error("Invalid XML format - invalid node");
         node = node->next_sibling();
