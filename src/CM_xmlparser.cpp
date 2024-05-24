@@ -1,7 +1,6 @@
 #include<iostream>
 #include<cmath>
 #include"CM_xmlparser.hpp"
-#include"CM_SFCreator.hpp"
 
 const std::string MAIN_NODE = "Configuration";
 const std::string DIM_X = "dimX";
@@ -29,31 +28,22 @@ const std::string MS_RGB = "xyzrgb";
 
 const std::string GRAIN_CONFIG = "Grain";
 const std::string GRAIN_NUMBER = "grains_number";
-const std::string MAX_COLUMN_TILT = "max_tilt";
-const std::string MIN_COLUMN_TILT = "min_tilt";
-const std::string REFERENCE_RADIUS = "ref_radius";
-const std::string MAX_ANGLE_OF_WIDEN = "max_angle_of_widen";
-const std::string SMOOTH_REGION_LENGTH = "smooth_region_length";
-const std::string SMOOTH_REGION_LENGTH_VAR = "smooth_region_length_var";
-const std::string FEATHERED_REGION_LENGTH = "feathered_region_length";
-const std::string FEATHERED_REGION_LENGTH_VAR = "feathered_region_length_var";
-const std::string TOP_REGION_LENGTH = "top_region_length";
-const std::string TOP_REGION_LENGTH_VAR = "top_region_length_var";
-const std::string MAX_LENGTH = "max_length";
-const std::string MIN_LENGTH = "min_length";
-const std::string BASE_RADIUS =  "base_radius";
-
-const std::string TOP = "top";
-const std::string FEATHERED = "feathered";
-const std::string SMOOTH = "smooth";
-const std::string PROFILE = "profile";
-const std::string PROFILE_NAME = "name";
-const std::string PROFILE_COEF = "coef";
 
 const std::string THREADS_NUMBER = "threads_number";
 
 const std::string TRUE = "true";
 const std::string FALSE = "false";
+
+const std::string MEAN = "mean";
+const std::string STD = "std";
+const std::string MAX = "max";
+const std::string MIN = "min";
+const std::string LENGTH = "length";
+const std::string RADIUS = "radius";
+const std::string WIDEN = "widen";
+const std::string TILT = "tilt";
+const std::string TOP_FRAC = "top_frac";
+const std::string RESOLUTION = "resolution";
 
 void parseConfiguration(std::string filePath, Configuration& configuration) {
     configuration.inputFile = filePath;
@@ -66,11 +56,9 @@ void parseConfiguration(std::string filePath, Configuration& configuration) {
 
     if (!domain_node) throw std::runtime_error("Invalid XML format.");
 
-    SFCreator sfcreator;
     cm_pos dim[3];
     Neighbourhood neighbourhood;
     BC boundry_condition;
-    SectionProfile profile;
 
     rapidxml::xml_node<>* node = domain_node->first_node();
     while(node)
@@ -125,24 +113,6 @@ void parseConfiguration(std::string filePath, Configuration& configuration) {
             else if(bc == PERIODIC) boundry_condition = BC::periodic;
             else throw std::runtime_error("Invalid XML format - invalid boundry condition");
         }
-        else if(TOP == node->name())
-        {
-            parseSection(node, profile, sfcreator);
-            configuration.profilesTop.push_back(profile);
-            profile.coeff.clear();
-        }
-        else if (FEATHERED == node->name())
-        {
-            parseSection(node, profile, sfcreator);
-            configuration.profilesFeathered.push_back(profile);
-            profile.coeff.clear();
-        }
-        else if(SMOOTH == node->name())
-        {
-            parseSection(node, profile, sfcreator);
-            configuration.profilesSmooth.push_back(profile);
-            profile.coeff.clear();
-        }
         else throw std::runtime_error("Invalid XML format - invalid node");
         node = node->next_sibling();
     }
@@ -157,57 +127,15 @@ void parseMicrostructureProperties(rapidxml::xml_node<>* node, Microstructure_Pr
 
     while(child_node)
     {
-        if(REFERENCE_RADIUS == child_node->name())
+        if(LENGTH == child_node->name()) mscp.length = parseGaussian(child_node);
+        else if(RADIUS == child_node->name()) mscp.radius = parseGaussian(child_node);
+        else if(TILT == child_node->name()) mscp.tilt = parseGaussian(child_node);
+        else if(WIDEN == child_node->name()) mscp.widen = parseGaussian(child_node);
+        else if(TOP_FRAC == child_node->name()) mscp.top_frac = parseGaussian(child_node);
+        else if(RESOLUTION == child_node->name())
         {
-            mscp.max_reference_radius = std::stoi(child_node->value());
-        }
-        else if(MAX_COLUMN_TILT == child_node->name())
-        {
-            mscp.max_tilt = std::stoi(child_node->value());
-        }
-        else if(MIN_COLUMN_TILT == child_node->name())
-        {
-            mscp.min_tilt = std::stoi(child_node->value());
-        }
-        else if(MAX_COLUMN_TILT == child_node->name())
-        {
-            mscp.max_tilt = std::stoi(child_node->value());
-        }
-        else if(SMOOTH_REGION_LENGTH == child_node->name())
-        {
-            mscp.smooth_region_length = std::stod(child_node->value());
-        }
-        else if(SMOOTH_REGION_LENGTH_VAR == child_node->name())
-        {
-            mscp.smooth_region_length_var = std::stod(child_node->value());
-        }
-        else if(FEATHERED_REGION_LENGTH == child_node->name())
-        {
-            mscp.feathered_region_length = std::stod(child_node->value());
-        }
-        else if(FEATHERED_REGION_LENGTH_VAR == child_node->name())
-        {
-            mscp.feathered_region_length_var = std::stod(child_node->value());
-        }
-        else if(TOP_REGION_LENGTH == child_node->name())
-        {
-            mscp.top_region_length = std::stod(child_node->value());
-        }
-        else if(TOP_REGION_LENGTH_VAR == child_node->name())
-        {
-            mscp.top_region_length_var = std::stod(child_node->value());
-        }
-        else if(MIN_LENGTH == child_node->name())
-        {
-            mscp.min_length = std::stoi(child_node->value());
-        }
-        else if(MAX_LENGTH == child_node->name())
-        {
-            mscp.max_length = std::stoi(child_node->value());
-        }
-        else if(MAX_ANGLE_OF_WIDEN == child_node->name())
-        {
-            mscp.max_angle_of_widen = std::stoi(child_node->value());
+            if(child_node->value() == "HIGH") mscp.resolution = Resolution::HIGH;
+            else mscp.resolution = Resolution::LOW;
         }
         else throw std::runtime_error("MSP - Invalid XML format - invalid node");
         child_node = child_node->next_sibling();
@@ -249,22 +177,30 @@ void parseNeighbourhood(rapidxml::xml_node<>* node, Neighbourhood& neighbourhood
     }
 }
 
-void parseSection(rapidxml::xml_node<>* node, SectionProfile& section, SFCreator& sfcreator)
+std::shared_ptr<GaussianDistr> parseGaussian(rapidxml::xml_node<>* node)
 {
-    rapidxml::xml_node<>* profile_node = node->first_node();
-    while(profile_node)
+    double mean, std;
+    double min = 0.0; double max = 0.0;
+    auto child_node = node->first_node();
+    while(child_node)
     {
-        if(PROFILE != profile_node->name()) throw std::runtime_error("Invalid profile data");
-        rapidxml::xml_node<>* child_node = profile_node->first_node();
-        while(child_node)
+        if(child_node->name() == MEAN)
         {
-            if(child_node->name() == PROFILE_NAME)
-            {
-                section.profile = sfcreator.get(child_node->value());
-            }
-            else section.coeff.push_back(std::stod(child_node->value()));
-            child_node = child_node->next_sibling();
+            mean = std::stod(child_node->value());
         }
-        profile_node = profile_node->next_sibling();
+        else if(child_node->name() == STD)
+        {
+            std = std::stod(child_node->value());
+        }
+        else if(child_node->name() == MIN)
+        {
+            min = std::stod(child_node->value());
+        }
+        else if(child_node->name() == MAX)
+        {
+            max = std::stod(child_node->value());
+        }
+        child_node = child_node->next_sibling();
     }
+    return std::make_shared<GaussianDistr>(mean, std, min, max);
 }

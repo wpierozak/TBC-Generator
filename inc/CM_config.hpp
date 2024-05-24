@@ -2,8 +2,8 @@
 #include<iostream>
 #include"CM_domain.hpp"
 #include"CM_mstypes.hpp"
-#include"CM_shapefun.hpp"
 
+/*
 struct SectionProfile
 {
     SectionProfile() = default;
@@ -11,6 +11,7 @@ struct SectionProfile
     sfptr profile;
     std::vector<double> coeff;
 };
+*/
 
 struct Configuration
 {
@@ -20,9 +21,6 @@ struct Configuration
     cm_size grainsNumber;
 
     Microstructure_Properties msp;
-    std::vector<SectionProfile> profilesSmooth;
-    std::vector<SectionProfile> profilesFeathered;
-    std::vector<SectionProfile> profilesTop;
 
     cm_smallsize threadsNum;
 
@@ -30,5 +28,4 @@ struct Configuration
     std::string inputFile;
     std::string outputDir;
     MsFileFormat msFileFormat;
-
 };

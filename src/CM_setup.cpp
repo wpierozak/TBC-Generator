@@ -5,7 +5,6 @@
 #include<ctime>
 #include<random>
 #include"CM_setup.hpp"
-#include"CM_shapefun.hpp"
 #include"CM_logs.hpp"
 
 /* Global variables for random number generation in the grain set up process */
@@ -15,7 +14,7 @@ std::uniform_real_distribution<double> p_dist(0, 1);
 std::normal_distribution<double> n_dist(0.7,0.2);
 
 
-void defineTasks(const Configuration& config, tasks_array& tasks)
+void defineTasks(Configuration& config, tasks_array& tasks)
 {
     int threadsNumber = config.threadsNum;
     tasks.clear();
@@ -94,19 +93,17 @@ void nucleation(Configuration& config)
             /* Growth tensor */
             setGrowthTensor(config.grains[grain_ID], config.msp);
             setRVector(config.grains[grain_ID]);
+             /* ref_length */
+            setReferenceLength(config.grains[grain_ID], config.msp);
             /* cos_phi_ub */
             setMaxWidenAngle(config.grains[grain_ID], config.msp);
-            /* h0_norm_smooth_region */
-            setSmoothRegionLen(config.grains[grain_ID], config.msp);
-            /* h0_norm_feathered_region */
-            setFeatheredRegionLen(config.grains[grain_ID], config.msp);
             /* h0_norm_top_region */
             setTopRegionLen(config.grains[grain_ID], config.msp);
-            config.grains[grain_ID].h0_norm_top_region = 1.0 - config.grains[grain_ID].h0_norm_smooth_region - config.grains[grain_ID].h0_norm_feathered_region;
             /* ref_column_rad */
             setReferenceRadius(config.grains[grain_ID], config.msp);
-            /* ref_length */
-            setReferenceLength(config.grains[grain_ID], config.msp);
+           
+
+            config.grains[grain_ID].resolution = config.msp.resolution;
 
             for(cm_pos dz = -config.grains[grain_ID].ref_column_rad; config.grains[grain_ID].center.z + dz < dimZ && dz < config.grains[grain_ID].ref_column_rad; dz++)
             for(cm_pos dx = -config.grains[grain_ID].ref_column_rad; config.grains[grain_ID].center.x + dx < dimX && dx < config.grains[grain_ID].ref_column_rad; dx++)
@@ -118,10 +115,6 @@ void nucleation(Configuration& config)
                 (*config.domain)(config.grains[grain_ID].center.x + dx, 0, config.grains[grain_ID].center.z + dz) = grain_ID;
             }
 
-            assignSmoothProfile(config.grains[grain_ID], config.profilesSmooth);
-            assignFeatheredProfile(config.grains[grain_ID], config.profilesFeathered);
-            assignTopProfile(config.grains[grain_ID], config.profilesTop);
-
             grain_ID++;
             if(LogManager::Manager().logmode()) LogManager::Manager().printGrainData(config.grains[grain_ID-1]);
             if(grain_ID == config.grainsNumber) break;
@@ -130,13 +123,10 @@ void nucleation(Configuration& config)
 }
 
 /* Defines grow tensor with regarding in-code parameters */
-void setGrowthTensor(Grain& grain, const Microstructure_Properties& msp)
+void setGrowthTensor(Grain& grain, Microstructure_Properties& msp)
 {
-    std::minstd_rand gen(std::random_device{}());
-    std::uniform_real_distribution<> rand_angle(msp.min_tilt * M_PI / 180.0, msp.max_tilt * M_PI / 180.0);
-
-    double xy_angle = rand_angle(gen);
-    double zy_angle = rand_angle(gen);
+    double xy_angle = radians(msp.tilt->draw());
+    double zy_angle = radians(msp.tilt->draw());
 
     grain.growth_tensor.x = sin(xy_angle);
     grain.growth_tensor.z = sin(zy_angle);
@@ -146,84 +136,26 @@ void setGrowthTensor(Grain& grain, const Microstructure_Properties& msp)
 }
 
 /* Defines bound for column width by bounding the angle between growth tensor and relative position vector*/
-void setMaxWidenAngle(Grain& grain, const Microstructure_Properties& msp)
+void setMaxWidenAngle(Grain& grain, Microstructure_Properties& msp)
 {
-    grain.angle_of_widen =  msp.max_angle_of_widen * 0.5 * M_PI / 180.0;
+    grain.angle_of_widen = radians(msp.widen->draw());
 }
 
-void setSmoothRegionLen(Grain& grain, const Microstructure_Properties& msp)
+
+void setTopRegionLen(Grain& grain, Microstructure_Properties& msp)
 {
-    grain.h0_norm_smooth_region = msp.smooth_region_length + lu_dist(gl_rand_gen)*msp.smooth_region_length_var;
+    grain.top_fraction = msp.top_frac->draw();
+    grain.top_parabola_coeff = -0.5;
 }
 
-void setFeatheredRegionLen(Grain& grain, const Microstructure_Properties& msp)
+void setReferenceRadius(Grain& grain, Microstructure_Properties& msp)
 {
-    grain.h0_norm_feathered_region = msp.feathered_region_length + lu_dist(gl_rand_gen)*msp.feathered_region_length_var;
+    grain.ref_column_rad = msp.radius->draw();
 }
 
-void setTopRegionLen(Grain& grain, const Microstructure_Properties& msp)
+void setReferenceLength(Grain& grain, Microstructure_Properties& msp)
 {
-    grain.h0_norm_top_region = msp.top_region_length + lu_dist(gl_rand_gen)*msp.top_region_length_var;
-}
-
-void setReferenceRadius(Grain& grain, const Microstructure_Properties& msp)
-{
-    grain.ref_column_rad = msp.max_reference_radius*n_dist(gl_rand_gen);
-}
-
-void setReferenceLength(Grain& grain, const Microstructure_Properties& msp)
-{
-    grain.ref_length = (msp.max_length - msp.min_length)*p_dist(gl_rand_gen) + msp.min_length;
-}
-
-void correctRefLen(Grain& grain)
-{
-    grain.ref_length = (grain.h0_norm_feathered_region + grain.h0_norm_smooth_region + grain.h0_norm_top_region);
-}
-
-void assignSmoothProfile(Grain& grain, const std::vector<SectionProfile> profiles)
-{
-    if(profiles.size() == 1)
-    {
-        grain.s_profile = profiles[0].profile;
-        std::copy(profiles[0].coeff.begin(), profiles[0].coeff.end(), std::back_inserter(grain.s_param));
-    }
-    else
-    {
-        int idx = p_dist(gl_rand_gen) * profiles.size();
-         grain.s_profile = profiles[idx].profile;
-        std::copy(profiles[idx].coeff.begin(), profiles[idx].coeff.end(), std::back_inserter(grain.s_param));
-    }
-}
-
-void assignFeatheredProfile(Grain& grain, const std::vector<SectionProfile> profiles)
-{
-     if(profiles.size() == 1)
-    {
-        grain.f_profile = profiles[0].profile;
-        std::copy(profiles[0].coeff.begin(), profiles[0].coeff.end(), std::back_inserter(grain.f_param));
-    }
-    else
-    {
-        int idx = p_dist(gl_rand_gen) * profiles.size();
-         grain.f_profile = profiles[idx].profile;
-        std::copy(profiles[idx].coeff.begin(), profiles[idx].coeff.end(), std::back_inserter(grain.f_param));
-    }
-}
-
-void assignTopProfile(Grain& grain, const std::vector<SectionProfile> profiles)
-{
-     if(profiles.size() == 1)
-    {
-        grain.t_profile = profiles[0].profile;
-        std::copy(profiles[0].coeff.begin(), profiles[0].coeff.end(), std::back_inserter(grain.t_param));
-    }
-    else
-    {
-        int idx = p_dist(gl_rand_gen) * profiles.size();
-         grain.t_profile = profiles[idx].profile;
-        std::copy(profiles[idx].coeff.begin(), profiles[idx].coeff.end(), std::back_inserter(grain.t_param));
-    }
+    grain.ref_length = msp.length->draw();
 }
 
 void setRVector(Grain& grain)

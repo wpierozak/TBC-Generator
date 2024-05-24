@@ -6,6 +6,13 @@
 #include<random>
 #include"CM_generation.hpp"
 
+cm_int noise()
+{
+    static std::minstd_rand generator(std::random_device{}());
+    static std::uniform_int_distribution<> distribution(-1,1);
+    return distribution(generator);
+}
+
 cm_int singleFieldCalculation(f_vec pos, const Grain& grain)
 {
     const f_vec& growth_tensor = grain.growth_tensor;
@@ -16,17 +23,26 @@ cm_int singleFieldCalculation(f_vec pos, const Grain& grain)
     double r = crossProduct(rpv, growth_tensor).norm();
     f_vec hg = growth_tensor*h;
     double phi = acos(dotProduct(substract(pos, hg), grain.r_vector)/((r!=0)?r:1));
-    if( h <= grain.h0_norm_smooth_region * grain.ref_length)
+
+    if( h <= grain.ref_length*(1.0-grain.top_fraction))
     {
-        return grain.s_profile(h,r, phi, grain);
+        switch(grain.resolution)
+        {
+            case Resolution::LOW:
+            if(r <= grain.ref_column_rad || (r-grain.ref_column_rad)/h < tan(grain.angle_of_widen))
+            return 1;
+            else return Grain::NON_VALID;
+            case Resolution::HIGH:
+            break;
+        }
     }
-    else if( h <= (1.0 - grain.h0_norm_top_region) * grain.ref_length)
+    else 
     {
-        return grain.f_profile(h, r, phi, grain);
-    }
-    else if( h <= grain.ref_length)
-    {
-        return grain.t_profile(h, r, phi, grain);
+        double rn = r/(grain.ref_column_rad + grain.ref_length*(1.0 - grain.top_fraction) * tan(grain.angle_of_widen));
+        double hn = (h - grain.ref_length*(1.0 - grain.top_fraction))/(grain.top_fraction*grain.ref_length);
+        double hp = grain.top_parabola_coeff*(rn*rn - 1.0);
+        if( hn < hp) return 1;
+        else return Grain::NON_VALID;
     }
 
     return Grain::NON_VALID;

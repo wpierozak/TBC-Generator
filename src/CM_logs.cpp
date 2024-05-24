@@ -75,11 +75,6 @@ void LogManager::printGrainData(const Grain& grain)
   _outstream << "Cos Phi Upper Bound: " << grain.angle_of_widen << std::endl;
   _outstream << "RPV Norm Upper Bound: " << grain.ref_length << std::endl;
   _outstream << "h0 Norm Bounds:" << std::endl;
-  _outstream << "\tSmooth Region: " << grain.h0_norm_smooth_region << std::endl;
-  _outstream << "\tFeathered Region: " << grain.h0_norm_feathered_region << std::endl;
-  _outstream << "\tTop Region: " << grain.h0_norm_top_region << std::endl;
-  _outstream << "Reference Column Radius: " << grain.ref_column_rad << std::endl;
-  _outstream << "Maximum Column Radius: " << grain.max_column_rad << std::endl;
 }
 
 void LogManager::printConfigData(const Configuration& config)
@@ -99,18 +94,6 @@ void LogManager::printConfigData(const Configuration& config)
 void LogManager::printMspData(const Microstructure_Properties& msp)
 {
     header("Microstructure Properties");
-    _outstream << "Maximum Angle of Widening: " << msp.max_angle_of_widen << std::endl;
-    _outstream << "Maximum Tilt (YZ, XY Plane): " << msp.max_tilt << std::endl;
-    _outstream << "Minimum Tilt (YZ, XY Plane): " << msp.min_tilt << std::endl;
-    _outstream << "Smooth Region Length (%): " << msp.smooth_region_length << std::endl;
-    _outstream << "Smooth Region Length Variance (%): " << msp.smooth_region_length_var << std::endl;
-    _outstream << "Feathered Region Length (%): " << msp.feathered_region_length << std::endl;
-    _outstream << "Feathered Region Length Variance (%): " << msp.feathered_region_length_var << std::endl;
-    _outstream << "Top Region Length (%): " << msp.top_region_length << std::endl;
-    _outstream << "Top Region Length Variance (%): " << msp.top_region_length_var << std::endl;
-    _outstream << "Minimum Column Length: " << msp.min_length << std::endl;
-    _outstream << "Maximum Column Length: " << msp.max_length << std::endl;
-    _outstream << "Maximum Reference Radius: " << msp.max_reference_radius << std::endl;
 }
 
 void LogManager::exception(std::string mess)

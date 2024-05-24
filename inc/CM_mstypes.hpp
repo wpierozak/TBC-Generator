@@ -1,16 +1,15 @@
 #pragma once
 #include<vector>
+#include<memory>
 #include"CM_basictypes.hpp"
 
 #define SHAPE_FUNCTION(name) \
 cm_int name(double h, double r, double phi, const Grain& grain) \
 
+enum class Resolution {LOW=0, HIGH=1};
+
 struct Grain
 {
-    Grain() = default;
-    Grain(const Grain&);
-    Grain(Grain&&) = delete;
-
     /* Grain global ID */
     cm_size ID;
 
@@ -28,87 +27,26 @@ struct Grain
     /* Reference bound for the RPV norm */
     double ref_length;
 
-    /* Reference bound for h0 norm of smooth region */
-    double h0_norm_smooth_region;
-
-    /* Reference bound for h0 norm of feathered region */
-    double h0_norm_feathered_region;
-
-    /* Reference bound for h0 norm of top region */
-    double h0_norm_top_region;
+    double top_fraction;
+    double top_parabola_coeff;
+    Resolution resolution;
 
     static const cm_int NON_VALID = __INT64_MAX__;
-
-    cm_int (*s_profile)(double, double, double, const Grain&);
-    std::vector<double> s_param;
-
-    /* 
-        Definition of the column shape within feathered region
-        Shape is defined by two cubic functions:
-            -> gap function - determines the width of gap between main column and a feather and an inner edge of a feather 
-            -> feather function - determines the shape and width of the outer edge of a feather 
-    */
-    cm_int (*f_profile)(double, double, double, const Grain&);
-    std::vector<double> f_param;
-
-    /* 
-        Definition of the column shape within top region
-        Shape is defined by splain of two linear function. Definition of the shape demands three parameters:
-            -> gradient of the "left" function
-            -> connecting point coordinate
-            -> gradient of the "right" function 
-    */
-    cm_int (*t_profile)(double, double, double, const Grain&);
-    std::vector<double> t_param;
     
     /* Reference column radius */
     double ref_column_rad;
-
-    /* Maximum column radius */
-    double max_column_rad;
 };
 
 typedef std::vector<Grain> grains_array;
 
-void copy(Grain& dest, const Grain& src);
-
 /* Contains information needed to define grain properties */
 struct Microstructure_Properties
 {
-    /* Maximum value of angle widen of a column */
-    double max_angle_of_widen;
-
-    /* Maximum tilt of a column in the YZ and XY plane */
-    double max_tilt;
-
-    /* Minimum tilt of a column in the YZ and XY plane */
-    double min_tilt;
-
-    /* Length of the smooth region in % of total length*/
-    double smooth_region_length;
-    
-    /* Maximum absolute variance of the smooth region in % of total length */
-    double smooth_region_length_var;
-
-    /* Length of the feathered region in % of total length*/
-    double feathered_region_length;
-
-    /* Maximum absolute variance of the feathered region in % of total length */
-    double feathered_region_length_var;
-
-    /* Length of the top region in % of total length*/
-    double top_region_length;
-
-    /* Maximum absolute variance of the top region in % of total length */
-    double top_region_length_var;
-
-    /* Minimum length of a column */
-    double min_length;
-
-    /* Maximum length of a column */
-    double max_length;
-
-    /* Maximum value for the reference radius */
-    double max_reference_radius;
+    std::shared_ptr<GaussianDistr> length;
+    std::shared_ptr<GaussianDistr> radius;
+    std::shared_ptr<GaussianDistr> tilt;
+    std::shared_ptr<GaussianDistr> widen;
+    std::shared_ptr<GaussianDistr> top_frac;
+    Resolution resolution;
 };
 

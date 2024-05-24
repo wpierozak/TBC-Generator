@@ -15,6 +15,10 @@ const std::string TOP_SECTION = "top";
 const std::string SMOOTH_SECTION = "smooth";
 const std::string FEATHERED_SECTION = "feathered";
 
+constexpr double PI_180 = M_PI/180.0;
+
+inline double radians(double degrees) { return degrees * PI_180; }
+
 struct cm_pos_vec
 {
     cm_pos x,y,z;
@@ -68,13 +72,24 @@ class GaussianDistr
 {
     public:
 
-    GaussianDistr(double mean, double std):
-        _generator(std::random_device{}()), _distribution(mean, std)
+    GaussianDistr(double mean=0.0, double std=1.0, double min = 0, double max = 0):
+        _generator(std::random_device{}()), _distribution(mean, std), _max(max), _min(min)
     {}
 
-    double draw() { return _distribution(_generator); }
+    double draw() { 
+        double val = _distribution(_generator); 
+        if(abs(_min-_max)<10e-4) return val;
+        else if(val < _min) return _min;
+        else if(val > _max) return _max;
+        else return val;
+        }
+    void reset(std::normal_distribution<> newdist) { _distribution = newdist; }
 
     private:
     std::minstd_rand _generator;
     std::normal_distribution<> _distribution;
+
+    double _min;
+    double _max;
 };
+
