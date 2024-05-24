@@ -77,8 +77,8 @@ void nucleation(Configuration& config)
     cm_size grain_ID = 0;
 
     auto div = findDiv(dimX, dimZ);
-    cm_pos dX = (config.domain->dimX + config.grainsNumber - 1)/ceil(sqrt(config.grainsNumber));
-    cm_pos dZ = (config.domain->dimZ + config.grainsNumber - 1)/floor(sqrt(config.grainsNumber));
+    cm_pos dX = (config.domain->dimX + sqrt(config.grainsNumber) - 1)/ceil(sqrt(config.grainsNumber));
+    cm_pos dZ = (config.domain->dimZ + sqrt(config.grainsNumber) - 1)/floor(sqrt(config.grainsNumber));
 
     for(cm_pos z = 0; z < dimZ; z+=dZ)
         for(cm_pos x = 0; x < dimX; x+=dX)

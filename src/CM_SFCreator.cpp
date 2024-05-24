@@ -10,6 +10,7 @@ SFCreator::SFCreator()
     _profiles.emplace("feather", bsf::feathered::feather);
     _profiles.emplace("feather_w", bsf::feathered::feather_w);
     _profiles.emplace("multi_feather_w", bsf::feathered::multi_feather_w);
+    _profiles.emplace("rand_feather", bsf::feathered::rand_feather);
 }
 
 void SFCreator::setParameters(std::list<std::string> coef, double* dest, int size)

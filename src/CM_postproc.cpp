@@ -103,13 +103,13 @@ void saveMicrostructureFile(Configuration* config)
             }
             if((*config->domain)(x, y, z) != Domain::VOID)
             {
-                //file << x << ' ' << y << ' ' << z << ' ' << (*config->domain)(x, y, z) << std::endl;
-                buffer += std::to_string(x) + ' ' + std::to_string(y) + ' ' + std::to_string(z) + ' ' + std::to_string((*config->domain)(x, y, z));
-                buffer += "\n";
+                file << x << ' ' << y << ' ' << z << ' ' << (*config->domain)(x, y, z) << std::endl;
+                //buffer += std::to_string(x) + ' ' + std::to_string(y) + ' ' + std::to_string(z) + ' ' + std::to_string((*config->domain)(x, y, z));
+                //buffer += "\n";
             }
          
         }
-        file.write(buffer.c_str(), buffer.size()-1);
+        //file.write(buffer.c_str(), buffer.size()-1);
         break;
 
     case MsFileFormat::xyzrgb:

@@ -1,6 +1,7 @@
 #pragma once
 #include<string>
 #include <cstdint>
+#include<random>
 #include<cmath>
 
 typedef int32_t cm_pos;
@@ -62,3 +63,18 @@ inline f_vec substract(const f_vec& a, const f_vec& b)
 {
     return {a.x - b.x, a.y - b.y, a.z - b.z};
 }
+
+class GaussianDistr
+{
+    public:
+
+    GaussianDistr(double mean, double std):
+        _generator(std::random_device{}()), _distribution(mean, std)
+    {}
+
+    double draw() { return _distribution(_generator); }
+
+    private:
+    std::minstd_rand _generator;
+    std::normal_distribution<> _distribution;
+};
