@@ -2,12 +2,12 @@
 <Configuration>
 
     <dimX>200</dimX> <!-- micrometers -->
-    <dimY>220</dimY>
+    <dimY>120</dimY>
     <dimZ>200</dimZ> <!-- micrometers -->
 
     <output_dir>../res/</output_dir>
 
-    <output_filename>200x100x200</output_filename>
+    <output_filename>200x120x200</output_filename>
 
     <ms_file_format>xyz</ms_file_format>
 
@@ -25,42 +25,32 @@
     <grains_number>400</grains_number>
 
     <Grain>    
-        <radius>    <!-- micrometers -->
+       <radius>    <!-- micrometers -->
             <mean>10</mean>
-            <std>1</std>
-            <min>7</min>
-            <max>20</max>
+            <std>2</std>
         </radius>
 
         <tilt>  <!-- degrees -->
-            <mean>10</mean>
-            <std>1</std>
-            <min>7</min>
-            <max>20</max>
+            <mean>0</mean>
+            <std>4</std>
         </tilt>
 
         <length> <!-- micrometers -->
-            <mean>10</mean>
-            <std>1</std>
-            <min>7</min>
-            <max>20</max>
+            <mean>100</mean>
+            <std>10</std>
         </length>
 
         <top_frac>
-            <mean>10</mean>
-            <std>1</std>
-            <min>7</min>
-            <max>20</max>
+            <mean>0.15</mean>
+            <std>0.01</std>
         </top_frac>
 
         <widen> <!-- degrees -->
-            <mean>10</mean>
+            <mean>3</mean>
             <std>1</std>
-            <min>7</min>
-            <max>20</max>
         </widen>
 
-        <resolution>low</resolution>
+        <resolution>LOW</resolution>
     </Grain>
 
     <threads_number>12</threads_number>
