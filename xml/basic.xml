@@ -55,6 +55,4 @@
 
     <threads_number>12</threads_number>
 
-    <boundry_conditions>absorption</boundry_conditions>
-
 </Configuration>

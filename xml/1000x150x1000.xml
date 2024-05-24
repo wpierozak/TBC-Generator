@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <Configuration>
 
-    <dimX>400</dimX> <!-- micrometers -->
-    <dimY>220</dimY>
-    <dimZ>400</dimZ> <!-- micrometers -->
+    <dimX>1000</dimX> <!-- micrometers -->
+    <dimY>150</dimY>
+    <dimZ>1000</dimZ> <!-- micrometers -->
 
     <output_dir>../res/</output_dir>
 
-    <output_filename>400x200x400</output_filename>
+    <output_filename>1000x150x1000</output_filename>
 
     <ms_file_format>xyz</ms_file_format>
 
@@ -22,39 +22,37 @@
         <z1>1</z1>
     </neighbourhood>
 
-    <grains_number>400</grains_number>
+    <grains_number>10000</grains_number>
 
     <Grain>    
-        <radius>    <!-- micrometers -->
-            <mean>10</mean>
-            <std>1</std>
+       <radius>    <!-- micrometers -->
+            <mean>8</mean>
+            <std>2</std>
         </radius>
 
         <tilt>  <!-- degrees -->
             <mean>0</mean>
-            <std>-4</std>
+            <std>4</std>
         </tilt>
 
         <length> <!-- micrometers -->
-            <mean>200</mean>
+            <mean>110</mean>
             <std>10</std>
         </length>
 
         <top_frac>
-            <mean>0.1</mean>
+            <mean>0.15</mean>
             <std>0.01</std>
         </top_frac>
 
         <widen> <!-- degrees -->
-            <mean>4</mean>
-            <std>2</std>
+            <mean>3</mean>
+            <std>1</std>
         </widen>
 
-        <resolution>low</resolution>
+        <resolution>LOW</resolution>
     </Grain>
 
     <threads_number>12</threads_number>
-
-    <boundry_conditions>absorption</boundry_conditions>
 
 </Configuration>

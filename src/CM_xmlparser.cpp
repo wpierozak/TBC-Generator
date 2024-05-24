@@ -59,7 +59,7 @@ void parseConfiguration(std::string filePath, Configuration& configuration) {
 
     cm_pos dim[3];
     Neighbourhood neighbourhood;
-    BC boundry_condition;
+    BC boundry_condition = BC::absorption;
 
     rapidxml::xml_node<>* node = domain_node->first_node();
     while(node)

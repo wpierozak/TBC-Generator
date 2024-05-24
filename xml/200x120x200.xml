@@ -22,11 +22,11 @@
         <z1>1</z1>
     </neighbourhood>
 
-    <grains_number>400</grains_number>
+    <grains_number>300</grains_number>
 
     <Grain>    
        <radius>    <!-- micrometers -->
-            <mean>10</mean>
+            <mean>6</mean>
             <std>2</std>
         </radius>
 
@@ -37,7 +37,7 @@
 
         <length> <!-- micrometers -->
             <mean>100</mean>
-            <std>10</std>
+            <std>5</std>
         </length>
 
         <top_frac>
@@ -54,7 +54,5 @@
     </Grain>
 
     <threads_number>12</threads_number>
-
-    <boundry_conditions>absorption</boundry_conditions>
 
 </Configuration>

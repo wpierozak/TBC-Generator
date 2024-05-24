@@ -6,11 +6,11 @@ This document describes the configuration settings for a grain growth simulation
 
 ### Dimensions
 
-The dimensions of the simulation domain are specified in micrometers.
+The dimensions of the simulation domain are specified in dimensionless.
 
-- **dimX**: X dimension of the simulation domain (micrometers)
-- **dimY**: Y dimension of the simulation domain (micrometers)
-- **dimZ**: Z dimension of the simulation domain (micrometers)
+- **dimX**: X dimension of the simulation domain (dimensionless)
+- **dimY**: Y dimension of the simulation domain (dimensionless)
+- **dimZ**: Z dimension of the simulation domain (dimensionless)
 
 ### Output Settings
 
@@ -23,13 +23,14 @@ These parameters define the output directory, filename, and file format for the 
 ### Neighbourhood Settings
 
 The neighbourhood settings define the range of offsets to consider in the x, y, and z directions.
+**At the current state of the project it is recomended to use default values provided below** 
 
-- **x0**: Minimum x-offset to consider.
-- **x1**: Maximum x-offset to consider.
-- **y0**: Minimum y-offset to consider.
-- **y1**: Maximum y-offset to consider.
-- **z0**: Minimum z-offset to consider.
-- **z1**: Maximum z-offset to consider.
+- **x0**: Minimum x-offset to consider (default: -1).
+- **x1**: Maximum x-offset to consider (default: 1).
+- **y0**: Minimum y-offset to consider (default: -1).
+- **y1**: Maximum y-offset to consider (default: -1).
+- **z0**: Minimum z-offset to consider (default: -1).
+- **z1**: Maximum z-offset to consider (default: 1).
 
 ### Grain Settings
 
@@ -40,8 +41,8 @@ The grain settings define the properties of individual grains, including their n
 #### Grain Properties
 
 - **radius**:  
-  - **mean**: Mean radius of the grains (micrometers).
-  - **std**: Standard deviation of the radius (micrometers).
+  - **mean**: Mean radius of the grains (dimensionless).
+  - **std**: Standard deviation of the radius (dimensionless).
   - **min**: Optional minimum value for the radius.
   - **max**: Optional maximum value for the radius.
 
@@ -52,16 +53,17 @@ The grain settings define the properties of individual grains, including their n
   - **max**: Optional maximum value for the tilt.
 
 - **length**:  
-  - **mean**: Mean length of the grains (micrometers).
-  - **std**: Standard deviation of the length (micrometers).
+  - **mean**: Mean length of the grains (dimensionless).
+  - **std**: Standard deviation of the length (dimensionless).
   - **min**: Optional minimum value for the length.
   - **max**: Optional maximum value for the length.
 
 - **top_frac**:  
-  - **mean**: Mean top fraction of the grains.
+  - **mean**: Mean top fraction of the grains (as a fraction of a total length).
   - **std**: Standard deviation of the top fraction.
   - **min**: Optional minimum value for the top fraction.
   - **max**: Optional maximum value for the top fraction.
+Top fraction is a parameter specific for this program. Top fraction is a fraction of a total length which is shaped as the parabolic top of the column.
 
 - **widen**:  
   - **mean**: Mean widen angle of the grains (degrees).
@@ -87,9 +89,9 @@ These parameters define the computational resources and boundary conditions for 
 <?xml version="1.0"?>
 <Configuration>
 
-    <dimX>...</dimX> <!-- micrometers -->
+    <dimX>...</dimX> <!-- dimensionless -->
     <dimY>...</dimY>
-    <dimZ>...</dimZ> <!-- micrometers -->
+    <dimZ>...</dimZ> <!-- dimensionless -->
 
     <output_dir>...</output_dir>
     <output_filename>...</output_filename>
@@ -107,7 +109,7 @@ These parameters define the computational resources and boundary conditions for 
     <grains_number>...</grains_number>
 
     <Grain>    
-        <radius>    <!-- micrometers -->
+        <radius>    <!-- dimensionless -->
             <mean>...</mean>
             <std>...</std>
         </radius>
@@ -117,7 +119,7 @@ These parameters define the computational resources and boundary conditions for 
             <std>...</std>
         </tilt>
 
-        <length> <!-- micrometers -->
+        <length> <!-- dimensionless -->
             <mean>...</mean>
             <std>...</std>
         </length>
@@ -136,7 +138,6 @@ These parameters define the computational resources and boundary conditions for 
     </Grain>
 
     <threads_number>...</threads_number>
-    <boundry_conditions>...</boundry_conditions>
     <bitmaps>...</bitmaps>
 
 </Configuration>
