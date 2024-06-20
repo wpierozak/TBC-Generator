@@ -80,7 +80,7 @@ void LogManager::printGrainData(const Grain& grain)
 void LogManager::printConfigData(const Configuration& config)
 {
     open("Configuration");
-   // _outstream << "Input file: " << config.inputFile << std::endl;
+   // _outstream << "Input file: " << configFile << std::endl;
     _outstream << "Output dir" << config.outputDir << std::endl;
     _outstream << "Number of threads to be used: " << config.threadsNum << std::endl;
     _outstream << "Domain: ";

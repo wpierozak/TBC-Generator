@@ -55,20 +55,20 @@ void runTask(Task* task)
     std::uniform_int_distribution<> dist(0,100);
 
     std::list<cm_state> grains_neighbourhood;
-    for(cm_pos y = task->input.y0; y < task->input.y1; y++)
-    for(cm_pos z = task->input.z0; z < task->input.z1; z++)
-    for(cm_pos x = task->input.x0; x < task->input.x1; x++)
+    for(cm_pos y = task->y0; y < task->y1; y++)
+    for(cm_pos z = task->z0; z < task->z1; z++)
+    for(cm_pos x = task->x0; x < task->x1; x++)
     {
         f_vec pos = {static_cast<double>(x), static_cast<double>(y), static_cast<double>(z)};
         double bestfit = Grain::NON_VALID;
-        scanNeighbourhood(pos, *task->input.domain, grains_neighbourhood);
+        scanNeighbourhood(pos, *task->domain, grains_neighbourhood);
 
         for(cm_state grain_idx: grains_neighbourhood)
         {
-            Grain& grain = task->input.grains[grain_idx];
+            Grain& grain = task->grains[grain_idx];
             double fit = singleFieldCalculation(pos, grain);
             if(fit >= bestfit) continue;
-            (*task->input.domain)(x,y,z) = grain_idx;
+            (*task->domain)(x,y,z) = grain_idx;
             bestfit = fit;
         }
     }

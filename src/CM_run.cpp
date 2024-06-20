@@ -19,7 +19,7 @@ void run(Configuration& config)
     {
         cm_int idx = omp_get_thread_num();
 
-        while (tasks[idx].input.y0 != tasks[idx].input.domain->dimY)
+        while (tasks[idx].y0 != tasks[idx].domain->dimY)
         {
             #pragma omp barrier
             runTask(&tasks[idx]);
@@ -30,13 +30,13 @@ void run(Configuration& config)
             #pragma omp master
             {
                 if(LogManager::Manager().logmode())
-                LogManager::Manager().header(std::string("Y = ") + std::to_string(tasks[idx].input.y0));
+                LogManager::Manager().header(std::string("Y = ") + std::to_string(tasks[idx].y0));
             }
             #endif
             
 
-            tasks[idx].input.y0 += 1;
-            tasks[idx].input.y1 += 1;
+            tasks[idx].y0 += 1;
+            tasks[idx].y1 += 1;
         }
     }
     if(LogManager::Manager().logmode()) LogManager::Manager().close("Run tasks");

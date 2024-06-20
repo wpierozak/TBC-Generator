@@ -31,17 +31,17 @@ void defineTasks(Configuration& config, tasks_array& tasks)
     for(cm_pos z = 0; z < config.domain->dimZ; z+=dz)
     for(cm_pos x = 0; x < config.domain->dimX; x+=dx)
     {
-        tasks[counter].input.domain = std::make_unique<Domain>(*config.domain);
+        tasks[counter].domain = std::make_unique<Domain>(*config.domain);
 
-        tasks[counter].input.x0 = x;
-        tasks[counter].input.x1 = ((x + dx) < config.domain->dimX)? x + dx: config.domain->dimX;
-        tasks[counter].input.y0 = y0;
-        tasks[counter].input.y1 = y1;
-        tasks[counter].input.z0 = z;
-        tasks[counter].input.z1 = ((z + dz) < config.domain->dimZ)? z + dz: config.domain->dimZ; 
+        tasks[counter].x0 = x;
+        tasks[counter].x1 = ((x + dx) < config.domain->dimX)? x + dx: config.domain->dimX;
+        tasks[counter].y0 = y0;
+        tasks[counter].y1 = y1;
+        tasks[counter].z0 = z;
+        tasks[counter].z1 = ((z + dz) < config.domain->dimZ)? z + dz: config.domain->dimZ; 
 
 
-        std::copy(config.grains.begin(), config.grains.end(), std::back_insert_iterator(tasks[counter].input.grains));   
+        std::copy(config.grains.begin(), config.grains.end(), std::back_insert_iterator(tasks[counter].grains));   
         counter++;              
     }
 }

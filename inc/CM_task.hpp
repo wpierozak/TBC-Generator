@@ -4,8 +4,7 @@
 #include<memory>
 #include"CM_config.hpp"
 
-/* Structure TaskData contains necessary information for executing a single subtask */
-struct TaskData
+struct Task
 {
     grains_array grains;
 
@@ -15,19 +14,6 @@ struct TaskData
 
     Microstructure_Properties msp;
     std::unique_ptr<Domain> domain{nullptr};
-};
-
-typedef std::vector<TaskData> taskdata_array;
-
-struct TaskResult
-{
-    cm_int code;
-};
-
-struct Task
-{
-    TaskData input;
-    TaskResult output;
 };
 
 typedef std::vector<Task> tasks_array;
