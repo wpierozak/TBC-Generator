@@ -48,7 +48,7 @@ void defineTasks(Configuration& config, tasks_array& tasks)
 
 std::pair<cm_pos, cm_pos> findDiv(cm_pos dimX, cm_pos dimZ)
 {
-    std::pair<cm_size, cm_size> res;
+    std::pair<cm_pos, cm_pos> res;
     cm_pos field = dimX*dimZ;
     cm_pos min_diff = field+1;
     for(cm_pos n = 1; n < field; n++)
@@ -74,7 +74,7 @@ void nucleation(Configuration& config)
     cm_pos dimZ = config.domain->dimZ;
 
     config.grains.resize(config.grainsNumber);
-    cm_size grain_ID = 0;
+    cm_pos grain_ID = 0;
 
     auto div = findDiv(dimX, dimZ);
     cm_pos dX = (config.domain->dimX + sqrt(config.grainsNumber) - 1)/ceil(sqrt(config.grainsNumber));

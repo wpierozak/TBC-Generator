@@ -10,18 +10,18 @@
 
 #define BUFFER_LINES_NUMBER 1000
 
-std::tuple<cm_colorampl, cm_colorampl, cm_colorampl> generateRandomColor() {
-    return std::make_tuple(static_cast<cm_colorampl>(std::rand() % 256),
-                           static_cast<cm_colorampl>(std::rand() % 256),
-                           static_cast<cm_colorampl>(std::rand() % 256));
+std::tuple<uint8_t, uint8_t, uint8_t> generateRandomColor() {
+    return std::make_tuple(static_cast<uint8_t>(std::rand() % 256),
+                           static_cast<uint8_t>(std::rand() % 256),
+                           static_cast<uint8_t>(std::rand() % 256));
 }
 
-cm_colorampl* defineColors(cm_size grainNum) {
+uint8_t* defineColors(cm_state grainNum) {
     std::srand(static_cast<unsigned>(std::time(0))); // Seed the random generator
-    cm_colorampl* colorsArray = new cm_colorampl[3 * grainNum];
-    std::set<std::tuple<cm_colorampl, cm_colorampl, cm_colorampl>> uniqueColors;
-    for (cm_size i = 0; i < grainNum; ++i) {
-        std::tuple<cm_colorampl, cm_colorampl, cm_colorampl> color;
+    uint8_t* colorsArray = new uint8_t[3 * grainNum];
+    std::set<std::tuple<uint8_t, uint8_t, uint8_t>> uniqueColors;
+    for (cm_state i = 0; i < grainNum; ++i) {
+        std::tuple<uint8_t, uint8_t, uint8_t> color;
         do {
             color = generateRandomColor();
         } while (uniqueColors.find(color) != uniqueColors.end());
@@ -35,9 +35,9 @@ cm_colorampl* defineColors(cm_size grainNum) {
     return colorsArray;
 }
 /*
-cm_colorampl* defineColors(cm_size grainNum)
+uint8_t* defineColors(cm_pos grainNum)
 {
-    cm_colorampl* colorsArray = new cm_colorampl[3*grainNum];
+    uint8_t* colorsArray = new uint8_t[3*grainNum];
     for(int i = 0; i < grainNum; i++)
     {
         colorsArray[i*3] = std::rand()%256;
@@ -61,7 +61,7 @@ cm_colorampl* defineColors(cm_size grainNum)
 void createBitmap(Configuration& config)
 {
     int threads_num = config.threadsNum;
-    cm_colorampl* colorsArray = defineColors(config.grainsNumber);
+    uint8_t* colorsArray = defineColors(config.grainsNumber);
     std::string filename = config.outputFile;
     std::string dir = config.outputDir;
 
@@ -98,14 +98,14 @@ void createBitmap(Configuration& config)
 
 void saveMicrostructureFile(Configuration* config)
 {
-    cm_colorampl* colorsArray = defineColors(config->grainsNumber);
+    uint8_t* colorsArray = defineColors(config->grainsNumber);
     std::string filename = config->outputDir + "/" + config->outputFile;
 
-    cm_int nonVoid = 0;
-    cm_int size = cm_int(config->domain->dimX)*cm_int(config->domain->dimY)*cm_int(config->domain->dimZ);
+    cm_pos nonVoid = 0;
+    cm_pos size = cm_pos(config->domain->dimX)*cm_pos(config->domain->dimY)*cm_pos(config->domain->dimZ);
     
     #pragma omp parallel for num_threads(config->threadsNumber) reduction(+= nonVoid)
-    for(cm_int idx = 0; idx < size; idx++)
+    for(cm_pos idx = 0; idx < size; idx++)
     {
         if((*config->domain)(idx) != Domain::VOID)
         {
@@ -121,9 +121,9 @@ void saveMicrostructureFile(Configuration* config)
 
     if(LogManager::Manager().logmode()) LogManager::Manager().text(std::string("Non void fields: ") + std::to_string(nonVoid));
     file << size << std::endl << std::endl;
-    size_t step = cm_int(config->domain->dimX) * cm_int(config->domain->dimY) * cm_int(config->domain->dimZ) / 10;
-    cm_int counter = 0; 
-    cm_int line_counter=0;
+    size_t step = cm_pos(config->domain->dimX) * cm_pos(config->domain->dimY) * cm_pos(config->domain->dimZ) / 10;
+    cm_pos counter = 0; 
+    cm_pos line_counter=0;
     std::string buffer;
     switch (config->msFileFormat)
     {

@@ -30,7 +30,7 @@ void run(Configuration& config)
             #pragma omp master
             {
                 if(LogManager::Manager().logmode())
-                LogManager::Manager().header(std::string("Y = ") + std::to_string(tasks[idx].y0));
+                LogManager::Manager().header(std::string("Y = ") + std::to_string(tasks[idx].input.y0));
             }
             #endif
             

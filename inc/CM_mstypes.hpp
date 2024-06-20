@@ -11,7 +11,7 @@ enum class Resolution {LOW=0, HIGH=1};
 struct Grain
 {
     /* Grain global ID */
-    cm_size ID;
+    cm_state ID;
 
     /* Coordinates of the center cell of the base of a column*/
     f_vec center;

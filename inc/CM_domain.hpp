@@ -42,7 +42,7 @@ class Domain
         return buffer[(y*dimZ + z)*dimX + x];
     }
 
-    cm_state& operator()(cm_int pos)
+    cm_state& operator()(cm_pos pos)
     {
         return buffer[pos];
     }

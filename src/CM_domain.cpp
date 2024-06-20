@@ -4,8 +4,8 @@
 Domain::Domain(cm_pos X, cm_pos Y, cm_pos Z, Neighbourhood n):
     dimX(X), dimY(Y), dimZ(Z), neighbourhood(n)
 {
-    buffer = std::shared_ptr<cm_state[]>(new cm_state[static_cast<cm_size>(dimX)*static_cast<cm_size>(dimZ)*static_cast<cm_size>(dimY)]);
-    for(cm_size n = 0; n < static_cast<cm_size>(dimX)*static_cast<cm_size>(dimZ)*static_cast<cm_size>(dimY); n++)
+    buffer = std::shared_ptr<cm_state[]>(new cm_state[static_cast<cm_pos>(dimX)*static_cast<cm_pos>(dimZ)*static_cast<cm_pos>(dimY)]);
+    for(cm_pos n = 0; n < static_cast<cm_pos>(dimX)*static_cast<cm_pos>(dimZ)*static_cast<cm_pos>(dimY); n++)
     buffer[n] = Domain::VOID;   
 }
 
@@ -14,13 +14,13 @@ cm_state Domain::state(cm_pos x, cm_pos y, cm_pos z) const
     if(dimZ > 1)
     {
         bool inside = (x >= 0 && x < dimX) && (y >= 0 && y < dimY) && (z >= 0 && z < dimZ);
-        if(inside) return buffer[cm_size(y)*(dimX * dimZ) + cm_size(z)*dimX + cm_size(x)];
+        if(inside) return buffer[cm_pos(y)*(dimX * dimZ) + cm_pos(z)*dimX + cm_pos(x)];
     }
 
     else
     {
         bool inside = (x >= 0 && x < dimX) && (y >= 0 && y < dimY);
-        if(inside) return buffer[cm_size(y)*(dimX * dimZ) + cm_size(x)];
+        if(inside) return buffer[cm_pos(y)*(dimX * dimZ) + cm_pos(x)];
     }
     
     switch (bc)
@@ -39,7 +39,7 @@ cm_state Domain::state(cm_pos x, cm_pos y, cm_pos z) const
         if(z >= dimZ) z = dimZ - 1 - (z-dimZ);
         else if(z < 0) z = -z - 1;
 
-        return buffer[cm_size(y)*(dimX * dimZ) + cm_size(z)*dimX + cm_size(x)];
+        return buffer[cm_pos(y)*(dimX * dimZ) + cm_pos(z)*dimX + cm_pos(x)];
     break;
 
     case BC::periodic:
@@ -52,7 +52,7 @@ cm_state Domain::state(cm_pos x, cm_pos y, cm_pos z) const
         if(z >= dimZ) z = z - dimZ;
         else if(z < 0) z = dimZ + z;
         
-        return buffer[cm_size(y)*(dimX * dimZ) + cm_size(z)*dimX + cm_size(x)];
+        return buffer[cm_pos(y)*(dimX * dimZ) + cm_pos(z)*dimX + cm_pos(x)];
     break;
 
     default:

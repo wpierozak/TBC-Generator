@@ -14,9 +14,9 @@ class Generator
     public:
     struct Subspace
     {
-        cm_int x0,x1;
-        cm_int y0,y1;
-        cm_int z0,z1;
+        cm_pos x0,x1;
+        cm_pos y0,y1;
+        cm_pos z0,z1;
     };
 
     Generator(Domain&& domain, Subspace subspace, const grains_array& grains);
