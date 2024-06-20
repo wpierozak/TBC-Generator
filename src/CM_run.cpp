@@ -26,12 +26,13 @@ void run(Configuration& config)
 
             #pragma omp barrier
 
-            
+            #ifdef DEBUG
             #pragma omp master
             {
                 if(LogManager::Manager().logmode())
                 LogManager::Manager().header(std::string("Y = ") + std::to_string(tasks[idx].input.y0));
             }
+            #endif
             
 
             tasks[idx].input.y0 += 1;

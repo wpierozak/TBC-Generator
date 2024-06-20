@@ -83,10 +83,8 @@ void nucleation(Configuration& config)
     for(cm_pos z = 0; z < dimZ; z+=dZ)
         for(cm_pos x = 0; x < dimX; x+=dX)
         {
-            if(LogManager::Manager().logmode()) 
-            LogManager::Manager().header(std::string("Grain ") + std::to_string(grain_ID));
             /* center */
-            config.grains[grain_ID].center = {round(dist(gen)*dX + x), 0.0, round(dist(gen)*dZ + z)};
+            config.grains[grain_ID].center = {round( x), 0.0, round( z)};
             if(config.grains[grain_ID].center.x >= dimX) config.grains[grain_ID].center.x = dimX - 1.0;
             if(config.grains[grain_ID].center.z >= dimZ) config.grains[grain_ID].center.z = dimZ - 1.0;
             /* ID */
@@ -107,7 +105,9 @@ void nucleation(Configuration& config)
             config.grains[grain_ID].resolution = config.msp.resolution;
 
             grain_ID++;
+            #ifdef DEBUG
             if(LogManager::Manager().logmode()) LogManager::Manager().printGrainData(config.grains[grain_ID-1]);
+            #endif 
             if(grain_ID == config.grainsNumber) break;
         }
 

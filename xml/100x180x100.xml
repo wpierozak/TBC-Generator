@@ -22,13 +22,13 @@
         <z1>1</z1>
     </neighbourhood>
 
-    <grains_number>900</grains_number>
+    <grains_number>600</grains_number>
 
     <Grain>    
        <radius>    
-            <mean>4</mean>
-            <std>2</std>
-            <max>7</max>
+            <mean>3</mean>
+            <std>1</std>
+            <max>6</max>
             <min>2</min>
         </radius>
 
@@ -38,7 +38,7 @@
         </tilt>
 
         <length> 
-            <mean>100</mean>
+            <mean>110</mean>
             <std>5</std>
         </length>
 
@@ -48,7 +48,7 @@
         </top_frac>
 
         <widen> <!-- degrees -->
-            <mean>3</mean>
+            <mean>2</mean>
             <std>1</std>
             <max>6</max>
             <min>0</min>

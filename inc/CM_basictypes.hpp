@@ -2,6 +2,7 @@
 #include<string>
 #include <cstdint>
 #include<random>
+#include<iostream>
 #include<cmath>
 
 typedef int32_t cm_pos;
@@ -85,6 +86,11 @@ class GaussianDistr
         }
     void reset(std::normal_distribution<> newdist) { _distribution = newdist; }
 
+    double mean() const {return _distribution.mean();}
+    double std() const {return _distribution.stddev();}
+    double min() const {return _min;}
+    double max() const {return _max;}
+
     private:
     std::minstd_rand _generator;
     std::normal_distribution<> _distribution;
@@ -93,3 +99,4 @@ class GaussianDistr
     double _max;
 };
 
+std::ostream& operator<<(std::ostream& os, const GaussianDistr gd);

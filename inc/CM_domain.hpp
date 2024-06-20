@@ -25,6 +25,7 @@ class Domain
     public:
     Domain() = delete;
     Domain(const Domain&) = default;
+    Domain(Domain&&);
     Domain& operator=(const Domain&) = delete;
     Domain(cm_pos dimX, cm_pos dimY, cm_pos dimZ, Neighbourhood neighbourhood);
 

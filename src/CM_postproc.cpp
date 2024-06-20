@@ -120,7 +120,7 @@ void saveMicrostructureFile(Configuration* config)
         throw std::runtime_error("Output file cannot be created/loade\n");
 
     if(LogManager::Manager().logmode()) LogManager::Manager().text(std::string("Non void fields: ") + std::to_string(nonVoid));
-    file << nonVoid << std::endl << std::endl;
+    file << size << std::endl << std::endl;
     size_t step = cm_int(config->domain->dimX) * cm_int(config->domain->dimY) * cm_int(config->domain->dimZ) / 10;
     cm_int counter = 0; 
     cm_int line_counter=0;
@@ -140,7 +140,7 @@ void saveMicrostructureFile(Configuration* config)
                 if(counter % (size/10) == 0)
                 LogManager::Manager().text(std::string("Progress: ") + std::to_string(counter) + std::string("/") + std::to_string(size));
             }
-            if((*config->domain)(x, y, z) != Domain::VOID)
+            //if((*config->domain)(x, y, z) != Domain::VOID)
             {
                 file << x << ' ' << y << ' ' << z << ' ' << (*config->domain)(x, y, z) << std::endl;
                 //buffer += std::to_string(x) + ' ' + std::to_string(y) + ' ' + std::to_string(z) + ' ' + std::to_string((*config->domain)(x, y, z));

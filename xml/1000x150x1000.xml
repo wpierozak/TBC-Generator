@@ -26,8 +26,10 @@
 
     <Grain>    
        <radius>    <!-- micrometers -->
-            <mean>8</mean>
+            <mean>3</mean>
             <std>2</std>
+            <min>2</min>
+            <max>8</max>
         </radius>
 
         <tilt>  <!-- degrees -->

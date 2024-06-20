@@ -48,5 +48,7 @@ struct Microstructure_Properties
     std::shared_ptr<GaussianDistr> widen;
     std::shared_ptr<GaussianDistr> top_frac;
     Resolution resolution;
+
+    void print(std::ostream& os) const;
 };
 

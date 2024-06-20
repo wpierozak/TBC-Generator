@@ -21,7 +21,6 @@ int main(int argc, const char** argv)
         parseConfiguration(inputFile, config);
         if(LogManager::Manager().logmode()) LogManager::Manager().printConfigData(config);
         if(LogManager::Manager().logmode()) LogManager::Manager().close("Parsing");
-   
         if(LogManager::Manager().logmode()) LogManager::Manager().timeStart("Run");
         run(config);
         if(LogManager::Manager().logmode()) LogManager::Manager().recordTimeElapsed("Run");

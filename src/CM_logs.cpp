@@ -94,6 +94,7 @@ void LogManager::printConfigData(const Configuration& config)
 void LogManager::printMspData(const Microstructure_Properties& msp)
 {
     header("Microstructure Properties");
+    msp.print(_outstream);
 }
 
 void LogManager::exception(std::string mess)

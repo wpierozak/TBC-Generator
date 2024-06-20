@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <Configuration>
 
-    <dimX>200</dimX> 
+    <dimX>400</dimX> 
     <dimY>120</dimY>
-    <dimZ>200</dimZ>
+    <dimZ>400</dimZ>
 
     <output_dir>../res/</output_dir>
 
-    <output_filename>200x120x200</output_filename>
+    <output_filename>400x120x400</output_filename>
 
     <ms_file_format>xyz</ms_file_format>
 
@@ -22,14 +22,14 @@
         <z1>1</z1>
     </neighbourhood>
 
-    <grains_number>900</grains_number>
+    <grains_number>2000</grains_number>
 
     <Grain>    
        <radius>    
-            <mean>4</mean>
-            <std>2</std>
-            <max>7</max>
-            <min>2</min>
+            <mean>3</mean>
+            <std>1</std>
+            <max>6</max>
+            <min>3</min>
         </radius>
 
         <tilt>  <!-- degrees -->
@@ -38,7 +38,7 @@
         </tilt>
 
         <length> 
-            <mean>100</mean>
+            <mean>110</mean>
             <std>5</std>
         </length>
 
@@ -48,9 +48,9 @@
         </top_frac>
 
         <widen> <!-- degrees -->
-            <mean>3</mean>
+            <mean>2</mean>
             <std>1</std>
-            <max>6</max>
+            <max>5</max>
             <min>0</min>
         </widen>
 
