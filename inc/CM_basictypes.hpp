@@ -29,27 +29,27 @@ struct f_vec
 
 void normalize(f_vec& vec);
 
-inline double dotProduct(f_vec&& a, f_vec&& b)
+inline double dotProduct(const f_vec& a, const f_vec& b)
 {
     return (a.x * b.x + a.y * b.y + a.z * b.z);
 }
 
-inline f_vec crossProduct(f_vec&& a, f_vec&& b)
+inline f_vec crossProduct(const f_vec& a, const f_vec& b)
 {
     return {a.y*b.z - a.z*b.y, a.z*b.x - a.x*b.z, a.x*b.y - a.y*b.x};
 }
 
-inline double cos(f_vec&& a, f_vec&& b)
+inline double cos(const f_vec& a, const f_vec& b)
 {
     return (a.x*b.x + a.y*b.y)/(a.norm()*b.norm());
 }
 
-inline f_vec add(f_vec&& a, f_vec&& b)
+inline f_vec add(const f_vec& a, const f_vec& b)
 {
     return {a.x + b.x, a.y + b.y, a.z + b.z};
 }
 
-inline f_vec substract(f_vec&& a, f_vec&& b)
+inline f_vec substract(const f_vec& a, const f_vec& b)
 {
     return {a.x - b.x, a.y - b.y, a.z - b.z};
 }

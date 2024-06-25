@@ -31,7 +31,7 @@ double singleFieldCalculation(f_vec pos, const Grain& grain)
         {
             case Resolution::LOW:
             //if(r <= grain.ref_column_rad || (r-grain.ref_column_rad)/h < tan(grain.angle_of_widen))
-            return (r - tan(grain.angle_of_widen)*h - grain.ref_column_rad )* pow(grain.growth_tensor.y/grain.growth_tensor.norm(),2);
+            return (r - grain.tan_angle_of_widen*h - grain.ref_column_rad )* grain.y_to_norm2;//pow(grain.growth_tensor.y/grain.growth_tensor.norm(),2);
             //else return Grain::NON_VALID;
             case Resolution::HIGH:
             break;
@@ -39,10 +39,10 @@ double singleFieldCalculation(f_vec pos, const Grain& grain)
     }
     else 
     {
-        double rn = r/(grain.ref_column_rad + grain.ref_length*(1.0 - grain.top_fraction) * tan(grain.angle_of_widen));
+        double rn = r/(grain.ref_column_rad + grain.ref_length*(1.0 - grain.top_fraction) * grain.tan_angle_of_widen);
         double hn = (h - grain.ref_length*(1.0 - grain.top_fraction))/(grain.top_fraction*grain.ref_length);
         double hp = grain.top_parabola_coeff*(rn*rn - 1.0);
-        if( hn < hp) return r - tan(grain.angle_of_widen)*h - grain.ref_column_rad;
+        if( hn < hp) return r - grain.tan_angle_of_widen*h - grain.ref_column_rad;
         else return Grain::NON_VALID;
     }
 

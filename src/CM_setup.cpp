@@ -20,15 +20,12 @@ void defineTasks(Configuration& config, tasks_array& tasks)
     tasks.clear();
     tasks.resize(threadsNumber);
 
-    cm_pos dx = (config.domain->dimX + sqrt(threadsNumber) - 1)/ceil(sqrt(threadsNumber));
-    cm_pos dz = (config.domain->dimZ + sqrt(threadsNumber) - 1)/floor(sqrt(threadsNumber));
-    if(config.domain->dimZ == 1) dx = (config.domain->dimX + threadsNumber - 1 )/(threadsNumber);
+    cm_pos dx = (config.domain->dimX + threadsNumber - 1)/threadsNumber;
     cm_pos y0 = 1;
     cm_pos y1 = 2;
 
     cm_int counter = 0;
 
-    for(cm_pos z = 0; z < config.domain->dimZ; z+=dz)
     for(cm_pos x = 0; x < config.domain->dimX; x+=dx)
     {
         tasks[counter].domain = std::make_unique<Domain>(*config.domain);
@@ -37,8 +34,8 @@ void defineTasks(Configuration& config, tasks_array& tasks)
         tasks[counter].x1 = ((x + dx) < config.domain->dimX)? x + dx: config.domain->dimX;
         tasks[counter].y0 = y0;
         tasks[counter].y1 = y1;
-        tasks[counter].z0 = z;
-        tasks[counter].z1 = ((z + dz) < config.domain->dimZ)? z + dz: config.domain->dimZ; 
+        tasks[counter].z0 = 0;
+        tasks[counter].z1 = config.domain->dimZ; 
 
 
         std::copy(config.grains.begin(), config.grains.end(), std::back_insert_iterator(tasks[counter].grains));   
@@ -104,6 +101,9 @@ void nucleation(Configuration& config)
 
             config.grains[grain_ID].resolution = config.msp.resolution;
 
+            config.grains[grain_ID].tan_angle_of_widen = tan(config.grains[grain_ID].angle_of_widen);
+            config.grains[grain_ID].y_to_norm2 = pow(config.grains[grain_ID].growth_tensor.y/config.grains[grain_ID].growth_tensor.norm(),2);
+            
             grain_ID++;
             #ifdef DEBUG
             if(LogManager::Manager().logmode()) LogManager::Manager().printGrainData(config.grains[grain_ID-1]);

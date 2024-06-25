@@ -3,9 +3,6 @@
 #include<memory>
 #include"CM_basictypes.hpp"
 
-#define SHAPE_FUNCTION(name) \
-cm_int name(double h, double r, double phi, const Grain& grain) \
-
 enum class Resolution {LOW=0, HIGH=1};
 
 struct Grain
@@ -35,6 +32,10 @@ struct Grain
     
     /* Reference column radius */
     double ref_column_rad;
+
+    /* Generation coefficients */
+    double y_to_norm2;
+    double tan_angle_of_widen;
 };
 
 typedef std::vector<Grain> grains_array;
