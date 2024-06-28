@@ -5,10 +5,6 @@
 #include"CM_config.hpp"
 #include"CM_task.hpp"
 
-void scanNeighbourhood(f_vec pos, const Domain& domain, std::list<cm_state>& grains);
-double singleFieldCalculation(f_vec pos, const Grain& grain);
-void runTask(Task* task);
-
 class Generator
 {
     public:
@@ -19,14 +15,16 @@ class Generator
         cm_pos z0,z1;
     };
 
-    Generator(Domain&& domain, Subspace subspace, const grains_array& grains);
+    Generator(Domain& domain, Subspace subspace, const grains_array& grains);
 
     void run();
+    Subspace& subspace() {return m_subspace;}
 
     private: 
 
+    void check_neighbourhood(f_vec pos, std::list<cm_state>& grains);
     void cell(f_vec pos);
-    void fitness_value(f_vec pos, const Grain& grain);
+    double fitness_value(f_vec pos, const Grain& grain);
 
     Domain m_domain;
     Subspace m_subspace;

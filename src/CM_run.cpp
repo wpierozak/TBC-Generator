@@ -1,43 +1,47 @@
 #include<omp.h>
 #include"CM_run.hpp"
-#include"CM_setup.hpp"
-#include"CM_generation.hpp"
 #include"CM_logs.hpp"
 
-void run(Configuration& config)
+void GenerationManager::generate_single_layer(Configuration& config)
 {
-    tasks_array tasks;
-    if(LogManager::Manager().logmode()) LogManager::Manager().open("Nucleation");
-    nucleation(config);
-    if(LogManager::Manager().logmode()) LogManager::Manager().close("Nucleation");
-    if(LogManager::Manager().logmode()) LogManager::Manager().open("Task definition");
-    defineTasks(config, tasks);
-    if(LogManager::Manager().logmode()) LogManager::Manager().close("Task definition");
-
-    if(LogManager::Manager().logmode()) LogManager::Manager().open("Run tasks");
-    #pragma omp parallel default(none) num_threads(config.threadsNum) shared(tasks)
+    m_nucleator.nucleate(config);
+    create_generators(config);
+    dimX = config.domain->dimX;
+    dimY = config.domain->dimY;
+    dimZ = config.domain->dimZ;
+    #pragma omp parallel default(none) num_threads(config.threadsNum) firstprivate(dimX,dimY,dimZ)
     {
         cm_int idx = omp_get_thread_num();
 
-        while (tasks[idx].y0 != tasks[idx].domain->dimY)
+        while (m_generators[idx].subspace().y0 != dimY)
         {
             #pragma omp barrier
-            runTask(&tasks[idx]);
-
+            m_generators[idx].run();
             #pragma omp barrier
 
-            #ifdef DEBUG
-            #pragma omp master
-            {
-                if(LogManager::Manager().logmode())
-                LogManager::Manager().header(std::string("Y = ") + std::to_string(tasks[idx].input.y0));
-            }
-            #endif
-            
-
-            tasks[idx].y0 += 1;
-            tasks[idx].y1 += 1;
+            m_generators[idx].subspace().y0 += 1;
+            m_generators[idx].subspace().y1 += 1;
         }
     }
-    if(LogManager::Manager().logmode()) LogManager::Manager().close("Run tasks");
+}
+
+void GenerationManager::create_generators(Configuration& config)
+{
+    int threadsNumber = config.threadsNum;
+
+    cm_pos dx = (config.domain->dimX + threadsNumber - 1)/threadsNumber;
+
+    for(cm_pos x = 0; x < config.domain->dimX; x+=dx)
+    {
+        Generator::Subspace subspace;
+
+        subspace.x0 = x;
+        subspace.x1 = ((x + dx) < config.domain->dimX)? x + dx: config.domain->dimX;
+        subspace.y0 = 1;
+        subspace.y1 = 2;
+        subspace.z0 = 0;
+        subspace.z1 = config.domain->dimZ; 
+
+        m_generators.emplace_back(*config.domain, subspace, m_nucleator.grains());
+    }
 }

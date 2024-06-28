@@ -22,7 +22,9 @@ int main(int argc, const char** argv)
         if(LogManager::Manager().logmode()) LogManager::Manager().printConfigData(config);
         if(LogManager::Manager().logmode()) LogManager::Manager().close("Parsing");
         if(LogManager::Manager().logmode()) LogManager::Manager().timeStart("Run");
-        run(config);
+        GenerationManager manager;
+        manager.generate_single_layer(config);
+        //run(config);
         if(LogManager::Manager().logmode()) LogManager::Manager().recordTimeElapsed("Run");
 
         if(LogManager::Manager().logmode()) LogManager::Manager().open("Results saving");

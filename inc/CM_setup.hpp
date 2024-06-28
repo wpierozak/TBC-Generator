@@ -1,20 +1,23 @@
+#pragma once
 #include"CM_config.hpp"
 #include"CM_task.hpp"
 
-std::pair<cm_pos, cm_pos> findDiv(cm_pos dimX, cm_pos dimZ);
+class Nucleator
+{
+    public:
+    Nucleator() = default;
 
-void defineTasks(Configuration& config, tasks_array& taskData);
+    void nucleate(Configuration& config);
+    std::vector<Grain>& grains() {return m_grains;}
 
-void nucleation(Configuration& config);
+    private:
 
-void setGrowthTensor(Grain& grain, Microstructure_Properties& msp);
+    void setGrowthTensor(Grain& grain, Microstructure_Properties& msp);
+    void setMaxWidenAngle(Grain& grain, Microstructure_Properties& msp);
+    void setTopRegionLen(Grain& grain, Microstructure_Properties& msp);
+    void setReferenceRadius(Grain& grain, Microstructure_Properties& msp);
+    void setReferenceLength(Grain& grain, Microstructure_Properties& msp);
+    void setRVector(Grain& grain);
 
-void setMaxWidenAngle(Grain& grain, Microstructure_Properties& msp);
-
-void setTopRegionLen(Grain& grain, Microstructure_Properties& msp);
-
-void setReferenceRadius(Grain& grain, Microstructure_Properties& msp);
-
-void setReferenceLength(Grain& grain, Microstructure_Properties& msp);
-
-void setRVector(Grain& grain);
+    std::vector<Grain> m_grains;
+};

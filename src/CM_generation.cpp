@@ -14,7 +14,35 @@ double noise()
     return distribution(generator);
 }
 
-double singleFieldCalculation(f_vec pos, const Grain& grain)
+Generator::Generator(Domain& domain, Subspace subspace, const grains_array& grains):
+    m_domain(domain), m_subspace(subspace)
+{
+    std::copy(grains.begin(), grains.end(), std::back_insert_iterator(m_grains));   
+}
+
+void Generator::run()
+{
+    std::list<cm_state> grains_neighbourhood;
+    for(cm_pos y = m_subspace.y0; y < m_subspace.y1; y++)
+    for(cm_pos z = m_subspace.z0; z < m_subspace.z1; z++)
+    for(cm_pos x = m_subspace.x0; x < m_subspace.x1; x++)
+    {
+        f_vec pos = {static_cast<double>(x), static_cast<double>(y), static_cast<double>(z)};
+        double bestfit = Grain::NON_VALID;
+        check_neighbourhood(pos, grains_neighbourhood);
+
+        for(cm_state grain_idx: grains_neighbourhood)
+        {
+            Grain& grain = m_grains[grain_idx];
+            double fit = fitness_value(pos, grain);
+            if(fit >= bestfit) continue;
+            m_domain(x,y,z) = grain_idx;
+            bestfit = fit;
+        }
+    }
+}
+
+double Generator::fitness_value(f_vec pos, const Grain& grain)
 {
     const f_vec& growth_tensor = grain.growth_tensor;
 
@@ -49,69 +77,17 @@ double singleFieldCalculation(f_vec pos, const Grain& grain)
     return Grain::NON_VALID;
 }
 
-void runTask(Task* task)
-{
-    std::minstd_rand generator(std::random_device{}());
-    std::uniform_int_distribution<> dist(0,100);
-
-    std::list<cm_state> grains_neighbourhood;
-    for(cm_pos y = task->y0; y < task->y1; y++)
-    for(cm_pos z = task->z0; z < task->z1; z++)
-    for(cm_pos x = task->x0; x < task->x1; x++)
-    {
-        f_vec pos = {static_cast<double>(x), static_cast<double>(y), static_cast<double>(z)};
-        double bestfit = Grain::NON_VALID;
-        scanNeighbourhood(pos, *task->domain, grains_neighbourhood);
-
-        for(cm_state grain_idx: grains_neighbourhood)
-        {
-            Grain& grain = task->grains[grain_idx];
-            double fit = singleFieldCalculation(pos, grain);
-            if(fit >= bestfit) continue;
-            (*task->domain)(x,y,z) = grain_idx;
-            bestfit = fit;
-        }
-    }
-}
-
-
-void scanNeighbourhood(f_vec pos, const Domain& domain, std::list<cm_state>& grains)
+void Generator::check_neighbourhood(f_vec pos, std::list<cm_state>& grains)
 {
     grains.clear();
 
-    for(cm_pos dy = domain.neighbourhood.dy0; dy <= domain.neighbourhood.dy1; dy++)
-    for(cm_pos dz = domain.neighbourhood.dz0; dz <= domain.neighbourhood.dz1; dz++)
-    for(cm_pos dx = domain.neighbourhood.dx0; dx <= domain.neighbourhood.dx1; dx++)
+    for(cm_pos dy = m_domain.neighbourhood.dy0; dy <= m_domain.neighbourhood.dy1; dy++)
+    for(cm_pos dz = m_domain.neighbourhood.dz0; dz <= m_domain.neighbourhood.dz1; dz++)
+    for(cm_pos dx = m_domain.neighbourhood.dx0; dx <= m_domain.neighbourhood.dx1; dx++)
     {
-        cm_state n = domain.state(pos.x + dx, pos.y + dy, pos.z + dz);
+        cm_state n = m_domain.state(pos.x + dx, pos.y + dy, pos.z + dz);
         if(n == Domain::VOID) continue;
         if(std::find(grains.begin(), grains.end(), n) != grains.end()) continue;
         grains.push_back(n);
     }
-}
-
-void Generator::run()
-{
-    std::list<cm_state> grains_neighbourhood;
-    for(cm_pos y = m_subspace.y0; y < m_subspace.y1; y++)
-    for(cm_pos z = m_subspace.z0; z < m_subspace.z1; z++)
-    for(cm_pos x = m_subspace.x0; x < m_subspace.x1; x++)
-    {
-        f_vec pos = {static_cast<double>(x), static_cast<double>(y), static_cast<double>(z)};
-        double bestfit = Grain::NON_VALID;
-        scanNeighbourhood(pos, m_domain, grains_neighbourhood);
-
-        for(cm_state grain_idx: grains_neighbourhood)
-        {
-            Grain& grain = m_grains[grain_idx];
-            double fit = singleFieldCalculation(pos, grain);
-            if(fit >= bestfit) continue;
-            m_domain(x,y,z) = grain_idx;
-            bestfit = fit;
-        }
-    }
-}
-
-void Generator::fitness_value(f_vec pos, const Grain& grain)
-{
 }

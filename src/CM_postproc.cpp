@@ -8,7 +8,7 @@
 #include"BMP/libbmp.h"
 #include"BMP/EasyBMP.h"
 
-#define BUFFER_LINES_NUMBER 1000
+#define BUFFER_SIZE 1000
 
 std::tuple<uint8_t, uint8_t, uint8_t> generateRandomColor() {
     return std::make_tuple(static_cast<uint8_t>(std::rand() % 256),
@@ -98,41 +98,27 @@ void createBitmap(Configuration& config)
 
 void saveMicrostructureFile(Configuration* config)
 {
-    uint8_t* colorsArray = defineColors(config->grainsNumber);
     std::string filename = config->outputDir + "/" + config->outputFile;
-
-    cm_pos nonVoid = 0;
     cm_pos size = cm_pos(config->domain->dimX)*cm_pos(config->domain->dimY)*cm_pos(config->domain->dimZ);
     
-    #pragma omp parallel for num_threads(config->threadsNumber) reduction(+= nonVoid)
-    for(cm_pos idx = 0; idx < size; idx++)
-    {
-        if((*config->domain)(idx) != Domain::VOID)
-        {
-            nonVoid++;
-        }
-    }
-
     std::ofstream file;
     file.open(filename);
+
+    char buffer[BUFFER_SIZE];
+    file.rdbuf()->pubsetbuf(buffer, BUFFER_SIZE);
 
     if(file.is_open() == false)
         throw std::runtime_error("Output file cannot be created/loade\n");
 
-    if(LogManager::Manager().logmode()) LogManager::Manager().text(std::string("Non void fields: ") + std::to_string(nonVoid));
     file << size << std::endl << std::endl;
+
     size_t step = cm_pos(config->domain->dimX) * cm_pos(config->domain->dimY) * cm_pos(config->domain->dimZ) / 10;
     cm_pos counter = 0; 
     cm_pos line_counter=0;
-    std::string buffer;
-    switch (config->msFileFormat)
-    {
-    case MsFileFormat::xyz:
-    {
-        buffer.resize(nonVoid*10);
-        for(cm_pos y = 0; y < config->domain->dimY; y++)
-        for(cm_pos z = 0; z < config->domain->dimZ; z++)
-        for(cm_pos x = 0; x < config->domain->dimX; x++)
+
+    for(cm_pos y = 0; y < config->domain->dimY; y++)
+    for(cm_pos z = 0; z < config->domain->dimZ; z++)
+    for(cm_pos x = 0; x < config->domain->dimX; x++)
         {
             if(LogManager::Manager().logmode())
             {
@@ -143,33 +129,9 @@ void saveMicrostructureFile(Configuration* config)
             //if((*config->domain)(x, y, z) != Domain::VOID)
             {
                 file << x << ' ' << y << ' ' << z << ' ' << (*config->domain)(x, y, z) << std::endl;
-                //buffer += std::to_string(x) + ' ' + std::to_string(y) + ' ' + std::to_string(z) + ' ' + std::to_string((*config->domain)(x, y, z));
-                //buffer += "\n";
             }
          
         }
-        //file.write(buffer.c_str(), buffer.size()-1);
-        break;
-
-    case MsFileFormat::xyzrgb:
-        for(cm_pos y = 0; y < config->domain->dimY; y++)
-        for(cm_pos z = 0; z < config->domain->dimZ; z++)
-        for(cm_pos x = 0; x < config->domain->dimX; x++)
-        {
-            if((*config->domain)(x, y, z) != Grain::NON_VALID)
-            {
-                file << x << ' ' << y << ' ' << z << ' ' << colorsArray[(*config->domain)(x, y, z)] << 
-                colorsArray[(*config->domain)(x, y, z) + 1] << colorsArray[(*config->domain)(x, y, z) + 2] << (*config->domain)(x, y, z) << std::endl;
-            }
-        }
-    }
-        break;
-    
-    default:
-        throw std::runtime_error("Format (yet) not supported!");
-        break;
-    }
 
     file.close();
-    delete[] colorsArray;
 }
