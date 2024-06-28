@@ -9,7 +9,7 @@ struct Configuration
     grains_array grains;
     cm_int grainsNumber;
 
-    Microstructure_Properties msp;
+    std::vector<Microstructure_Properties> layers;
     Neighbourhood neighbourhood;
 
     cm_int threadsNum;

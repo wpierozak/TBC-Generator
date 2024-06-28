@@ -22,10 +22,8 @@ int main(int argc, const char** argv)
         if(LogManager::Manager().logmode()) LogManager::Manager().printConfigData(config);
         if(LogManager::Manager().logmode()) LogManager::Manager().close("Parsing");
         if(LogManager::Manager().logmode()) LogManager::Manager().timeStart("Run");
-        GenerationManager manager(config.dimX, config.dimY, config.dimZ, config.neighbourhood);
-        manager.add_layer(config.msp);
-        manager.set_threads_number(config.threadsNum);
-        manager.generate_single_layer(0);
+        GenerationManager manager(config);
+        manager.generate();
         //run(config);
         if(LogManager::Manager().logmode()) LogManager::Manager().recordTimeElapsed("Run");
 

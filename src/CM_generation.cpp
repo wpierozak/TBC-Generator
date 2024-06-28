@@ -14,10 +14,15 @@ double noise()
     return distribution(generator);
 }
 
-Generator::Generator(Domain& domain, Subspace subspace, const grains_array& grains):
+Generator::Generator(Domain& domain, Subspace subspace):
     m_domain(domain), m_subspace(subspace)
 {
-    std::copy(grains.begin(), grains.end(), std::back_insert_iterator(m_grains));   
+    
+}
+
+void Generator::update_grains(std::unordered_map<cm_state, Grain> &grains)
+{
+    m_grains = grains;
 }
 
 void Generator::run()

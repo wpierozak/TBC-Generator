@@ -1,7 +1,7 @@
 #pragma once
 
 #include<list>
-#include<vector>
+#include<unordered_map>
 #include"CM_config.hpp"
 
 class Generator
@@ -14,7 +14,9 @@ class Generator
         cm_pos z0,z1;
     };
 
-    Generator(Domain& domain, Subspace subspace, const grains_array& grains);
+    Generator(Domain& domain, Subspace subspace);
+    void update_grains(std::unordered_map<cm_state, Grain>& grains);
+    void set_g0(cm_int g0) { m_g0 = g0; }
 
     void run();
     Subspace& subspace() {return m_subspace;}
@@ -28,5 +30,7 @@ class Generator
     Domain m_domain;
     Subspace m_subspace;
 
-    grains_array m_grains;
+    cm_int m_g0;
+
+    std::unordered_map<cm_state, Grain> m_grains;
 };
