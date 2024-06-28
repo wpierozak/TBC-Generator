@@ -53,6 +53,7 @@ struct Microstructure_Properties
         top_frac = std::make_shared<GaussianDistr>(*obj.top_frac);
         resolution = obj.resolution;
         grainsNumber = obj.grainsNumber;
+        layer_height = obj.layer_height;
     }
 
     std::shared_ptr<GaussianDistr> length;
@@ -60,7 +61,10 @@ struct Microstructure_Properties
     std::shared_ptr<GaussianDistr> tilt;
     std::shared_ptr<GaussianDistr> widen;
     std::shared_ptr<GaussianDistr> top_frac;
+
     cm_int grainsNumber;
+    cm_pos layer_height;
+
     Resolution resolution;
 
     void print(std::ostream& os) const;

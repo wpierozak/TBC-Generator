@@ -13,13 +13,12 @@ std::uniform_real_distribution<double> lu_dist(-1, 1);
 std::uniform_real_distribution<double> p_dist(0, 1);
 std::normal_distribution<double> n_dist(0.7,0.2);
 
-void Nucleator::nucleate(Domain& domain, Microstructure_Properties& msp)
+void Nucleator::nucleate(Domain& domain, cm_pos y0, cm_int g0, Microstructure_Properties& msp)
 {
     std::minstd_rand gen(std::random_device{}());
     std::uniform_real_distribution<double> dist(0, 1);
 
-    m_grains.resize(msp.grainsNumber);
-    cm_pos grain_ID = 0;
+    cm_state grain_ID = g0;
     
     cm_pos dimX = domain.dimX;
     cm_pos dimZ = domain.dimZ;
@@ -30,7 +29,8 @@ void Nucleator::nucleate(Domain& domain, Microstructure_Properties& msp)
         for(cm_pos x = 0; x < dimX; x+=dX)
         {
             /* center */
-            m_grains[grain_ID].center = {round( x), 0.0, round( z)};
+            m_grains.insert({grain_ID, Grain()});
+            m_grains[grain_ID].center = {round( x), double(y0), round( z)};
             if(m_grains[grain_ID].center.x >= dimX) m_grains[grain_ID].center.x = dimX - 1.0;
             if(m_grains[grain_ID].center.z >= dimZ) m_grains[grain_ID].center.z = dimZ - 1.0;
             /* ID */
@@ -61,7 +61,7 @@ void Nucleator::nucleate(Domain& domain, Microstructure_Properties& msp)
         }
 
     std::vector<int> idxs;
-    for(int i = 0; i < msp.grainsNumber; i++) idxs.push_back(i);
+    for(int i = g0; i < msp.grainsNumber+g0; i++) idxs.push_back(i);
     std::minstd_rand minstd(std::random_device{}());
     std::shuffle(idxs.begin(), idxs.end(), minstd);
     for(int grain_ID: idxs)
@@ -72,8 +72,8 @@ void Nucleator::nucleate(Domain& domain, Microstructure_Properties& msp)
                 if(dx*dx + dz*dz > pow(m_grains[grain_ID].ref_column_rad, 2)) continue;
                 if(m_grains[grain_ID].center.x + dx < 0 || m_grains[grain_ID].center.x + dx > dimX ||
                     m_grains[grain_ID].center.z + dz < 0 || m_grains[grain_ID].center.z + dz > dimZ) continue; 
-                if(domain(m_grains[grain_ID].center.x + dx, 0, m_grains[grain_ID].center.z + dz) == Domain::VOID)
-                domain(m_grains[grain_ID].center.x + dx, 0, m_grains[grain_ID].center.z + dz) = grain_ID;
+                if(domain(m_grains[grain_ID].center.x + dx, y0, m_grains[grain_ID].center.z + dz) == Domain::VOID)
+                domain(m_grains[grain_ID].center.x + dx, y0, m_grains[grain_ID].center.z + dz) = m_grains[grain_ID].ID;
             }
     }
 }

@@ -26,7 +26,7 @@ const std::string MS_FILE_FORMAT = "ms_file_format";
 const std::string MS_XYZ = "xyz";
 const std::string MS_RGB = "xyzrgb";
 
-const std::string GRAIN_CONFIG = "Grain";
+const std::string LAYER = "Layer";
 const std::string GRAIN_NUMBER = "grains_number";
 
 const std::string THREADS_NUMBER = "threads_number";
@@ -45,6 +45,7 @@ const std::string WIDEN = "widen";
 const std::string TILT = "tilt";
 const std::string TOP_FRAC = "top_frac";
 const std::string RESOLUTION = "resolution";
+const std::string LAYER_HEIGHT = "layer_height";
 
 void parseConfiguration(std::string filePath, Configuration& configuration) {
     configuration.inputFile = filePath;
@@ -94,13 +95,10 @@ void parseConfiguration(std::string filePath, Configuration& configuration) {
             if(format == MS_XYZ) configuration.msFileFormat = MsFileFormat::xyz;
             else if(format == MS_RGB) configuration.msFileFormat = MsFileFormat::xyzrgb;
         }
-        else if(GRAIN_CONFIG == node->name())
+        else if(LAYER == node->name())
         {
-            parseMicrostructureProperties(node, configuration.msp);
-        }
-        else if(GRAIN_NUMBER == node->name())
-        {
-            configuration.msp.grainsNumber = std::stoi(node->value());
+            configuration.layers.resize(configuration.layers.size()+1);
+            parseMicrostructureProperties(node, configuration.layers.back());
         }
         else if(NEIGHBOURHOOD == node->name())
         {
@@ -143,6 +141,14 @@ void parseMicrostructureProperties(rapidxml::xml_node<>* node, Microstructure_Pr
         {
             if(child_node->value() == "HIGH") mscp.resolution = Resolution::HIGH;
             else mscp.resolution = Resolution::LOW;
+        }
+        else if(GRAIN_NUMBER == child_node->name())
+        {
+            mscp.grainsNumber = std::stoi(child_node->value());
+        }
+        else if(LAYER_HEIGHT == child_node->name())
+        {
+            mscp.layer_height = std::stoi(child_node->value());
         }
         else throw std::runtime_error("MSP - Invalid XML format - invalid node");
         child_node = child_node->next_sibling();

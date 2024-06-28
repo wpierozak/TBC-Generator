@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <Configuration>
 
-    <dimX>200</dimX> 
-    <dimY>120</dimY>
-    <dimZ>200</dimZ>
+    <dimX>100</dimX> 
+    <dimY>400</dimY>
+    <dimZ>100</dimZ>
 
     <output_dir>../res/</output_dir>
 
@@ -22,9 +22,10 @@
         <z1>1</z1>
     </neighbourhood>
 
-    <grains_number>900</grains_number>
+    <Layer> 
+       <grains_number>400</grains_number>    
+       <layer_height>120</layer_height>
 
-    <Grain>    
        <radius>    
             <mean>4</mean>
             <std>2</std>
@@ -55,7 +56,42 @@
         </widen>
 
         <resolution>LOW</resolution>
-    </Grain>
+    </Layer>
+     <Layer> 
+       <grains_number>400</grains_number>    
+       <layer_height>120</layer_height>
+       
+       <radius>    
+            <mean>4</mean>
+            <std>2</std>
+            <max>7</max>
+            <min>2</min>
+        </radius>
+
+        <tilt>  <!-- degrees -->
+            <mean>0</mean>
+            <std>4</std>
+        </tilt>
+
+        <length> 
+            <mean>100</mean>
+            <std>5</std>
+        </length>
+
+        <top_frac>
+            <mean>0.15</mean>
+            <std>0.01</std>
+        </top_frac>
+
+        <widen> <!-- degrees -->
+            <mean>3</mean>
+            <std>1</std>
+            <max>6</max>
+            <min>0</min>
+        </widen>
+
+        <resolution>LOW</resolution>
+    </Layer>
 
     <threads_number>12</threads_number>
 

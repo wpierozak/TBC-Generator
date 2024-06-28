@@ -87,7 +87,7 @@ void LogManager::printConfigData(const Configuration& config)
     //if(config.domain != nullptr) _outstream << "allocated\n";
     //else _outstream << "not allocated";
     _outstream << "Grains number: " << config.grainsNumber << std::endl;
-    printMspData(config.msp);
+   // printMspData(config.layers);
     close("Configuration");
 }
 
