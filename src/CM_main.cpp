@@ -22,14 +22,16 @@ int main(int argc, const char** argv)
         if(LogManager::Manager().logmode()) LogManager::Manager().printConfigData(config);
         if(LogManager::Manager().logmode()) LogManager::Manager().close("Parsing");
         if(LogManager::Manager().logmode()) LogManager::Manager().timeStart("Run");
-        GenerationManager manager;
-        manager.generate_single_layer(config);
+        GenerationManager manager(config.dimX, config.dimY, config.dimZ, config.neighbourhood);
+        manager.add_layer(config.msp);
+        manager.set_threads_number(config.threadsNum);
+        manager.generate_single_layer(0);
         //run(config);
         if(LogManager::Manager().logmode()) LogManager::Manager().recordTimeElapsed("Run");
 
         if(LogManager::Manager().logmode()) LogManager::Manager().open("Results saving");
         if(LogManager::Manager().logmode()) LogManager::Manager().timeStart("File generation");
-        saveMicrostructureFile(&config);
+        saveMicrostructureFile(manager.domain(),config);
         if(config.bitmaps) createBitmap(config);
         if(LogManager::Manager().logmode()) LogManager::Manager().recordTimeElapsed("File generation");
         if(LogManager::Manager().logmode()) LogManager::Manager().close("Results saving");

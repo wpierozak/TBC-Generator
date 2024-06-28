@@ -3,7 +3,6 @@
 #include<list>
 #include<vector>
 #include"CM_config.hpp"
-#include"CM_task.hpp"
 
 class Generator
 {

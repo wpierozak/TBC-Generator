@@ -35,7 +35,7 @@ class Domain
     const cm_pos dimZ;
     const Neighbourhood neighbourhood;
 
-    BC bc;
+    BC bc = BC::absorption;
 
     cm_state& operator()(cm_pos x, cm_pos y, cm_pos z)
     {

@@ -60,46 +60,46 @@ uint8_t* defineColors(cm_pos grainNum)
 
 void createBitmap(Configuration& config)
 {
-    int threads_num = config.threadsNum;
-    uint8_t* colorsArray = defineColors(config.grainsNumber);
-    std::string filename = config.outputFile;
-    std::string dir = config.outputDir;
+//     int threads_num = config.threadsNum;
+//     uint8_t* colorsArray = defineColors(config.grainsNumber);
+//     std::string filename = config.outputFile;
+//     std::string dir = config.outputDir;
 
-   #pragma omp parallel for schedule(static) num_threads(threads_num) firstprivate(dimX, dimY, domain, colorsArray, domain, filename, dir)
-    for(cm_pos z = 0; z < config.domain->dimZ; z++)
-    {
-        BMP bmp;
-        bmp.SetSize(config.domain->dimX, config.domain->dimY);    
-        for(cm_pos y = 0; y < config.domain->dimY; y++)
-        for(cm_pos x = 0; x < config.domain->dimX; x++)
-        {
-            RGBApixel pixel;
-            cm_state grain = (*config.domain)(x, y, z);
-            if( grain != Domain::VOID)
-            {
-                pixel.Red =  colorsArray[(grain)*3];
-                pixel.Green = colorsArray[(grain)*3 + 1];
-                pixel.Blue =  colorsArray[(grain)*3 + 2];
-            }
-            else
-            {
-                pixel.Red = pixel.Green = pixel.Blue = 0;
-            }
+//    #pragma omp parallel for schedule(static) num_threads(threads_num) firstprivate(dimX, dimY, domain, colorsArray, domain, filename, dir)
+//     for(cm_pos z = 0; z < config.domain.dimZ; z++)
+//     {
+//         BMP bmp;
+//         bmp.SetSize(config.domain.dimX, config.domain.dimY);    
+//         for(cm_pos y = 0; y < config.domain.dimY; y++)
+//         for(cm_pos x = 0; x < config.domain.dimX; x++)
+//         {
+//             RGBApixel pixel;
+//             cm_state grain = (*config.domain)(x, y, z);
+//             if( grain != Domain::VOID)
+//             {
+//                 pixel.Red =  colorsArray[(grain)*3];
+//                 pixel.Green = colorsArray[(grain)*3 + 1];
+//                 pixel.Blue =  colorsArray[(grain)*3 + 2];
+//             }
+//             else
+//             {
+//                 pixel.Red = pixel.Green = pixel.Blue = 0;
+//             }
        
-            bmp.SetPixel(x,config.domain->dimY - y - 1, pixel);
-    }
+//             bmp.SetPixel(x,config.domain.dimY - y - 1, pixel);
+//     }
 
-    std::string output = dir + std::string("/") + filename + std::string("_") + std::to_string(z) + std::string(".bmp");
-    bmp.WriteToFile(output.c_str());
-    }
+//     std::string output = dir + std::string("/") + filename + std::string("_") + std::to_string(z) + std::string(".bmp");
+//     bmp.WriteToFile(output.c_str());
+//     }
 
-    delete[] colorsArray;
+//     delete[] colorsArray;
 }
 
-void saveMicrostructureFile(Configuration* config)
+void saveMicrostructureFile(Domain& domain, Configuration& config)
 {
-    std::string filename = config->outputDir + "/" + config->outputFile;
-    cm_pos size = cm_pos(config->domain->dimX)*cm_pos(config->domain->dimY)*cm_pos(config->domain->dimZ);
+    std::string filename = config.outputDir + "/" + config.outputFile;
+    cm_pos size = cm_pos(domain.dimX)*cm_pos(domain.dimY)*cm_pos(domain.dimZ);
     
     std::ofstream file;
     file.open(filename);
@@ -112,13 +112,13 @@ void saveMicrostructureFile(Configuration* config)
 
     file << size << std::endl << std::endl;
 
-    size_t step = cm_pos(config->domain->dimX) * cm_pos(config->domain->dimY) * cm_pos(config->domain->dimZ) / 10;
+    size_t step = cm_pos(domain.dimX) * cm_pos(domain.dimY) * cm_pos(domain.dimZ) / 10;
     cm_pos counter = 0; 
     cm_pos line_counter=0;
 
-    for(cm_pos y = 0; y < config->domain->dimY; y++)
-    for(cm_pos z = 0; z < config->domain->dimZ; z++)
-    for(cm_pos x = 0; x < config->domain->dimX; x++)
+    for(cm_pos y = 0; y < domain.dimY; y++)
+    for(cm_pos z = 0; z < domain.dimZ; z++)
+    for(cm_pos x = 0; x < domain.dimX; x++)
         {
             if(LogManager::Manager().logmode())
             {
@@ -126,9 +126,9 @@ void saveMicrostructureFile(Configuration* config)
                 if(counter % (size/10) == 0)
                 LogManager::Manager().text(std::string("Progress: ") + std::to_string(counter) + std::string("/") + std::to_string(size));
             }
-            //if((*config->domain)(x, y, z) != Domain::VOID)
+            //if((*domain)(x, y, z) != Domain::VOID)
             {
-                file << x << ' ' << y << ' ' << z << ' ' << (*config->domain)(x, y, z) << std::endl;
+                file << x << ' ' << y << ' ' << z << ' ' << domain(x, y, z) << std::endl;
             }
          
         }

@@ -1,13 +1,12 @@
 #pragma once
 #include"CM_config.hpp"
-#include"CM_task.hpp"
 
 class Nucleator
 {
     public:
     Nucleator() = default;
 
-    void nucleate(Configuration& config);
+    void nucleate(Domain& domain, Microstructure_Properties& msp);
     std::vector<Grain>& grains() {return m_grains;}
 
     private:

@@ -5,12 +5,12 @@
 
 struct Configuration
 {
-    std::unique_ptr<Domain> domain;
-
+    cm_pos dimX, dimY, dimZ;
     grains_array grains;
     cm_int grainsNumber;
 
     Microstructure_Properties msp;
+    Neighbourhood neighbourhood;
 
     cm_int threadsNum;
 

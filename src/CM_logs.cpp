@@ -84,8 +84,8 @@ void LogManager::printConfigData(const Configuration& config)
     _outstream << "Output dir" << config.outputDir << std::endl;
     _outstream << "Number of threads to be used: " << config.threadsNum << std::endl;
     _outstream << "Domain: ";
-    if(config.domain != nullptr) _outstream << "allocated\n";
-    else _outstream << "not allocated";
+    //if(config.domain != nullptr) _outstream << "allocated\n";
+    //else _outstream << "not allocated";
     _outstream << "Grains number: " << config.grainsNumber << std::endl;
     printMspData(config.msp);
     close("Configuration");

@@ -2,14 +2,18 @@
 #include"CM_run.hpp"
 #include"CM_logs.hpp"
 
-void GenerationManager::generate_single_layer(Configuration& config)
+GenerationManager::GenerationManager(cm_pos dimX, cm_pos dimY, cm_pos dimZ, Neighbourhood neighbourhood):
+    m_domain(dimX, dimY, dimZ, neighbourhood)
 {
-    m_nucleator.nucleate(config);
-    create_generators(config);
-    dimX = config.domain->dimX;
-    dimY = config.domain->dimY;
-    dimZ = config.domain->dimZ;
-    #pragma omp parallel default(none) num_threads(config.threadsNum) firstprivate(dimX,dimY,dimZ)
+    m_threads_number = omp_get_num_threads();
+}
+
+void GenerationManager::generate_single_layer(cm_int layer)
+{
+    m_nucleator.nucleate(m_domain, m_layers_properties[layer]);
+    create_generators();
+    cm_pos dimY = m_domain.dimY;
+    #pragma omp parallel num_threads(m_threads_number) 
     {
         cm_int idx = omp_get_thread_num();
 
@@ -25,23 +29,23 @@ void GenerationManager::generate_single_layer(Configuration& config)
     }
 }
 
-void GenerationManager::create_generators(Configuration& config)
+void GenerationManager::create_generators()
 {
-    int threadsNumber = config.threadsNum;
+    int threadsNumber = m_threads_number;
 
-    cm_pos dx = (config.domain->dimX + threadsNumber - 1)/threadsNumber;
+    cm_pos dx = (m_domain.dimX + threadsNumber - 1)/threadsNumber;
 
-    for(cm_pos x = 0; x < config.domain->dimX; x+=dx)
+    for(cm_pos x = 0; x < m_domain.dimX; x+=dx)
     {
         Generator::Subspace subspace;
 
         subspace.x0 = x;
-        subspace.x1 = ((x + dx) < config.domain->dimX)? x + dx: config.domain->dimX;
+        subspace.x1 = ((x + dx) < m_domain.dimX)? x + dx: m_domain.dimX;
         subspace.y0 = 1;
         subspace.y1 = 2;
         subspace.z0 = 0;
-        subspace.z1 = config.domain->dimZ; 
+        subspace.z1 = m_domain.dimZ; 
 
-        m_generators.emplace_back(*config.domain, subspace, m_nucleator.grains());
+        m_generators.emplace_back(m_domain, subspace, m_nucleator.grains());
     }
 }

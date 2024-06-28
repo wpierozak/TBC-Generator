@@ -100,7 +100,7 @@ void parseConfiguration(std::string filePath, Configuration& configuration) {
         }
         else if(GRAIN_NUMBER == node->name())
         {
-            configuration.grainsNumber = std::stoi(node->value());
+            configuration.msp.grainsNumber = std::stoi(node->value());
         }
         else if(NEIGHBOURHOOD == node->name())
         {
@@ -122,9 +122,10 @@ void parseConfiguration(std::string filePath, Configuration& configuration) {
         else throw std::runtime_error("Invalid XML format - invalid node");
         node = node->next_sibling();
     }
-
-    configuration.domain = std::make_unique<Domain>(dim[0], dim[1], dim[2], neighbourhood);
-    configuration.domain->bc = boundry_condition;
+    configuration.dimX = dim[0];
+    configuration.dimY = dim[1];
+    configuration.dimZ = dim[2];
+    configuration.neighbourhood = neighbourhood;
 }
 
 void parseMicrostructureProperties(rapidxml::xml_node<>* node, Microstructure_Properties& mscp)

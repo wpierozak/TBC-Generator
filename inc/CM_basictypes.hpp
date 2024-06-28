@@ -62,6 +62,10 @@ class GaussianDistr
         _generator(std::random_device{}()), _distribution(mean, std), _max(max), _min(min)
     {}
 
+    GaussianDistr(const GaussianDistr& obj): 
+        _generator(std::random_device{}()), _distribution(obj.mean(), obj.std()), _max(obj.max()), _min(obj.min())
+    {}
+
     double draw() { 
         double val = _distribution(_generator); 
         if(abs(_min-_max)<10e-4) return val;

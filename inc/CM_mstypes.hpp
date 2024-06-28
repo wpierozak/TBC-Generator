@@ -43,11 +43,24 @@ typedef std::vector<Grain> grains_array;
 /* Contains information needed to define grain properties */
 struct Microstructure_Properties
 {
+    Microstructure_Properties() = default;
+    Microstructure_Properties(const Microstructure_Properties& obj)
+    {
+        length = std::make_shared<GaussianDistr>(*obj.length);
+        radius = std::make_shared<GaussianDistr>(*obj.radius);
+        tilt = std::make_shared<GaussianDistr>(*obj.tilt);
+        widen = std::make_shared<GaussianDistr>(*obj.widen);
+        top_frac = std::make_shared<GaussianDistr>(*obj.top_frac);
+        resolution = obj.resolution;
+        grainsNumber = obj.grainsNumber;
+    }
+
     std::shared_ptr<GaussianDistr> length;
     std::shared_ptr<GaussianDistr> radius;
     std::shared_ptr<GaussianDistr> tilt;
     std::shared_ptr<GaussianDistr> widen;
     std::shared_ptr<GaussianDistr> top_frac;
+    cm_int grainsNumber;
     Resolution resolution;
 
     void print(std::ostream& os) const;
