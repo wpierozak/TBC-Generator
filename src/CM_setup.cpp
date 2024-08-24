@@ -28,18 +28,39 @@ void Nucleator::nucleate(Domain& domain, cm_pos y0, cm_int g0, Layer& msp)
     for(cm_pos z = 0; z < dimZ; z+=dZ)
         for(cm_pos x = 0; x < dimX; x+=dX)
         {
-            /* center */
-            m_grains.insert({grain_ID, Grain()});
-            m_grains[grain_ID].center = {round( x), double(y0), round( z)};
-            if(m_grains[grain_ID].center.x >= dimX) m_grains[grain_ID].center.x = dimX - 1.0;
-            if(m_grains[grain_ID].center.z >= dimZ) m_grains[grain_ID].center.z = dimZ - 1.0;
-            /* ID */
             m_grains[grain_ID].ID = grain_ID;
+
+            /* center */
+            if( x >= dimX ) x = dimX - 1;
+            if (z >= dimZ ) z = dimZ - 1;
+            m_grains.insert({grain_ID, Grain()});
+            for(cm_pos y = y0; ;)
+            {
+                if( y == 0)
+                {
+                    m_grains[grain_ID].center = {round( x), double(y), round( z)};
+                    domain(x,y,z) = {m_grains[grain_ID].ID,0};
+                    break;
+                }
+                else if( domain(x,y,z).state == Domain::VOID.state && domain(x,y-1,z).state != Domain::VOID.state)
+                {
+                    m_grains[grain_ID].center = {round( x), double(y), round( z)};
+                    domain(x,y,z) = {m_grains[grain_ID].ID,0};
+                    break;
+                }
+                else if(domain(x,y,z).state == Domain::VOID.state)
+                {
+                    y -= 1;
+                }
+                else
+                {
+                    y += 1;
+                }
+            }
+            
             /* Growth tensor */
             setGrowthTensor(m_grains[grain_ID], msp);
 
-            domain(m_grains[grain_ID].center.x, y0, m_grains[grain_ID].center.z) = {m_grains[grain_ID].ID,0};
-            
             grain_ID++;
             #ifdef DEBUG
             if(LogManager::Manager().logmode()) LogManager::Manager().printGrainData(m_grains[grain_ID-1]);

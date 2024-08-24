@@ -62,7 +62,7 @@ void GenerationManager::update_generators()
     {
         g.update_grains(m_nucleator.grains());
         g.set_prefered_orientation(m_layers_properties[m_current_layer].prefered_orientation);
-        g.subspace().y0 = m_current_y0;
+        g.subspace().y0 = 0;
     }
 }
 
@@ -72,7 +72,7 @@ void GenerationManager::generate()
     for(cm_int layer = 0; layer < m_layers_properties.size(); layer++)
     {
         m_current_layer = layer;
-        m_current_y0 = 0;
+        m_current_y0 = layer > 0 ? m_layers_properties[layer].layer_height : 0;
         m_nucleator.nucleate(m_domain, m_current_y0, m_current_grain_0, m_layers_properties[layer]);
 
         update_generators();

@@ -37,6 +37,21 @@
             <z>0</z>
         </prefered_orientation>
     </Layer>
+    <Layer> 
+       <grains_number>400</grains_number>    
+       <layer_height>120</layer_height>
+
+        <tilt>  <!-- degrees -->
+            <mean>0</mean>
+            <std>16</std>
+        </tilt>
+
+        <prefered_orientation>
+            <x>0</x>
+            <y>1</y>
+            <z>0</z>
+        </prefered_orientation>
+    </Layer>
      
 
     <threads_number>12</threads_number>

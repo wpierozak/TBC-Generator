@@ -31,7 +31,7 @@ void Generator::run(Domain& input, Domain& output, double ct)
     for(cm_pos z = m_subspace.z0; z < m_subspace.z1; z++)
     for(cm_pos x = m_subspace.x0; x < m_subspace.x1; x++)
     {
-        //if( m_domain(x,y,z).state != Domain::VOID.state ) continue;
+        if( m_domain(x,y,z).state < m_g0) continue;
         f_vec pos = {static_cast<double>(x), static_cast<double>(y), static_cast<double>(z)};
 
         for(cm_pos dy = m_domain.neighbourhood.dy0; dy <= m_domain.neighbourhood.dy1; dy++)
@@ -39,7 +39,7 @@ void Generator::run(Domain& input, Domain& output, double ct)
         for(cm_pos dx = m_domain.neighbourhood.dx0; dx <= m_domain.neighbourhood.dx1; dx++)
         {
             cell c = input.state(pos.x + dx, pos.y + dy, pos.z + dz);
-            if(c == Domain::VOID) continue;
+            if(c == Domain::VOID || c.state < m_g0) continue;
 
             Grain&  grain = m_grains[c.state];
 
