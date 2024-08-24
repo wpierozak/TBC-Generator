@@ -97,8 +97,9 @@ void parseConfiguration(std::string filePath, Configuration& configuration) {
         }
         else if(LAYER == node->name())
         {
-            configuration.layers.resize(configuration.layers.size()+1);
-            parseMicrostructureProperties(node, configuration.layers.back());
+            Layer msp;
+            parseMicrostructureProperties(node, msp);
+            configuration.layers.push_back(msp);
         }
         else if(NEIGHBOURHOOD == node->name())
         {
@@ -126,17 +127,14 @@ void parseConfiguration(std::string filePath, Configuration& configuration) {
     configuration.neighbourhood = neighbourhood;
 }
 
-void parseMicrostructureProperties(rapidxml::xml_node<>* node, Microstructure_Properties& mscp)
+void parseMicrostructureProperties(rapidxml::xml_node<>* node, Layer& mscp)
 {
     rapidxml::xml_node<>* child_node = node->first_node();
 
     while(child_node)
     {
-        if(LENGTH == child_node->name()) mscp.length = parseGaussian(child_node);
-        else if(RADIUS == child_node->name()) mscp.radius = parseGaussian(child_node);
-        else if(TILT == child_node->name()) mscp.tilt = parseGaussian(child_node);
-        else if(WIDEN == child_node->name()) mscp.widen = parseGaussian(child_node);
-        else if(TOP_FRAC == child_node->name()) mscp.top_frac = parseGaussian(child_node);
+        
+        if(TILT == child_node->name()) mscp.tilt = parseGaussian(child_node);
         else if(RESOLUTION == child_node->name())
         {
             if(child_node->value() == "HIGH") mscp.resolution = Resolution::HIGH;
@@ -193,7 +191,7 @@ void parseNeighbourhood(rapidxml::xml_node<>* node, Neighbourhood& neighbourhood
     }
 }
 
-std::shared_ptr<GaussianDistr> parseGaussian(rapidxml::xml_node<>* node)
+Layer::GaussianParam parseGaussian(rapidxml::xml_node<>* node)
 {
     double mean, std;
     double min = 0.0; double max = 0.0;
@@ -218,5 +216,5 @@ std::shared_ptr<GaussianDistr> parseGaussian(rapidxml::xml_node<>* node)
         }
         child_node = child_node->next_sibling();
     }
-    return std::make_shared<GaussianDistr>(mean, std, min, max);
+    return {mean, std, min, max};
 }

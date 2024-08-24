@@ -12,7 +12,7 @@ class GenerationManager
     void generate_single_layer(cm_int layer);
     void generate();
 
-    void add_layer(Microstructure_Properties& msp) { m_layers_properties.emplace_back(msp);}
+    void add_layer(Layer& msp) { m_layers_properties.emplace_back(msp);}
     Domain& domain() { return m_domain; }
     void set_threads_number(cm_int threads) {m_threads_number=threads;}
 
@@ -22,7 +22,7 @@ class GenerationManager
     void find_y0();
     void propagate_downward();
 
-    std::vector<Microstructure_Properties> m_layers_properties;
+    std::vector<Layer> m_layers_properties;
 
     Domain m_domain;
     

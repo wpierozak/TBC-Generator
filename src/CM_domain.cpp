@@ -1,15 +1,18 @@
 #include<stdexcept>
+#include<climits>
 #include"CM_domain.hpp"
+
+const cell Domain::VOID = cell(-1, std::numeric_limits<double>::max());
 
 Domain::Domain(cm_pos X, cm_pos Y, cm_pos Z, Neighbourhood n):
     dimX(X), dimY(Y), dimZ(Z), neighbourhood(n)
 {
-    buffer = std::shared_ptr<cm_state[]>(new cm_state[static_cast<cm_pos>(dimX)*static_cast<cm_pos>(dimZ)*static_cast<cm_pos>(dimY)]);
+    buffer = std::shared_ptr<cell[]>(new cell[static_cast<cm_pos>(dimX)*static_cast<cm_pos>(dimZ)*static_cast<cm_pos>(dimY)]);
     for(cm_pos n = 0; n < static_cast<cm_pos>(dimX)*static_cast<cm_pos>(dimZ)*static_cast<cm_pos>(dimY); n++)
     buffer[n] = Domain::VOID;   
 }
 
-cm_state Domain::state(cm_pos x, cm_pos y, cm_pos z) const
+cell Domain::state(cm_pos x, cm_pos y, cm_pos z) const
 {
     if(dimZ > 1)
     {

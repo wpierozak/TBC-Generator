@@ -68,15 +68,8 @@ void LogManager::recordTimeElapsed(std::string input)
 
 void LogManager::printGrainData(const Grain& grain)
 {
-    header("Grain");
-  _outstream << "ID: " << grain.ID << std::endl;
-  _outstream << "Center: (" << grain.center.x << ", " << grain.center.y << ", " << grain.center.z << ")" << std::endl;
-  _outstream << "Growth Tensor: (" << grain.growth_tensor.x << ", " << grain.growth_tensor.y << ", " << grain.growth_tensor.z << ")" << std::endl;
-  _outstream << "Cos Phi Upper Bound: " << grain.angle_of_widen << std::endl;
-  _outstream << "RPV Norm Upper Bound: " << grain.ref_length << std::endl;
-  _outstream << "h0 Norm Bounds:" << std::endl;
-}
 
+}
 void LogManager::printConfigData(const Configuration& config)
 {
     open("Configuration");
@@ -91,10 +84,9 @@ void LogManager::printConfigData(const Configuration& config)
     close("Configuration");
 }
 
-void LogManager::printMspData(const Microstructure_Properties& msp)
+void LogManager::printMspData(const Layer& msp)
 {
     header("Microstructure Properties");
-    msp.print(_outstream);
 }
 
 void LogManager::exception(std::string mess)

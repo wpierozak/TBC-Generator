@@ -19,7 +19,7 @@ class LogManager
 
     void printGrainData(const Grain&);
     void printConfigData(const Configuration&);
-    void printMspData(const Microstructure_Properties&);
+    void printMspData(const Layer&);
 
     void timeStart(std::string="");
     void recordTimeElapsed(std::string="");

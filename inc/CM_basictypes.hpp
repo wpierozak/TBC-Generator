@@ -4,10 +4,43 @@
 #include<random>
 #include<iostream>
 #include<cmath>
+#include <functional> 
 
 typedef int64_t cm_pos;
 typedef int32_t cm_int;
-typedef uint16_t cm_state;
+
+// Define the struct
+struct cell
+{
+    uint16_t state;
+    double time;
+
+    cell(uint16_t s = -1, double t = 0): state(s), time(t)
+    {
+
+    }
+
+    operator int() { return state; }
+    // Implement equality comparison operator (necessary for unordered containers)
+    bool operator==(const cell& other) const
+    {
+        return state == other.state && time == other.time;
+    }
+};
+
+// Define a custom hash function
+struct cm_state_hash
+{
+    std::size_t operator()(const cell& key) const
+    {
+        std::size_t h1 = std::hash<uint16_t>{}(key.state);
+        std::size_t h2 = std::hash<double>{}(key.time);
+
+        // Combine the two hash values (you can use any combining method, this is a simple one)
+        return h1 ^ (h2 << 1); // XOR and bit-shift to combine the hash values
+    }
+};
+
 const std::string TOP_SECTION = "top";
 
 constexpr double PI_180 = M_PI/180.0;

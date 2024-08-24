@@ -20,7 +20,7 @@ struct Neighbourhood
 class Domain
 {
     private:
-    std::shared_ptr<cm_state[]> buffer;
+    std::shared_ptr<cell[]> buffer;
 
     public:
     Domain() = delete;
@@ -29,7 +29,7 @@ class Domain
     Domain& operator=(const Domain&) = delete;
     Domain(cm_pos dimX, cm_pos dimY, cm_pos dimZ, Neighbourhood neighbourhood);
 
-    static const cm_state VOID{static_cast<cm_state>(-1)};
+    static const cell VOID;
     const cm_pos dimX;
     const cm_pos dimY;
     const cm_pos dimZ;
@@ -37,15 +37,15 @@ class Domain
 
     BC bc = BC::absorption;
 
-    cm_state& operator()(cm_pos x, cm_pos y, cm_pos z)
+    cell& operator()(cm_pos x, cm_pos y, cm_pos z)
     {
         return buffer[(y*dimZ + z)*dimX + x];
     }
 
-    cm_state& operator()(cm_pos pos)
+    cell& operator()(cm_pos pos)
     {
         return buffer[pos];
     }
 
-    cm_state state(cm_pos x, cm_pos y, cm_pos z) const; 
+    cell state(cm_pos x, cm_pos y, cm_pos z) const; 
 };

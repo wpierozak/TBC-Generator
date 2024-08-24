@@ -16,44 +16,20 @@
         <x1>1</x1>
 
         <y0>-1</y0>
-        <y1>0</y1>
+        <y1>1</y1>
 
         <z0>-1</z0>
         <z1>1</z1>
     </neighbourhood>
 
     <Layer> 
-       <grains_number>100</grains_number>    
+       <grains_number>400</grains_number>    
        <layer_height>120</layer_height>
-
-       <radius>    
-            <mean>4</mean>
-            <std>2</std>
-            <max>5</max>
-            <min>2</min>
-        </radius>
 
         <tilt>  <!-- degrees -->
             <mean>0</mean>
-            <std>8</std>
+            <std>16</std>
         </tilt>
-
-        <length> 
-            <mean>100</mean>
-            <std>5</std>
-        </length>
-
-        <top_frac>
-            <mean>0.15</mean>
-            <std>0.01</std>
-        </top_frac>
-
-        <widen> <!-- degrees -->
-            <mean>3</mean>
-            <std>1</std>
-            <max>6</max>
-            <min>0</min>
-        </widen>
 
         <resolution>LOW</resolution>
     </Layer>

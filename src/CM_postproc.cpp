@@ -16,11 +16,11 @@ std::tuple<uint8_t, uint8_t, uint8_t> generateRandomColor() {
                            static_cast<uint8_t>(std::rand() % 256));
 }
 
-uint8_t* defineColors(cm_state grainNum) {
+uint8_t* defineColors(uint16_t grainNum) {
     std::srand(static_cast<unsigned>(std::time(0))); // Seed the random generator
     uint8_t* colorsArray = new uint8_t[3 * grainNum];
     std::set<std::tuple<uint8_t, uint8_t, uint8_t>> uniqueColors;
-    for (cm_state i = 0; i < grainNum; ++i) {
+    for (uint16_t i = 0; i < grainNum; ++i) {
         std::tuple<uint8_t, uint8_t, uint8_t> color;
         do {
             color = generateRandomColor();
@@ -74,7 +74,7 @@ void createBitmap(Configuration& config)
 //         for(cm_pos x = 0; x < config.domain.dimX; x++)
 //         {
 //             RGBApixel pixel;
-//             cm_state grain = (*config.domain)(x, y, z);
+//             cell grain = (*config.domain)(x, y, z);
 //             if( grain != Domain::VOID)
 //             {
 //                 pixel.Red =  colorsArray[(grain)*3];
