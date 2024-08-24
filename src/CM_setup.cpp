@@ -53,6 +53,8 @@ void Nucleator::nucleate(Domain& domain, cm_pos y0, cm_int g0, Microstructure_Pr
             m_grains[grain_ID].tan_angle_of_widen = tan(m_grains[grain_ID].angle_of_widen);
             m_grains[grain_ID].y_to_norm2 = pow(m_grains[grain_ID].growth_tensor.y/m_grains[grain_ID].growth_tensor.norm(),2);
             
+            domain(m_grains[grain_ID].center.x, y0, m_grains[grain_ID].center.z) = m_grains[grain_ID].ID;
+            
             grain_ID++;
             #ifdef DEBUG
             if(LogManager::Manager().logmode()) LogManager::Manager().printGrainData(m_grains[grain_ID-1]);
@@ -60,22 +62,22 @@ void Nucleator::nucleate(Domain& domain, cm_pos y0, cm_int g0, Microstructure_Pr
             if(grain_ID == msp.grainsNumber) break;
         }
 
-    std::vector<int> idxs;
-    for(int i = g0; i < msp.grainsNumber+g0; i++) idxs.push_back(i);
-    std::minstd_rand minstd(std::random_device{}());
-    std::shuffle(idxs.begin(), idxs.end(), minstd);
-    for(int grain_ID: idxs)
-    {
-        for(cm_pos dz = -m_grains[grain_ID].ref_column_rad; m_grains[grain_ID].center.z + dz < dimZ && dz < m_grains[grain_ID].ref_column_rad; dz++)
-        for(cm_pos dx = -m_grains[grain_ID].ref_column_rad; m_grains[grain_ID].center.x + dx < dimX && dx < m_grains[grain_ID].ref_column_rad; dx++)
-            {
-                if(dx*dx + dz*dz > pow(m_grains[grain_ID].ref_column_rad, 2)) continue;
-                if(m_grains[grain_ID].center.x + dx < 0 || m_grains[grain_ID].center.x + dx > dimX ||
-                    m_grains[grain_ID].center.z + dz < 0 || m_grains[grain_ID].center.z + dz > dimZ) continue; 
-                if(domain(m_grains[grain_ID].center.x + dx, y0, m_grains[grain_ID].center.z + dz) == Domain::VOID)
-                domain(m_grains[grain_ID].center.x + dx, y0, m_grains[grain_ID].center.z + dz) = m_grains[grain_ID].ID;
-            }
-    }
+    // std::vector<int> idxs;
+    // for(int i = g0; i < msp.grainsNumber+g0; i++) idxs.push_back(i);
+    // std::minstd_rand minstd(std::random_device{}());
+    // std::shuffle(idxs.begin(), idxs.end(), minstd);
+    // for(int grain_ID: idxs)
+    // {
+    //     for(cm_pos dz = -m_grains[grain_ID].ref_column_rad; m_grains[grain_ID].center.z + dz < dimZ && dz < m_grains[grain_ID].ref_column_rad; dz++)
+    //     for(cm_pos dx = -m_grains[grain_ID].ref_column_rad; m_grains[grain_ID].center.x + dx < dimX && dx < m_grains[grain_ID].ref_column_rad; dx++)
+    //         {
+    //             if(dx*dx + dz*dz > pow(m_grains[grain_ID].ref_column_rad, 2)) continue;
+    //             if(m_grains[grain_ID].center.x + dx < 0 || m_grains[grain_ID].center.x + dx > dimX ||
+    //                 m_grains[grain_ID].center.z + dz < 0 || m_grains[grain_ID].center.z + dz > dimZ) continue; 
+    //             if(domain(m_grains[grain_ID].center.x + dx, y0, m_grains[grain_ID].center.z + dz) == Domain::VOID)
+    //             domain(m_grains[grain_ID].center.x + dx, y0, m_grains[grain_ID].center.z + dz) = m_grains[grain_ID].ID;
+    //         }
+    // }
 }
 
 void Nucleator::setMaxWidenAngle(Grain& grain, Microstructure_Properties& msp)
