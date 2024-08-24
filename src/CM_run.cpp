@@ -61,6 +61,7 @@ void GenerationManager::update_generators()
     for(Generator& g: m_generators)
     {
         g.update_grains(m_nucleator.grains());
+        g.set_prefered_orientation(m_layers_properties[m_current_layer].prefered_orientation);
         g.subspace().y0 = m_current_y0;
     }
 }
@@ -71,65 +72,13 @@ void GenerationManager::generate()
     for(cm_int layer = 0; layer < m_layers_properties.size(); layer++)
     {
         m_current_layer = layer;
-        //find_y0();
+        m_current_y0 = 0;
         m_nucleator.nucleate(m_domain, m_current_y0, m_current_grain_0, m_layers_properties[layer]);
+
         update_generators();
-        propagate_downward();
         generate_single_layer(layer);
+
         m_current_grain_0 = m_layers_properties[layer].grainsNumber + 1;
     }
 }
 
-void GenerationManager::find_y0()
-{
-    if(m_current_layer == 0) return;
-
-    m_current_y0 =  m_layers_properties[m_current_layer-1].layer_height;
-    bool flag = true;
-    
-    for(cm_pos y = m_layers_properties[m_current_layer-1].layer_height-1; y >= 0; y--)
-    {
-        #pragma omp parallel for schedule(static) num_threads(m_threads_number) firstprivate(y)
-        for(cm_pos z = 0; z < m_domain.dimZ; z++)
-        {
-            for(cm_pos x = 0; x < m_domain.dimX; x++)
-            {
-                if(m_domain(x,y,z).state != Domain::VOID.state) flag = false;
-            }
-        }
-        if(flag) m_current_y0 = y;
-        else break;
-    }
-}
-
-void GenerationManager::propagate_downward()
-{
-    if(m_current_layer == 0) return;
-    bool flag = true;
-
-    for(cm_pos y = m_current_y0-1; y >=0; y--)
-    {
-        flag = true;
-
-        #pragma omp parallel for schedule(static) num_threads(m_threads_number) shared(flag) firstprivate(y)
-        for(cm_pos z = 0; z  < m_domain.dimZ; z++ )
-        {
-            for(cm_pos x = 0; x < m_domain.dimX; x++)
-            {
-                if(m_domain(x,y,z) == Domain::VOID)
-                {
-                    if(flag)
-                    {
-                        #pragma omp critical
-                        {
-                            flag = false;
-                        }
-                    }
-                    m_domain(x,y,z) = m_domain(x,y+1,z);
-                }
-            }
-        }
-
-        if(flag) break;
-    }
-}

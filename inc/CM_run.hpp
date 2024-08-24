@@ -19,9 +19,7 @@ class GenerationManager
     private:
     void create_generators();
     void update_generators();
-    void find_y0();
-    void propagate_downward();
-
+    
     std::vector<Layer> m_layers_properties;
 
     Domain m_domain;

@@ -1,5 +1,6 @@
 #include<iostream>
 #include<cmath>
+#include<cstring>
 #include"CM_xmlparser.hpp"
 
 const std::string MAIN_NODE = "Configuration";
@@ -39,12 +40,9 @@ const std::string MEAN = "mean";
 const std::string STD = "std";
 const std::string MAX = "max";
 const std::string MIN = "min";
-const std::string LENGTH = "length";
-const std::string RADIUS = "radius";
-const std::string WIDEN = "widen";
+
 const std::string TILT = "tilt";
-const std::string TOP_FRAC = "top_frac";
-const std::string RESOLUTION = "resolution";
+const std::string PREFERED_ORIENTATION = "prefered_orientation";
 const std::string LAYER_HEIGHT = "layer_height";
 
 void parseConfiguration(std::string filePath, Configuration& configuration) {
@@ -98,7 +96,7 @@ void parseConfiguration(std::string filePath, Configuration& configuration) {
         else if(LAYER == node->name())
         {
             Layer msp;
-            parseMicrostructureProperties(node, msp);
+            parseLayer(node, msp);
             configuration.layers.push_back(msp);
         }
         else if(NEIGHBOURHOOD == node->name())
@@ -127,7 +125,7 @@ void parseConfiguration(std::string filePath, Configuration& configuration) {
     configuration.neighbourhood = neighbourhood;
 }
 
-void parseMicrostructureProperties(rapidxml::xml_node<>* node, Layer& mscp)
+void parseLayer(rapidxml::xml_node<>* node, Layer& mscp)
 {
     rapidxml::xml_node<>* child_node = node->first_node();
 
@@ -135,11 +133,6 @@ void parseMicrostructureProperties(rapidxml::xml_node<>* node, Layer& mscp)
     {
         
         if(TILT == child_node->name()) mscp.tilt = parseGaussian(child_node);
-        else if(RESOLUTION == child_node->name())
-        {
-            if(child_node->value() == "HIGH") mscp.resolution = Resolution::HIGH;
-            else mscp.resolution = Resolution::LOW;
-        }
         else if(GRAIN_NUMBER == child_node->name())
         {
             mscp.grainsNumber = std::stoi(child_node->value());
@@ -148,9 +141,39 @@ void parseMicrostructureProperties(rapidxml::xml_node<>* node, Layer& mscp)
         {
             mscp.layer_height = std::stoi(child_node->value());
         }
+        else if(PREFERED_ORIENTATION == child_node->name())
+        {
+            rapidxml::xml_node<>* grandchild = child_node->first_node();
+            double x = 0;
+            double y = 0;
+            double z = 0;
+            while(grandchild)
+            {
+                if(strcmp(grandchild->name(), "x") == 0)
+                {
+                    x = std::stod(grandchild->value());
+                }
+                else if(strcmp(grandchild->name(), "y") == 0)
+                {
+                    y = std::stod(grandchild->value());
+                }
+                else if(strcmp(grandchild->name(), "z") == 0)
+                {
+                    z = std::stod(grandchild->value());
+                }
+                else
+                {
+                    throw std::runtime_error("Orientation - Invalid XML format - invalid node");
+                }
+                grandchild = grandchild->next_sibling();
+            }
+            mscp.prefered_orientation = {x,y,z};
+            normalize(mscp.prefered_orientation);
+        
+        }
         else 
         {
-            throw std::runtime_error("MSP - Invalid XML format - invalid node");
+            throw std::runtime_error("Layer - Invalid XML format - invalid node");
         }
         child_node = child_node->next_sibling();
     }

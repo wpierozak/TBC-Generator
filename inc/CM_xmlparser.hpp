@@ -6,7 +6,7 @@
 
 void parseConfiguration(std::string filePath, Configuration& configuration);
 
-void parseMicrostructureProperties(rapidxml::xml_node<>* node, Layer& mscp);
+void parseLayer(rapidxml::xml_node<>* node, Layer& mscp);
 void parseNeighbourhood(rapidxml::xml_node<>* node, Neighbourhood& neighbourhood);
 
 Layer::GaussianParam parseGaussian(rapidxml::xml_node<>* node);

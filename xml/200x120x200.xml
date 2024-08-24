@@ -31,7 +31,11 @@
             <std>16</std>
         </tilt>
 
-        <resolution>LOW</resolution>
+        <prefered_orientation>
+            <x>0</x>
+            <y>1</y>
+            <z>0</z>
+        </prefered_orientation>
     </Layer>
      
 

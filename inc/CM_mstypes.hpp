@@ -28,17 +28,15 @@ struct Layer
     Layer(const Layer& obj)
     {
         tilt = obj.tilt;
-
-        resolution = obj.resolution;
+        prefered_orientation = obj.prefered_orientation;
         grainsNumber = obj.grainsNumber;
         layer_height = obj.layer_height;
     }
 
     struct GaussianParam {double mean; double stddev; double min; double max; } tilt;
 
+    f_vec prefered_orientation;
     cm_int grainsNumber;
     cm_pos layer_height;
-
-    Resolution resolution;
 };
 
