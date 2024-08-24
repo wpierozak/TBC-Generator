@@ -150,7 +150,10 @@ void parseMicrostructureProperties(rapidxml::xml_node<>* node, Microstructure_Pr
         {
             mscp.layer_height = std::stoi(child_node->value());
         }
-        else throw std::runtime_error("MSP - Invalid XML format - invalid node");
+        else 
+        {
+            throw std::runtime_error("MSP - Invalid XML format - invalid node");
+        }
         child_node = child_node->next_sibling();
     }
 }
