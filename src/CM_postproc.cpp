@@ -3,7 +3,8 @@
 #include<tuple>
 #include<set>
 #include<algorithm>
-#include"CM_logs.hpp"
+#include<ctime>
+
 #include"CM_postproc.hpp"
 #include"BMP/libbmp.h"
 #include"BMP/EasyBMP.h"
@@ -35,7 +36,7 @@ uint8_t* defineColors(uint16_t grainNum) {
     return colorsArray;
 }
 /*
-uint8_t* defineColors(cm_pos grainNum)
+uint8_t* defineColors(_long_int grainNum)
 {
     uint8_t* colorsArray = new uint8_t[3*grainNum];
     for(int i = 0; i < grainNum; i++)
@@ -66,12 +67,12 @@ void createBitmap(Configuration& config)
 //     std::string dir = config.outputDir;
 
 //    #pragma omp parallel for schedule(static) num_threads(threads_num) firstprivate(dimX, dimY, domain, colorsArray, domain, filename, dir)
-//     for(cm_pos z = 0; z < config.domain.dimZ; z++)
+//     for(_long_int z = 0; z < config.domain.dimZ; z++)
 //     {
 //         BMP bmp;
 //         bmp.SetSize(config.domain.dimX, config.domain.dimY);    
-//         for(cm_pos y = 0; y < config.domain.dimY; y++)
-//         for(cm_pos x = 0; x < config.domain.dimX; x++)
+//         for(_long_int y = 0; y < config.domain.dimY; y++)
+//         for(_long_int x = 0; x < config.domain.dimX; x++)
 //         {
 //             RGBApixel pixel;
 //             cell grain = (*config.domain)(x, y, z);
@@ -99,7 +100,7 @@ void createBitmap(Configuration& config)
 void saveMicrostructureFile(Domain& domain, Configuration& config)
 {
     std::string filename = config.outputDir + "/" + config.outputFile;
-    cm_pos size = cm_pos(domain.dimX)*cm_pos(domain.dimY)*cm_pos(domain.dimZ);
+    _long_int size = _long_int(domain.dimX)*_long_int(domain.dimY)*_long_int(domain.dimZ);
     
     std::ofstream file;
     file.open(filename);
@@ -112,25 +113,15 @@ void saveMicrostructureFile(Domain& domain, Configuration& config)
 
     file << size << std::endl << std::endl;
 
-    size_t step = cm_pos(domain.dimX) * cm_pos(domain.dimY) * cm_pos(domain.dimZ) / 10;
-    cm_pos counter = 0; 
-    cm_pos line_counter=0;
+    size_t step = _long_int(domain.dimX) * _long_int(domain.dimY) * _long_int(domain.dimZ) / 10;
+    _long_int counter = 0; 
+    _long_int line_counter=0;
 
-    for(cm_pos y = 0; y < domain.dimY; y++)
-    for(cm_pos z = 0; z < domain.dimZ; z++)
-    for(cm_pos x = 0; x < domain.dimX; x++)
+    for(_long_int y = 0; y < domain.dimY; y++)
+    for(_long_int z = 0; z < domain.dimZ; z++)
+    for(_long_int x = 0; x < domain.dimX; x++)
         {
-            if(LogManager::Manager().logmode())
-            {
-                counter++;
-                if(counter % (size/10) == 0)
-                LogManager::Manager().text(std::string("Progress: ") + std::to_string(counter) + std::string("/") + std::to_string(size));
-            }
-            //if((*domain)(x, y, z) != Domain::VOID)
-            {
-                file << x << ' ' << y << ' ' << z << ' ' << domain(x, y, z) << std::endl;
-            }
-         
+            file << x << ' ' << y << ' ' << z << ' ' << domain(x, y, z) << std::endl;
         }
 
     file.close();

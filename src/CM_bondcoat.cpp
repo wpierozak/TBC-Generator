@@ -4,7 +4,7 @@
 
 void BondCoat::fill(Domain& domain)
 {
-    double max_y = std::max_element(m_parameters.begin(), m_parameters.end());
+    double max_y = *std::max_element(m_parameters.begin(), m_parameters.end());
 
     for(double y = 0; y < max_y; y += 1)
     {
@@ -14,7 +14,7 @@ void BondCoat::fill(Domain& domain)
     {
         if(y <= shape_function(x,z))
         {
-            domain(x,y,z) = Domain::BOND_COAT;
+            //domain(x,y,z) = Domain::BOND_COAT;
         }
     }// x    
     }// y

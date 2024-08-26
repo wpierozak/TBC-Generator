@@ -36,7 +36,7 @@ struct Layer
     struct GaussianParam {double mean; double stddev; double min; double max; } tilt;
 
     f_vec prefered_orientation;
-    cm_int grainsNumber;
-    cm_pos layer_height;
+    _int grainsNumber;
+    _long_int layer_height;
 };
 

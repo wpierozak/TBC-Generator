@@ -27,16 +27,16 @@ void Generator::update_grains(std::unordered_map<uint16_t, Grain> &grains)
 
 void Generator::run(Domain& input, Domain& output, double ct)
 {
-    for(cm_pos y = m_subspace.y0; y < m_subspace.y1; y++)
-    for(cm_pos z = m_subspace.z0; z < m_subspace.z1; z++)
-    for(cm_pos x = m_subspace.x0; x < m_subspace.x1; x++)
+    for(_long_int y = m_subspace.y0; y < m_subspace.y1; y++)
+    for(_long_int z = m_subspace.z0; z < m_subspace.z1; z++)
+    for(_long_int x = m_subspace.x0; x < m_subspace.x1; x++)
     {
         if( m_domain(x,y,z).state < m_g0) continue;
         f_vec pos = {static_cast<double>(x), static_cast<double>(y), static_cast<double>(z)};
 
-        for(cm_pos dy = m_domain.neighbourhood.dy0; dy <= m_domain.neighbourhood.dy1; dy++)
-        for(cm_pos dz = m_domain.neighbourhood.dz0; dz <= m_domain.neighbourhood.dz1; dz++)
-        for(cm_pos dx = m_domain.neighbourhood.dx0; dx <= m_domain.neighbourhood.dx1; dx++)
+        for(_long_int dy = m_domain.neighbourhood.dy0; dy <= m_domain.neighbourhood.dy1; dy++)
+        for(_long_int dz = m_domain.neighbourhood.dz0; dz <= m_domain.neighbourhood.dz1; dz++)
+        for(_long_int dx = m_domain.neighbourhood.dx0; dx <= m_domain.neighbourhood.dx1; dx++)
         {
             cell c = input.state(pos.x + dx, pos.y + dy, pos.z + dz);
             if(c == Domain::VOID || c.state < m_g0) continue;
@@ -55,11 +55,12 @@ void Generator::run(Domain& input, Domain& output, double ct)
 
 double Generator::dt(double d, f_vec pos, const Grain& grain)
 {
-    double f = dotProduct(grain.growth_tensor, m_prefered_orientation);
+    double f = grain.growth_tensor * m_prefered_orientation;
 
     f_vec rpv = { pos.x - grain.center.x,  pos.y - grain.center.y, pos.z - grain.center.z};
     //double r = crossProduct(rpv, grain.growth_tensor).norm()/rpv.norm();
-    double r = abs(dotProduct(rpv, grain.growth_tensor))/rpv.norm();
+    double r = abs(rpv * grain.growth_tensor)/rpv.norm();
+   // r = r > 0 ? r : 0.0001;
 
     return d/(r*f);
 }

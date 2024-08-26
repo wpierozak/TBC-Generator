@@ -1,32 +1,27 @@
 #include<omp.h>
 #include"CM_run.hpp"
-#include"CM_logs.hpp"
 
 
 GenerationManager::GenerationManager(Configuration& config):
     m_domain(config.dimX, config.dimY, config.dimZ, config.neighbourhood)
 {
     m_threads_number = config.threadsNum;
-    m_current_layer = 0;
-    m_current_y0 =0;
-    m_current_grain_0 = 0;
     for(auto& l : config.layers)
     {
-        m_layers_properties.push_back(l);
+        m_layers.push_back(l);
     }
-    //std::copy(config.layers.begin(), config.layers.end(), std::back_inserter(m_layers_properties));
+    //std::copy(config.layers.begin(), config.layers.end(), std::back_inserter(m_layers));
 } 
 
-void GenerationManager::generate_single_layer(cm_int layer)
+void GenerationManager::generate_layer(_int layer)
 {
-    cm_pos dimY = m_domain.dimY;
     Domain copy(m_domain);
 
-    for(int i = 0; i < m_layers_properties[layer].layer_height; i++)
+    for(int i = 0; i < m_layers[layer].layer_height; i++)
     {
         #pragma omp parallel num_threads(m_threads_number) 
         {
-            cm_int idx = omp_get_thread_num();
+            _int idx = omp_get_thread_num();
             #pragma omp barrier
             if(i % 2 == 0) m_generators[idx].run(m_domain, copy, i);
             else m_generators[idx].run(copy, m_domain, i);
@@ -39,9 +34,9 @@ void GenerationManager::create_generators()
 {
     int threadsNumber = m_threads_number;
 
-    cm_pos dz = (m_domain.dimZ + threadsNumber - 1)/threadsNumber;
+    _long_int dz = (m_domain.dimZ + threadsNumber - 1)/threadsNumber;
 
-    for(cm_pos z = 0; z < m_domain.dimZ; z+=dz)
+    for(_long_int z = 0; z < m_domain.dimZ; z+=dz)
     {
         Generator::Subspace subspace;
 
@@ -56,29 +51,36 @@ void GenerationManager::create_generators()
     }
 }
 
-void GenerationManager::update_generators()
+void GenerationManager::update_generators(_int layer, _int g0, _int y0)
 {
     for(Generator& g: m_generators)
     {
         g.update_grains(m_nucleator.grains());
-        g.set_prefered_orientation(m_layers_properties[m_current_layer].prefered_orientation);
-        g.subspace().y0 = 0;
+        g.set_g0(g0);
+        g.set_prefered_orientation(m_layers[layer].prefered_orientation);
+        g.subspace().y0 = y0;
     }
 }
 
 void GenerationManager::generate()
 {
     create_generators();
-    for(cm_int layer = 0; layer < m_layers_properties.size(); layer++)
+    _int g0 = 0;
+    _int y0 = 0;
+
+    for(_int layer = 0; layer < m_layers.size(); layer++)
     {
-        m_current_layer = layer;
-        m_current_y0 = layer > 0 ? m_layers_properties[layer].layer_height : 0;
-        m_nucleator.nucleate(m_domain, m_current_y0, m_current_grain_0, m_layers_properties[layer]);
+        g0 = layer == 0 ? 0 : g0 + m_layers[layer-1].grainsNumber;
+        y0 = calc_y0(layer, y0, g0);
 
-        update_generators();
-        generate_single_layer(layer);
+        m_nucleator.nucleate(m_domain, y0, g0, m_layers[layer]);
 
-        m_current_grain_0 = m_layers_properties[layer].grainsNumber + 1;
+        update_generators(layer, g0, y0);
+        generate_layer(layer);
     }
 }
 
+_long_int GenerationManager::calc_y0(_int layer, _int y0, _int g0)
+{
+    return (layer == 0) ? 0 : y0 + m_layers[layer-1].layer_height*0.9;
+}

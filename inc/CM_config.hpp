@@ -5,14 +5,14 @@
 
 struct Configuration
 {
-    cm_pos dimX, dimY, dimZ;
+    _long_int dimX, dimY, dimZ;
     grains_array grains;
-    cm_int grainsNumber;
+    _int grainsNumber;
 
     std::vector<Layer> layers;
     Neighbourhood neighbourhood;
 
-    cm_int threadsNum;
+    _int threadsNum;
 
     std::string outputFile;
     std::string inputFile;

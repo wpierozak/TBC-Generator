@@ -65,18 +65,6 @@ $(OBJ_CM_DIR)/CM_run.o: $(SRC_DIR)/CM_run.cpp
 	$(COMP) $(CM_COMP_FLAGS) $(INC) $(OMP) $(SRC_DIR)/CM_run.cpp	-o $(OBJ_CM_DIR)/CM_run.o
 CM_DEPENDENCIES += $(OBJ_CM_DIR)/CM_run.o
 
-#$(OBJ_CM_DIR)/CM_shapefun.o: $(SRC_DIR)/CM_shapefun.cpp
-#	$(COMP) $(CM_COMP_FLAGS) $(INC) $(SRC_DIR)/CM_shapefun.cpp -o $(OBJ_CM_DIR)/CM_shapefun.o
-#CM_DEPENDENCIES += $(OBJ_CM_DIR)/CM_shapefun.o
-
-$(OBJ_CM_DIR)/CM_logs.o: $(SRC_DIR)/CM_logs.cpp
-	$(COMP) $(CM_COMP_FLAGS) $(INC) $(SRC_DIR)/CM_logs.cpp -o $(OBJ_CM_DIR)/CM_logs.o
-CM_DEPENDENCIES += $(OBJ_CM_DIR)/CM_logs.o
-
-#$(OBJ_CM_DIR)/CM_SFCreator.o: $(SRC_DIR)/CM_SFCreator.cpp
-#	$(COMP) $(CM_COMP_FLAGS) $(INC) $(SRC_DIR)/CM_SFCreator.cpp -o $(OBJ_CM_DIR)/CM_SFCreator.o
-#CM_DEPENDENCIES += $(OBJ_CM_DIR)/CM_SFCreator.o
-
 $(LIB_DIR)/cmlib.a: $(CM_DEPENDENCIES)
 	ar rcs $(LIB_DIR)/cmlib.a $(OBJ_CM_DIR)/*.o
 

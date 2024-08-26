@@ -56,7 +56,7 @@ void parseConfiguration(std::string filePath, Configuration& configuration) {
 
     if (!domain_node) throw std::runtime_error("Invalid XML format.");
 
-    cm_pos dim[3];
+    _long_int dim[3];
     Neighbourhood neighbourhood;
     BC boundry_condition = BC::absorption;
 
@@ -168,7 +168,7 @@ void parseLayer(rapidxml::xml_node<>* node, Layer& mscp)
                 grandchild = grandchild->next_sibling();
             }
             mscp.prefered_orientation = {x,y,z};
-            normalize(mscp.prefered_orientation);
+            mscp.prefered_orientation.normalize();
         
         }
         else 

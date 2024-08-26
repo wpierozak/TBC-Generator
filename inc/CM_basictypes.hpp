@@ -6,8 +6,8 @@
 #include<cmath>
 #include <functional> 
 
-typedef int64_t cm_pos;
-typedef int32_t cm_int;
+typedef int64_t _long_int;
+typedef int32_t _int;
 
 // Define the struct
 struct cell
@@ -28,20 +28,6 @@ struct cell
     }
 };
 
-// Define a custom hash function
-struct cm_state_hash
-{
-    std::size_t operator()(const cell& key) const
-    {
-        std::size_t h1 = std::hash<uint16_t>{}(key.state);
-        std::size_t h2 = std::hash<double>{}(key.time);
-
-        // Combine the two hash values (you can use any combining method, this is a simple one)
-        return h1 ^ (h2 << 1); // XOR and bit-shift to combine the hash values
-    }
-};
-
-const std::string TOP_SECTION = "top";
 
 constexpr double PI_180 = M_PI/180.0;
 
@@ -58,34 +44,41 @@ struct f_vec
     {
         return {x*f, y*f, z*f};
     }
+
+    double operator*(const f_vec& a) const
+    {
+        return x*a.x + y*a.y + z*a.z;
+    }
+
+    f_vec cross(const f_vec& b) const
+    {
+        return {y*b.z - z*b.y, z*b.x - x*b.z, x*b.y - y*b.x};
+    }
+
+    f_vec operator+(const f_vec& b) const
+    {
+        return {x + b.x, y + b.y, z + b.z};
+    }
+
+    f_vec operator-(const f_vec& b) const
+    {
+        return {x - b.x, y - b.y, z - b.z};
+    }
+
+    double cos(const f_vec& b) const
+    {
+        return ( (*this)*b  )/ (this->norm() * b.norm());
+    }
+
+    void normalize()
+    {
+        double norm = this->norm();
+        x = x/norm;
+        y = y/norm;
+        z = z/norm;
+    }
 };
 
-void normalize(f_vec& vec);
-
-inline double dotProduct(const f_vec& a, const f_vec& b)
-{
-    return (a.x * b.x + a.y * b.y + a.z * b.z);
-}
-
-inline f_vec crossProduct(const f_vec& a, const f_vec& b)
-{
-    return {a.y*b.z - a.z*b.y, a.z*b.x - a.x*b.z, a.x*b.y - a.y*b.x};
-}
-
-inline double cos(const f_vec& a, const f_vec& b)
-{
-    return (a.x*b.x + a.y*b.y)/(a.norm()*b.norm());
-}
-
-inline f_vec add(const f_vec& a, const f_vec& b)
-{
-    return {a.x + b.x, a.y + b.y, a.z + b.z};
-}
-
-inline f_vec substract(const f_vec& a, const f_vec& b)
-{
-    return {a.x - b.x, a.y - b.y, a.z - b.z};
-}
 
 class GaussianDistr
 {
