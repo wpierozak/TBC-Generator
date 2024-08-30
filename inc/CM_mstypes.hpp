@@ -14,7 +14,7 @@ struct Grain
     f_vec center;
 
     /* Growth tensor' coordinates */
-    f_vec growth_tensor;
+    f_vec orientation;
 
     Resolution resolution;
 };
@@ -27,13 +27,13 @@ struct Layer
     Layer() = default;
     Layer(const Layer& obj)
     {
-        tilt = obj.tilt;
+        tilt_stddev = obj.tilt_stddev;
         prefered_orientation = obj.prefered_orientation;
         grainsNumber = obj.grainsNumber;
         layer_height = obj.layer_height;
     }
 
-    struct GaussianParam {double mean; double stddev; double min; double max; } tilt;
+    double tilt_stddev;
 
     f_vec prefered_orientation;
     _int grainsNumber;

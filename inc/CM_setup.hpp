@@ -11,8 +11,5 @@ class Nucleator
     std::unordered_map<uint16_t, Grain>& grains() {return m_grains;}
 
     private:
-
-    void setGrowthTensor(Grain& grain, Layer& msp);
-
     std::unordered_map<uint16_t, Grain> m_grains;
 };

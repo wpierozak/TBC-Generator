@@ -41,7 +41,7 @@ const std::string STD = "std";
 const std::string MAX = "max";
 const std::string MIN = "min";
 
-const std::string TILT = "tilt";
+const std::string TILT = "tilt_stddev";
 const std::string PREFERED_ORIENTATION = "prefered_orientation";
 const std::string LAYER_HEIGHT = "layer_height";
 
@@ -132,7 +132,7 @@ void parseLayer(rapidxml::xml_node<>* node, Layer& mscp)
     while(child_node)
     {
         
-        if(TILT == child_node->name()) mscp.tilt = parseGaussian(child_node);
+        if(TILT == child_node->name()) mscp.tilt_stddev = std::stod(child_node->value())/180.0 * M_PI;
         else if(GRAIN_NUMBER == child_node->name())
         {
             mscp.grainsNumber = std::stoi(child_node->value());
@@ -214,30 +214,3 @@ void parseNeighbourhood(rapidxml::xml_node<>* node, Neighbourhood& neighbourhood
     }
 }
 
-Layer::GaussianParam parseGaussian(rapidxml::xml_node<>* node)
-{
-    double mean, std;
-    double min = 0.0; double max = 0.0;
-    auto child_node = node->first_node();
-    while(child_node)
-    {
-        if(child_node->name() == MEAN)
-        {
-            mean = std::stod(child_node->value());
-        }
-        else if(child_node->name() == STD)
-        {
-            std = std::stod(child_node->value());
-        }
-        else if(child_node->name() == MIN)
-        {
-            min = std::stod(child_node->value());
-        }
-        else if(child_node->name() == MAX)
-        {
-            max = std::stod(child_node->value());
-        }
-        child_node = child_node->next_sibling();
-    }
-    return {mean, std, min, max};
-}

@@ -53,15 +53,3 @@ void Generator::run(Domain& input, Domain& output, double ct)
     }
 }
 
-double Generator::dt(double d, f_vec pos, const Grain& grain)
-{
-    double f = grain.growth_tensor * m_prefered_orientation;
-
-    f_vec rpv = { pos.x - grain.center.x,  pos.y - grain.center.y, pos.z - grain.center.z};
-    //double r = crossProduct(rpv, grain.growth_tensor).norm()/rpv.norm();
-    double r = abs(rpv * grain.growth_tensor)/rpv.norm();
-   // r = r > 0 ? r : 0.0001;
-
-    return d/(r*f);
-}
-

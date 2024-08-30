@@ -24,13 +24,18 @@ class Generator
 
     private: 
 
-    double dt(double d, f_vec pos, const Grain& grain);
+    double dt(double d, f_vec pos, const Grain& grain)
+    {
+        return d/(cos(atan((pos - grain.center).cross(grain.orientation).norm())/2.0) * (grain.orientation * m_prefered_orientation));
+    }
+
 
     Domain m_domain;
     Subspace m_subspace;
 
     f_vec m_prefered_orientation;
     _int m_g0;
+    double m_velocityShape;
 
     std::unordered_map<uint16_t, Grain> m_grains;
 };

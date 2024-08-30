@@ -70,9 +70,9 @@ void GenerationManager::generate()
 
     for(_int layer = 0; layer < m_layers.size(); layer++)
     {
-        g0 = layer == 0 ? 0 : g0 + m_layers[layer-1].grainsNumber;
+        g0 = (layer == 0) ? 0 : g0 + m_layers[layer-1].grainsNumber;
         y0 = calc_y0(layer, y0, g0);
-
+        
         m_nucleator.nucleate(m_domain, y0, g0, m_layers[layer]);
 
         update_generators(layer, g0, y0);

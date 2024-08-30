@@ -2,12 +2,12 @@
 <Configuration>
 
     <dimX>100</dimX> 
-    <dimY>300</dimY>
+    <dimY>250</dimY>
     <dimZ>100</dimZ>
 
     <output_dir>/home/wiktor/Desktop/engineering_thesis/res/</output_dir>
 
-    <output_filename>200x120x200</output_filename>
+    <output_filename>200x300x200</output_filename>
 
     <ms_file_format>xyz</ms_file_format>
 
@@ -24,17 +24,14 @@
 
     
     <Layer> 
-       <grains_number>400</grains_number>    
-       <layer_height>120</layer_height>
+       <grains_number>1000</grains_number>    
+       <layer_height>200</layer_height>
 
-        <tilt>  <!-- degrees -->
-            <mean>0</mean>
-            <std>16</std>
-        </tilt>
+        <tilt_stddev>5</tilt_stddev>
 
         <prefered_orientation>
-            <x>0</x>
-            <y>1</y>
+            <x>1</x>
+            <y>5</y>
             <z>0</z>
         </prefered_orientation>
     </Layer>
