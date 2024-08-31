@@ -24,11 +24,44 @@ class Generator
 
     private: 
 
-    double dt(double d, f_vec pos, const Grain& grain)
+    double dt(double&& d, f_vec&& virtual_pos, const Grain& grain)
     {
-        return d/(cos(atan((pos - grain.center).cross(grain.orientation).norm())/2.0) * (grain.orientation * m_prefered_orientation));
+        return d/(cos(atan((virtual_pos - grain.center).cross(grain.orientation).norm())/2.0) * (grain.orientation * m_prefered_orientation));
     }
 
+    f_vec virtual_pos(const f_vec& pos, f_vec&& relative_pos, const f_vec& space)
+    {
+        f_vec virtual_pos = pos;
+
+        if(pos.x + relative_pos.x < 0)
+        {
+            virtual_pos.x = space.x + relative_pos.x;
+        }
+        else if(pos.x + relative_pos.x >= space.x)
+        {
+            virtual_pos.x = -relative_pos.x;
+        }
+
+        if(pos.y + relative_pos.y < 0)
+        {
+            virtual_pos.y = space.y + relative_pos.y;
+        }
+        else if(pos.y + relative_pos.y >= space.y)
+        {
+            virtual_pos.y = -relative_pos.y;
+        }
+
+        if(pos.z + relative_pos.z < 0)
+        {
+            virtual_pos.z = space.z + relative_pos.z;
+        }
+        else if(pos.z + relative_pos.z >= space.z)
+        {
+            virtual_pos.z = -relative_pos.z;
+        }
+
+        return virtual_pos;
+    }
 
     Domain m_domain;
     Subspace m_subspace;

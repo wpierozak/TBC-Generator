@@ -19,47 +19,22 @@ cell Domain::state(_long_int x, _long_int y, _long_int z) const
         bool inside = (x >= 0 && x < dimX) && (y >= 0 && y < dimY) && (z >= 0 && z < dimZ);
         if(inside) return buffer[_long_int(y)*(dimX * dimZ) + _long_int(z)*dimX + _long_int(x)];
     }
-
     else
     {
         bool inside = (x >= 0 && x < dimX) && (y >= 0 && y < dimY);
         if(inside) return buffer[_long_int(y)*(dimX * dimZ) + _long_int(x)];
     }
     
-    switch (bc)
-    {
-    case BC::absorption :
-        return Domain::VOID;
-    break;
+    
+   
+    if(x >= dimX) x = x - dimX;
+    else if(x < 0) x = dimX + x;
 
-    case BC::bouncy:
-        if(x >= dimX) x = dimX - 1 - (x-dimX);
-        else if(x < 0) x = -x - 1;
+    if(y >= dimY) y = y - dimY;
+    else if(y < 0) y = dimY + y;
+
+    if(z >= dimZ) z = z - dimZ;
+    else if(z < 0) z = dimZ + z;
         
-        if(y >= dimY) y = dimY - 1 - (y-dimY);
-        else if(y < 0) y = -y - 1;
-
-        if(z >= dimZ) z = dimZ - 1 - (z-dimZ);
-        else if(z < 0) z = -z - 1;
-
-        return buffer[_long_int(y)*(dimX * dimZ) + _long_int(z)*dimX + _long_int(x)];
-    break;
-
-    case BC::periodic:
-        if(x >= dimX) x = x - dimX;
-        else if(x < 0) x = dimX + x;
-
-        if(y >= dimY) y = y - dimY;
-        else if(y < 0) y = dimY + y;
-
-        if(z >= dimZ) z = z - dimZ;
-        else if(z < 0) z = dimZ + z;
-        
-        return buffer[_long_int(y)*(dimX * dimZ) + _long_int(z)*dimX + _long_int(x)];
-    break;
-
-    default:
-        throw std::runtime_error("Invalid bc");
-        break;
-    }
+    return buffer[_long_int(y)*(dimX * dimZ) + _long_int(z)*dimX + _long_int(x)];
 }

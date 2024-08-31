@@ -27,6 +27,8 @@ void Generator::update_grains(std::unordered_map<uint16_t, Grain> &grains)
 
 void Generator::run(Domain& input, Domain& output, double ct)
 {
+    f_vec space = {m_domain.dimX, m_domain.dimY, m_domain.dimZ};
+
     for(_long_int y = m_subspace.y0; y < m_subspace.y1; y++)
     for(_long_int z = m_subspace.z0; z < m_subspace.z1; z++)
     for(_long_int x = m_subspace.x0; x < m_subspace.x1; x++)
@@ -43,7 +45,7 @@ void Generator::run(Domain& input, Domain& output, double ct)
 
             Grain&  grain = m_grains[c.state];
 
-            double time = dt(sqrt(dx*dx + dy*dy + dz*dz), pos, grain) + c.time;
+            double time = dt(sqrt(dx*dx + dy*dy + dz*dz), virtual_pos(pos, {dx,dy,dz}, space), grain) + c.time;
 
             if(time < input(x,y,z).time && time <= ct)
             {
