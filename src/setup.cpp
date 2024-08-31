@@ -6,10 +6,10 @@
 #include<random>
 #include<Eigen/Dense>
 #include<Eigen/Geometry>
-#include"CM_setup.hpp"
+#include"setup.hpp"
 
 
-void Nucleator::nucleate(Domain& domain, _long_int y0, _int g0, Layer& layer)
+void Nucleator::nucleate(Domain& domain, _long_int y0, _int g0, const Configuration::Layer& layer)
 {
     std::minstd_rand gen(std::random_device{}());
     std::uniform_real_distribution<double> pos_dist(0, 1);
@@ -35,13 +35,7 @@ void Nucleator::nucleate(Domain& domain, _long_int y0, _int g0, Layer& layer)
         m_grains.insert({grain_ID, Grain()});
         for(_long_int y = y0; ;)
         {
-            if( y == 0)
-            {
-                m_grains[grain_ID].center = {round( x), double(y), round( z)};
-                domain(x,y,z) = {m_grains[grain_ID].ID,0};
-                break;
-            }
-            else if( domain(x,y,z).state == Domain::VOID.state && domain(x,y-1,z).state != Domain::VOID.state)
+            if( domain(x,y,z).state == Domain::VOID.state && domain(x,y-1,z).state != Domain::VOID.state)
             {
                 m_grains[grain_ID].center = {round( x), double(y), round( z)};
                 domain(x,y,z) = {m_grains[grain_ID].ID,0};

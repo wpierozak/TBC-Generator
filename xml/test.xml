@@ -1,33 +1,38 @@
 <?xml version="1.0"?>
 <Configuration>
 
-    <dimX>100</dimX> 
-    <dimY>250</dimY>
-    <dimZ>100</dimZ>
+    <Space>
+        <dimX>100</dimX> 
+        <dimY>250</dimY>
+        <dimZ>100</dimZ>
+    </Space>
 
-    <output_dir>/home/wiktor/Desktop/engineering_thesis/res/</output_dir>
+    <Output>
+        <filename>/home/wiktor/Desktop/engineering_thesis/res/200x300x200</filename>
+        <format>xyz</format>
+    </Output>
 
-    <output_filename>200x300x200</output_filename>
-
-    <ms_file_format>xyz</ms_file_format>
-
-    <neighbourhood>   
+    <Neighbourhood>   
         <x0>-1</x0>
         <x1>1</x1>
 
         <y0>-1</y0>
-        <y1>1</y1>
+        <y1>0</y1>
 
         <z0>-1</z0>
         <z1>1</z1>
-    </neighbourhood>
+    </Neighbourhood>
 
+    <Bond>
+        <A>1</A>
+        <Z>10</Z>
+    </Bond>
     
     <Layer> 
-       <grains_number>1000</grains_number>    
-       <layer_height>200</layer_height>
+       <grains_number>400</grains_number>    
+       <height>100</height>
 
-        <tilt_stddev>5</tilt_stddev>
+        <tilt_stddev>10</tilt_stddev>
 
         <prefered_orientation>
             <x>1</x>
@@ -35,8 +40,8 @@
             <z>0</z>
         </prefered_orientation>
     </Layer>
-
-
-    <threads_number>12</threads_number>
-
+    
+    <Parallel>
+        <cpu_threads>12</cpu_threads>
+    </Parallel>
 </Configuration>

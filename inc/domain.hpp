@@ -1,9 +1,7 @@
 #pragma once
 #include<memory>
-#include"CM_basictypes.hpp"
+#include"basictypes.hpp"
 
-enum class BC{absorption, bouncy, periodic};
-enum class MsFileFormat{xyz, xyzrgb};
 
 struct Neighbourhood
 {
@@ -30,12 +28,12 @@ class Domain
     Domain(_long_int dimX, _long_int dimY, _long_int dimZ, Neighbourhood neighbourhood);
 
     static const cell VOID;
+    static const cell BOND;
+    
     const _long_int dimX;
     const _long_int dimY;
     const _long_int dimZ;
     const Neighbourhood neighbourhood;
-
-    BC bc = BC::absorption;
 
     cell& operator()(_long_int x, _long_int y, _long_int z)
     {

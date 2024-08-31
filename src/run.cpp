@@ -1,25 +1,21 @@
 #include<omp.h>
-#include"CM_run.hpp"
+#include"run.hpp"
 
 
 GenerationManager::GenerationManager(Configuration& config):
-    m_domain(config.dimX, config.dimY, config.dimZ, config.neighbourhood)
+    m_domain(config.space.dimX, config.space.dimY, config.space.dimZ, config.neighbourhood),
+    m_config(config)
 {
-    m_threads_number = config.threadsNum;
-    for(auto& l : config.layers)
-    {
-        m_layers.push_back(l);
-    }
-    //std::copy(config.layers.begin(), config.layers.end(), std::back_inserter(m_layers));
+   
 } 
 
 void GenerationManager::generate_layer(_int layer)
 {
     Domain copy(m_domain);
 
-    for(int i = 0; i < m_layers[layer].layer_height; i++)
+    for(int i = 0; i < m_config.layers[layer].layer_height; i++)
     {
-        #pragma omp parallel num_threads(m_threads_number) 
+        #pragma omp parallel num_threads(m_config.parallel.cpu_threads) 
         {
             _int idx = omp_get_thread_num();
             #pragma omp barrier
@@ -32,7 +28,7 @@ void GenerationManager::generate_layer(_int layer)
 
 void GenerationManager::create_generators()
 {
-    int threadsNumber = m_threads_number;
+    int threadsNumber = m_config.parallel.cpu_threads;
 
     _long_int dz = (m_domain.dimZ + threadsNumber - 1)/threadsNumber;
 
@@ -57,23 +53,26 @@ void GenerationManager::update_generators(_int layer, _int g0, _int y0)
     {
         g.update_grains(m_nucleator.grains());
         g.set_g0(g0);
-        g.set_prefered_orientation(m_layers[layer].prefered_orientation);
+        g.set_prefered_orientation(m_config.layers[layer].prefered_orientation);
         g.subspace().y0 = y0;
     }
 }
 
 void GenerationManager::generate()
 {
+    BondCoat bond(m_config.bond.parameters);
+    bond.fill(m_domain);
+    
     create_generators();
     _int g0 = 0;
     _int y0 = 0;
 
-    for(_int layer = 0; layer < m_layers.size(); layer++)
+    for(_int layer = 0; layer < m_config.layers.size(); layer++)
     {
-        g0 = (layer == 0) ? 0 : g0 + m_layers[layer-1].grainsNumber;
+        g0 = (layer == 0) ? 0 : g0 + m_config.layers[layer-1].grainsNumber;
         y0 = calc_y0(layer, y0, g0);
         
-        m_nucleator.nucleate(m_domain, y0, g0, m_layers[layer]);
+        m_nucleator.nucleate(m_domain, y0, g0, m_config.layers[layer]);
 
         update_generators(layer, g0, y0);
         generate_layer(layer);
@@ -82,5 +81,5 @@ void GenerationManager::generate()
 
 _long_int GenerationManager::calc_y0(_int layer, _int y0, _int g0)
 {
-    return (layer == 0) ? 0 : y0 + m_layers[layer-1].layer_height*0.9;
+    return (layer == 0) ? 0 : y0 + m_config.layers[layer-1].layer_height*0.9;
 }

@@ -1,5 +1,6 @@
 #pragma once
-#include"CM_config.hpp"
+#include"config.hpp"
+#include"grain.hpp"
 #include<unordered_map>
 
 class Nucleator
@@ -7,7 +8,7 @@ class Nucleator
     public:
     Nucleator() = default;
 
-    void nucleate(Domain& domain, _long_int y0, _int g0, Layer& msp);
+    void nucleate(Domain& domain, _long_int y0, _int g0, const Configuration::Layer& layer);
     std::unordered_map<uint16_t, Grain>& grains() {return m_grains;}
 
     private:

@@ -2,7 +2,8 @@
 
 #include<list>
 #include<unordered_map>
-#include"CM_config.hpp"
+#include"config.hpp"
+#include"grain.hpp"
 
 class Generator
 {
@@ -17,7 +18,7 @@ class Generator
     Generator(Domain& domain, Subspace subspace);
     void update_grains(std::unordered_map<uint16_t, Grain>& grains);
     void set_g0(_int g0) { m_g0 = g0; }
-    void set_prefered_orientation(f_vec& p){ m_prefered_orientation = p; }
+    void set_prefered_orientation(f_vec p){ m_prefered_orientation = p; }
 
     void run(Domain& input, Domain& output, double ct);
     Subspace& subspace() {return m_subspace;}

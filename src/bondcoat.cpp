@@ -1,4 +1,5 @@
-#include"CM_bondcoat.hpp"
+#include"bondcoat.hpp"
+#include"domain.hpp"
 #include<cmath>
 
 
@@ -14,7 +15,7 @@ void BondCoat::fill(Domain& domain)
     {
         if(y <= shape_function(x,z))
         {
-            //domain(x,y,z) = Domain::BOND_COAT;
+            domain(x,y,z) = Domain::BOND;
         }
     }// x    
     }// y

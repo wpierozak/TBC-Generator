@@ -1,14 +1,22 @@
+#pragma once
+
 #include<cstring>
-#include"CM_config.hpp"
+#include"basictypes.hpp"
 #include<array>
 #include<algorithm>
+
+class Domain;
 
 class BondCoat
 {
     public:
-    static constexpr int FunctionParametersNumber = 8;
+    static constexpr int FunctionParametersNumber = 9;
 
-    BondCoat(double*parameters);
+    BondCoat(const double*parameters)
+    {
+        std::memcpy(m_parameters.data(), parameters, sizeof(double)*FunctionParametersNumber); 
+    }
+
     void fill(Domain& domain);
     
     void parameters(double* param) 
@@ -31,6 +39,6 @@ class BondCoat
     double shape_function(double x, double z) const
     {
         return m_parameters[0]*sin(m_parameters[1]*x) + m_parameters[2]*cos(m_parameters[3]*x) 
-            + m_parameters[4]*sin(m_parameters[5]*z) + m_parameters[6]*cos(m_parameters[7]*z);
+            + m_parameters[4]*sin(m_parameters[5]*z) + m_parameters[6]*cos(m_parameters[7]*z) + m_parameters[8];
     }
 };

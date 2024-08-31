@@ -1,18 +1,20 @@
-#include"CM_config.hpp"
-#include"CM_xmlparser.hpp"
-#include"CM_postproc.hpp"
-#include"CM_run.hpp"
+#include"config.hpp"
+#include"parser.hpp"
+#include"postproc.hpp"
+#include"run.hpp"
 #include<iostream>
 
 int main(int argc, const char** argv)
 {
+    ConfigurationParser parser;
     Configuration config;
 
     std::string inputFile = argv[1];
     try
     {
-        parseConfiguration(inputFile, config);
-
+    
+        parser.parseXmlFile(inputFile);
+        config = parser.createConfiguration();
         GenerationManager manager(config);
         manager.generate();
         //run(config);
