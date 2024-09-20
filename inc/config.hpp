@@ -28,6 +28,8 @@ struct Configuration {
         Layer& operator=(const Layer& other) = default;
 
         double tilt_stddev;
+        double alpha_g;
+        double alpha_t;
         f_vec prefered_orientation;
         _int grainsNumber;
         _long_int layer_height;

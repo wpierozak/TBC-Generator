@@ -41,6 +41,7 @@ void Generator::run(Domain& input, Domain& output, double ct)
             Grain&  grain = m_grains[c.state];
 
             double time = dt(sqrt(dx*dx + dy*dy + dz*dz), virtual_pos(pos, {dx,dy,dz}, space), grain) + c.time;
+            //double time = dt(sqrt(dx*dx + dy*dy + dz*dz), {dx,dy,dz}, grain) + c.time;
 
             if(time < input(x,y,z).time && time <= ct)
             {

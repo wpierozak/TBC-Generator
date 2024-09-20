@@ -94,6 +94,14 @@ namespace XmlNodes
         layer.grains_number = std::stoi(node->first_node(n_grains_number)->value());
         layer.height = std::stol(node->first_node(n_height)->value());
         layer.tilt_stddev = std::stod(node->first_node(n_tilt_stddev)->value());
+        if(node->first_node(n_alpha_g) != nullptr)
+        {
+            layer.alpha_g = std::stod(node->first_node(n_alpha_g)->value());
+        }
+        if(node->first_node(n_alpha_t) != nullptr)
+        {
+            layer.alpha_t = std::stod(node->first_node(n_alpha_t)->value());
+        }
 
         layer.prefered_orientation = PreferedOrientation::parse(node->first_node(PreferedOrientation::n_name));
 

@@ -55,6 +55,8 @@ void GenerationManager::update_generators(_int layer, _int g0, _int y0)
         g.set_g0(g0);
         g.set_prefered_orientation(m_config.layers[layer].prefered_orientation);
         g.subspace().y0 = y0;
+        g.set_alpha_g(m_config.layers[layer].alpha_g);
+        g.set_alpha_t(m_config.layers[layer].alpha_t);
     }
 }
 

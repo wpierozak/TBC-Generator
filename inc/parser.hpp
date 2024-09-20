@@ -15,7 +15,7 @@ public:
     XmlNodes::Output output;
     XmlNodes::Neighbourhood neighbourhood;
     XmlNodes::Bond bond;
-    XmlNodes::Layer layer;
+    std::vector<XmlNodes::Layer> layers;
     XmlNodes::Parallel parallel;
 
     // Method to load and parse an XML file

@@ -71,6 +71,8 @@ namespace XmlNodes
         static constexpr const char* n_grains_number = "grains_number";
         static constexpr const char* n_height = "height";
         static constexpr const char* n_tilt_stddev = "tilt_stddev";
+        static constexpr const char* n_alpha_g = "alpha_g";
+        static constexpr const char* n_alpha_t = "alpha_t";
 
         struct PreferedOrientation
         {
@@ -90,6 +92,8 @@ namespace XmlNodes
         _int grains_number;
         _long_int height;
         double tilt_stddev;
+        double alpha_g{0.5};
+        double alpha_t{4.0};
     };
     
     struct Parallel

@@ -2,9 +2,9 @@
 <Configuration>
 
     <Space>
-        <dimX>100</dimX> 
-        <dimY>250</dimY>
-        <dimZ>100</dimZ>
+        <dimX>40</dimX> 
+        <dimY>160</dimY>
+        <dimZ>40</dimZ>
     </Space>
 
     <Output>
@@ -22,23 +22,25 @@
         <z0>-1</z0>
         <z1>1</z1>
     </Neighbourhood>
-
+    <!-- Asin(BX) + Ccos(Dx) + Esin(Fz) + Gcos(Hz) + Z -->
     <Bond>
         <A>1</A>
         <Z>10</Z>
     </Bond>
     
     <Layer> 
-       <grains_number>400</grains_number>    
-       <height>100</height>
+       <grains_number>1</grains_number>    
+       <height>40</height>
 
-        <tilt_stddev>10</tilt_stddev>
+        <tilt_stddev>5</tilt_stddev>
 
         <prefered_orientation>
             <x>1</x>
             <y>5</y>
             <z>0</z>
         </prefered_orientation>
+
+
     </Layer>
     
     <Parallel>

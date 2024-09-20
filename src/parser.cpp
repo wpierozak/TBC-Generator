@@ -49,14 +49,23 @@ void ConfigurationParser::parseXmlFile(const std::string& filePath) {
 
     // Parse the <Layer> node
     rapidxml::xml_node<>* layerNode = root->first_node(XmlNodes::Layer::n_name);
-    if (layerNode) {
-        layer = XmlNodes::Layer::parse(layerNode);
-        std::cout << "Parsed Layer: grains_number=" << layer.grains_number << ", height=" << layer.height
-                  << ", tilt_stddev=" << layer.tilt_stddev << std::endl;
+    while (layerNode) {
+        if(strcmp(layerNode->name(), XmlNodes::Layer::n_name) == 0)
+        {
+    // Parse the current layer node
+        layers.emplace_back(XmlNodes::Layer::parse(layerNode));
 
-        std::cout << "Layer's Preferred Orientation: x=" << layer.prefered_orientation.x
-                  << ", y=" << layer.prefered_orientation.y
-                  << ", z=" << layer.prefered_orientation.z << std::endl;
+    // Output the parsed data
+        std::cout << "Parsed Layer: grains_number=" << layers.back().grains_number << ", height=" << layers.back().height
+              << ", tilt_stddev=" << layers.back().tilt_stddev << std::endl;
+
+        std::cout << "Layer's Preferred Orientation: x=" << layers.back().prefered_orientation.x
+              << ", y=" << layers.back().prefered_orientation.y
+              << ", z=" << layers.back().prefered_orientation.z << std::endl;
+        }
+
+    // Move to the next "Layer" node
+    layerNode = layerNode->next_sibling(XmlNodes::Layer::n_name);
     }
 
     // Parse the <Parallel> node
@@ -86,14 +95,18 @@ Configuration ConfigurationParser::createConfiguration() const {
     config.parallel.gpu = parallel.gpu;
 
     // Set the Layer configuration
+    for(auto& layer : layers){
     Configuration::Layer configLayer;
     configLayer.tilt_stddev = M_PI * layer.tilt_stddev / 180.0 ;
     configLayer.prefered_orientation = {layer.prefered_orientation.x, layer.prefered_orientation.y, layer.prefered_orientation.z};
     configLayer.prefered_orientation.normalize();
     configLayer.grainsNumber = layer.grains_number;
     configLayer.layer_height = layer.height;
+    configLayer.alpha_g = layer.alpha_g;
+    configLayer.alpha_t = layer.alpha_t;
 
     config.layers.push_back(configLayer);
+    }
 
     config.space.dimX = space.dimX;
     config.space.dimY = space.dimY;
