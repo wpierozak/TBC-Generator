@@ -40,8 +40,20 @@ void Generator::run(Domain& input, Domain& output, double ct)
 
             Grain&  grain = m_grains[c.state];
 
-            double time = dt(sqrt(dx*dx + dy*dy + dz*dz), virtual_pos(pos, {dx,dy,dz}, space), grain) + c.time;
-            //double time = dt(sqrt(dx*dx + dy*dy + dz*dz), {dx,dy,dz}, grain) + c.time;
+            double dt = INFINITY;
+            {
+                f_vec vp = virtual_pos(pos, {dx,dy,dz}, space);
+
+                double theta = acos((m_prefered_orientation*f_vec{-dx,-dy,-dz})/sqrt(dx*dx + dy*dy + dz*dz));
+                double beta = atan_jw((vp - grain.center).cross(grain.orientation).norm());
+
+                dt =  sqrt(dx*dx + dy*dy + dz*dz) /( cos(beta*m_alpha_g)* ( 0.1 + cos(theta*m_alpha_t)) );
+
+                if(dt <= 0) dt = INFINITY;
+            }
+
+            //double time = dt(sqrt(dx*dx + dy*dy + dz*dz), virtual_pos(pos, {dx,dy,dz}, space), grain) + c.time;
+            double time = dt + c.time;
 
             if(time < input(x,y,z).time && time <= ct)
             {

@@ -51,10 +51,13 @@ class Generator
         //         );
 
 
-        double theta = acos(grain.orientation * m_prefered_orientation);
-        double arctan = atan_jw((virtual_pos - grain.center).cross(grain.orientation).norm());
+        //double theta = acos(grain.orientation * m_prefered_orientation);
+        double theta = acos(m_prefered_orientation*virtual_pos);
+        double beta = atan_jw((virtual_pos - grain.center).cross(grain.orientation).norm());
+        double dt =  d/( cos(beta*m_alpha_g) * cos(theta*m_alpha_t));
+        //double arctan = atan_jw((virtual_pos - grain.center).cross(grain.orientation).norm());
 
-        return d/fabs(cos(arctan*m_alpha_g)*cos(m_alpha_t*theta));
+        return (dt > 0 ? dt: INFINITY);
     }
 
     f_vec virtual_pos(const f_vec& pos, f_vec&& relative_pos, const f_vec& space)
