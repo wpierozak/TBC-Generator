@@ -22,14 +22,30 @@ void Generator::update_grains(std::unordered_map<uint16_t, Grain> &grains)
 
 void Generator::run(Domain& input, Domain& output, double ct)
 {
+    std::minstd_rand gen(std::random_device{}());
+    std::uniform_real_distribution<double> pos_dist(0, 1);
+
     f_vec space = {m_domain.dimX, m_domain.dimY, m_domain.dimZ};
 
     for(_long_int y = m_subspace.y0; y < m_subspace.y1; y++)
     for(_long_int z = m_subspace.z0; z < m_subspace.z1; z++)
     for(_long_int x = m_subspace.x0; x < m_subspace.x1; x++)
     {
-        if( m_domain(x,y,z).state < m_g0 || m_domain(x,y,z).state == Domain::BOND.state) continue;
+        if( input(x,y,z).state < m_g0 || input(x,y,z).state == Domain::BOND.state ) continue;
         f_vec pos = {static_cast<double>(x), static_cast<double>(y), static_cast<double>(z)};
+
+        double shadowing = 1.0;
+        for(_long_int dy = 0; dy <= 1; dy++)
+        for(_long_int dz = m_domain.neighbourhood.dz0; dz <= m_domain.neighbourhood.dz1; dz++)
+        for(_long_int dx = m_domain.neighbourhood.dx0; dx <= m_domain.neighbourhood.dx1; dx++)
+        {
+            if(input.state(pos.x + dx, pos.y + dy, pos.z + dz).state != Domain::VOID.state)
+            {
+                double sh = 1.0 - m_prefered_orientation*f_vec{dx,dy,z};
+                if(sh >=  1.0) sh = 1.0;
+                if(sh < shadowing) shadowing = sh;
+            }  
+        }
 
         for(_long_int dy = m_domain.neighbourhood.dy0; dy <= m_domain.neighbourhood.dy1; dy++)
         for(_long_int dz = m_domain.neighbourhood.dz0; dz <= m_domain.neighbourhood.dz1; dz++)
@@ -42,13 +58,20 @@ void Generator::run(Domain& input, Domain& output, double ct)
 
             double dt = INFINITY;
             {
-                f_vec vp = virtual_pos(pos, {dx,dy,dz}, space);
 
-                double theta = acos((m_prefered_orientation*f_vec{-dx,-dy,-dz})/sqrt(dx*dx + dy*dy + dz*dz));
-                double beta = atan_jw((vp - grain.center).cross(grain.orientation).norm());
+                f_vec k = {-dx, -dy, -dz};
+                k.normalize();
 
-                dt =  sqrt(dx*dx + dy*dy + dz*dz) /( cos(beta*m_alpha_g)* ( 0.1 + cos(theta*m_alpha_t)) );
+                double theta = acos(grain.orientation*k);
 
+                constexpr double diff = 0.1;
+                constexpr double inv_dk = 0.1;
+
+                double v_k = cos(m_alpha_g * acos(k*m_prefered_orientation)) * (inv_dk + cos(m_alpha_t*theta));
+                double scaling = 1.0 + inv_dk;
+                
+                dt = (sqrt(dx*dx + dy*dy + dz*dz)) /(shadowing*v_k + diff) ;
+               
                 if(dt <= 0) dt = INFINITY;
             }
 
@@ -59,6 +82,8 @@ void Generator::run(Domain& input, Domain& output, double ct)
             {
                output(x,y,z) = {c.state, time};
             }
+
+            
         }
     }
 }

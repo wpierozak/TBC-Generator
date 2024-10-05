@@ -2,13 +2,13 @@
 <Configuration>
 
     <Space>
-        <dimX>40</dimX> 
-        <dimY>160</dimY>
-        <dimZ>40</dimZ>
+        <dimX>100</dimX> 
+        <dimY>300</dimY>
+        <dimZ>100</dimZ>
     </Space>
 
     <Output>
-        <filename>/home/wiktor/Desktop/engineering_thesis/res/200x300x200</filename>
+        <filename>/home/wiktor/Desktop/engineering_thesis/res/example-3</filename>
         <format>xyz</format>
     </Output>
 
@@ -25,18 +25,19 @@
     <!-- Asin(BX) + Ccos(Dx) + Esin(Fz) + Gcos(Hz) + Z -->
     <Bond>
         <A>1</A>
-        <Z>10</Z>
+        <Z>8</Z>
     </Bond>
     
     <Layer> 
-       <grains_number>1</grains_number>    
-       <height>40</height>
-
-        <tilt_stddev>5</tilt_stddev>
+       <grains_number>100</grains_number>    
+       <height>200</height>
+        <alpha_g>4.0</alpha_g>
+        <alpha_t>0.5</alpha_t>
+        <tilt_stddev>15</tilt_stddev>
 
         <prefered_orientation>
-            <x>1</x>
-            <y>5</y>
+            <x>0</x>
+            <y>1</y>
             <z>0</z>
         </prefered_orientation>
 

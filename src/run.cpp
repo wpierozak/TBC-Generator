@@ -12,16 +12,24 @@ GenerationManager::GenerationManager(Configuration& config):
 void GenerationManager::generate_layer(_int layer)
 {
     Domain copy(m_domain);
-
-    for(int i = 0; i < m_config.layers[layer].layer_height; i++)
+    double y0 = 0;
+    bool flip = true;
+    for(double i = 0; i < m_config.layers[layer].layer_height; i+=0.5)
     {
         #pragma omp parallel num_threads(m_config.parallel.cpu_threads) 
         {
             _int idx = omp_get_thread_num();
             #pragma omp barrier
-            if(i % 2 == 0) m_generators[idx].run(m_domain, copy, i);
+            if(flip) m_generators[idx].run(m_domain, copy, i);
             else m_generators[idx].run(copy, m_domain, i);
+            !flip;
             #pragma omp barrier
+        }
+
+        y0 = floor(i);
+        for(Generator& g: m_generators)
+        {
+             g.subspace().y0 = floor(y0);
         }
     }
 }
