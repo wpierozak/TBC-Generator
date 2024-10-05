@@ -1,4 +1,5 @@
 bin/*
+!bin/.gitkeep
 lib/*
-res/*
-obj/*
+!lib/.gitkeep
+build/*
