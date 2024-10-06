@@ -15,6 +15,8 @@ public:
     XmlNodes::Output output;
     XmlNodes::Neighbourhood neighbourhood;
     XmlNodes::Bond bond;
+    XmlNodes::Time time;
+    XmlNodes::Front front;
     std::vector<XmlNodes::Layer> layers;
     XmlNodes::Parallel parallel;
 

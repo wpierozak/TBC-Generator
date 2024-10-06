@@ -2,9 +2,9 @@
 <Configuration>
 
     <Space>
-        <dimX>100</dimX> 
-        <dimY>300</dimY>
-        <dimZ>100</dimZ>
+        <dimX>50</dimX> 
+        <dimY>200</dimY>
+        <dimZ>50</dimZ>
     </Space>
 
     <Output>
@@ -12,16 +12,25 @@
         <format>xyz</format>
     </Output>
 
+    <Time>
+        <dt>0.5</dt>
+    </Time>
+
+    <Front>
+        <vb>1.0</vb>
+    </Front>
+
     <Neighbourhood>   
         <x0>-1</x0>
         <x1>1</x1>
 
         <y0>-1</y0>
-        <y1>0</y1>
+        <y1>1</y1>
 
         <z0>-1</z0>
         <z1>1</z1>
     </Neighbourhood>
+
     <!-- Asin(BX) + Ccos(Dx) + Esin(Fz) + Gcos(Hz) + Z -->
     <Bond>
         <A>1</A>
@@ -29,18 +38,19 @@
     </Bond>
     
     <Layer> 
-       <grains_number>100</grains_number>    
-       <height>200</height>
+        <grains_number>20</grains_number>    
+        <height>100</height>
         <alpha_g>4.0</alpha_g>
         <alpha_t>0.5</alpha_t>
-        <tilt_stddev>15</tilt_stddev>
+        <tilt_stddev>1</tilt_stddev>
+        <anisotropy>10.0</anisotropy>
+        <diffusion>0.1</diffusion>
 
         <prefered_orientation>
             <x>0</x>
             <y>1</y>
             <z>0</z>
         </prefered_orientation>
-
 
     </Layer>
     

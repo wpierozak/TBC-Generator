@@ -11,6 +11,10 @@
 
 #define BUFFER_SIZE 1000
 
+#include <iostream>
+#include <cmath>
+
+
 std::tuple<uint8_t, uint8_t, uint8_t> generateRandomColor() {
     return std::make_tuple(static_cast<uint8_t>(std::rand() % 256),
                            static_cast<uint8_t>(std::rand() % 256),

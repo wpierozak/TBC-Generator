@@ -9,7 +9,7 @@
 #include"setup.hpp"
 
 
-void Nucleator::nucleate(Domain& domain, _long_int y0, _int g0, const Configuration::Layer& layer)
+double Nucleator::nucleate(Domain& domain, _long_int y0, _int g0, const Configuration::Layer& layer)
 {
     std::minstd_rand gen(std::random_device{}());
     std::uniform_real_distribution<double> pos_dist(0, 1);
@@ -23,6 +23,8 @@ void Nucleator::nucleate(Domain& domain, _long_int y0, _int g0, const Configurat
     
     _long_int dimX = domain.dimX;
     _long_int dimZ = domain.dimZ;
+
+    double y_max = 0.0;
 
     for(_long_int grain_ID = g0; grain_ID < g0 + layer.grainsNumber; grain_ID++)
     {
@@ -39,6 +41,9 @@ void Nucleator::nucleate(Domain& domain, _long_int y0, _int g0, const Configurat
             {
                 m_grains[grain_ID].center = {round( x), double(y), round( z)};
                 domain(x,y,z) = {m_grains[grain_ID].ID,0};
+                if(y > y_max){
+                    y_max = static_cast<double>(y);
+                }
                 break;
             }
             else if(domain(x,y,z).state == Domain::VOID.state)
@@ -63,6 +68,8 @@ void Nucleator::nucleate(Domain& domain, _long_int y0, _int g0, const Configurat
     m_grains[grain_ID].orientation = {orientation[0], orientation[1], orientation[2]};
             
     }
+
+    return y_max;
 }
 
 

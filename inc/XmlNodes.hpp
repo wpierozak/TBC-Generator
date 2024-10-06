@@ -6,6 +6,28 @@
 
 namespace XmlNodes
 {
+
+    struct Time
+    {
+        static constexpr const char* n_name = "Time";
+        static constexpr const char* n_dt = "dt";
+
+        static Time parse(rapidxml::xml_node<>* node);
+
+        double dt;
+    };
+
+    struct Front
+    {
+        static constexpr const char* n_name = "Front";
+        static constexpr const char* n_vb = "vb";
+
+        static Front parse(rapidxml::xml_node<>* node);
+
+        double vb;
+    };
+    
+
     struct Space
     {
         static constexpr const char* n_name = "Space";
@@ -73,6 +95,8 @@ namespace XmlNodes
         static constexpr const char* n_tilt_stddev = "tilt_stddev";
         static constexpr const char* n_alpha_g = "alpha_g";
         static constexpr const char* n_alpha_t = "alpha_t";
+        static constexpr const char* n_anisotropy = "anisotropy";
+        static constexpr const char* n_diffusion = "diffusion";
 
         struct PreferedOrientation
         {
@@ -94,6 +118,8 @@ namespace XmlNodes
         double tilt_stddev;
         double alpha_g{0.5};
         double alpha_t{4.0};
+        double anisotropy;
+        double diffusion;
     };
     
     struct Parallel

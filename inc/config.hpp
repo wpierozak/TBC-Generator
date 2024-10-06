@@ -7,6 +7,20 @@
 #include "domain.hpp"
 
 struct Configuration {
+    struct Time{
+        Time() = default;
+        Time(const Time&) = default;
+        double dt;
+
+    } time;
+
+    struct Front{
+        Front() = default;
+        Front(const Front&) = default;
+
+        double vb;
+    } front;
+
     struct Space {
         _long_int dimX, dimY, dimZ;
 
@@ -30,6 +44,9 @@ struct Configuration {
         double tilt_stddev;
         double alpha_g;
         double alpha_t;
+        double dk;
+        double diff;
+
         f_vec prefered_orientation;
         _int grainsNumber;
         _long_int layer_height;
@@ -72,6 +89,8 @@ struct Configuration {
           neighbourhood(other.neighbourhood),
           parallel(other.parallel), output(other.output) 
           {
+            time = other.time;
+            front = other.front;
             std::memcpy(bond.parameters, other.bond.parameters, sizeof(double) * BondCoat::FunctionParametersNumber);
           }
 
@@ -86,6 +105,8 @@ struct Configuration {
         neighbourhood = other.neighbourhood;
         parallel = other.parallel;
         output = other.output;
+        time = other.time;
+        front = other.front;
         std::memcpy(bond.parameters, other.bond.parameters, sizeof(double) * BondCoat::FunctionParametersNumber);
 
         return *this;

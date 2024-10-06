@@ -1,6 +1,31 @@
 #include<omp.h>
 #include"run.hpp"
 
+#include <iostream>
+#include <cmath>
+
+void printProgressBar(double dt, double time) {
+    int barWidth = 50; // Width of the progress bar
+    double progress = dt / time;
+
+    // Ensure progress does not exceed 100%
+    if (progress > 1.0) progress = 1.0;
+
+    int pos = static_cast<int>(barWidth * progress);
+
+    std::cout << "[";
+    for (int i = 0; i < barWidth; ++i) {
+        if (i < pos)
+            std::cout << "=";
+        else if (i == pos)
+            std::cout << ">";
+        else
+            std::cout << " ";
+    }
+    std::cout << "] " << static_cast<int>(progress * 100.0) << " %\r";
+    std::cout.flush();
+}
+
 
 GenerationManager::GenerationManager(Configuration& config):
     m_domain(config.space.dimX, config.space.dimY, config.space.dimZ, config.neighbourhood),
@@ -9,13 +34,28 @@ GenerationManager::GenerationManager(Configuration& config):
    
 } 
 
-void GenerationManager::generate_layer(_int layer)
+void GenerationManager::generate_layer(_int layer, double y0_p, double y1_p)
 {
+    std::cout<< "Layer: " << layer << std::endl;
     Domain copy(m_domain);
-    double y0 = 0;
+
+    double y0 = y0_p;
+    double y1 = y1_p;
+
     bool flip = true;
-    for(double i = 0; i < m_config.layers[layer].layer_height; i+=0.5)
+
+    double t_stop = m_config.layers[layer].layer_height*(1.0 + 1.0/m_config.layers[layer].dk + m_config.layers[layer].diff);
+
+    for(double i = 0; i < t_stop; i+=m_config.time.dt)
     {
+        printProgressBar(i, t_stop);
+        y0 += m_config.front.vb*m_config.time.dt;
+        for(Generator& g: m_generators)
+        {
+             g.subspace().y0 = round(y0);
+             g.subspace().y1 = round(y1);
+        }
+
         #pragma omp parallel num_threads(m_config.parallel.cpu_threads) 
         {
             _int idx = omp_get_thread_num();
@@ -26,10 +66,8 @@ void GenerationManager::generate_layer(_int layer)
             #pragma omp barrier
         }
 
-        y0 = floor(i);
-        for(Generator& g: m_generators)
-        {
-             g.subspace().y0 = floor(y0);
+        if(y1 < m_domain.dimY - 1){
+            y1 += 1.0;
         }
     }
 }
@@ -55,16 +93,18 @@ void GenerationManager::create_generators()
     }
 }
 
-void GenerationManager::update_generators(_int layer, _int g0, _int y0)
+void GenerationManager::update_generators(_int layer, _int g0)
 {
     for(Generator& g: m_generators)
     {
         g.update_grains(m_nucleator.grains());
         g.set_g0(g0);
+
         g.set_prefered_orientation(m_config.layers[layer].prefered_orientation);
-        g.subspace().y0 = y0;
         g.set_alpha_g(m_config.layers[layer].alpha_g);
         g.set_alpha_t(m_config.layers[layer].alpha_t);
+        g.set_diffusion(m_config.layers[layer].diff);
+        g.set_inv_dk(m_config.layers[layer].dk);
     }
 }
 
@@ -75,17 +115,17 @@ void GenerationManager::generate()
     
     create_generators();
     _int g0 = 0;
-    _int y0 = 0;
+    double y0 = 0;
 
     for(_int layer = 0; layer < m_config.layers.size(); layer++)
     {
         g0 = (layer == 0) ? 0 : g0 + m_config.layers[layer-1].grainsNumber;
         y0 = calc_y0(layer, y0, g0);
         
-        m_nucleator.nucleate(m_domain, y0, g0, m_config.layers[layer]);
+        double y_max = m_nucleator.nucleate(m_domain, y0, g0, m_config.layers[layer]);
 
-        update_generators(layer, g0, y0);
-        generate_layer(layer);
+        update_generators(layer, g0);
+        generate_layer(layer, y0, y_max);
     }
 }
 

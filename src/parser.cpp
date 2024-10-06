@@ -16,34 +16,38 @@ void ConfigurationParser::parseXmlFile(const std::string& filePath) {
         throw std::runtime_error("Invalid XML file: missing <Configuration> root node.");
     }
 
+    rapidxml::xml_node<>* timeNode = root->first_node(XmlNodes::Time::n_name);
+    if(timeNode){
+        time = XmlNodes::Time::parse(timeNode);
+    }
+
+    rapidxml::xml_node<>* frontNode = root->first_node(XmlNodes::Front::n_name);
+    if(frontNode){
+        front = XmlNodes::Front::parse(frontNode);
+    }
+
     // Parse the <Space> node
     rapidxml::xml_node<>* spaceNode = root->first_node(XmlNodes::Space::n_name);
     if (spaceNode) {
         space = XmlNodes::Space::parse(spaceNode);
-        std::cout << "Parsed Space: dimX=" << space.dimX << ", dimY=" << space.dimY << ", dimZ=" << space.dimZ << std::endl;
     }
 
     // Parse the <Output> node
     rapidxml::xml_node<>* outputNode = root->first_node(XmlNodes::Output::n_name);
     if (outputNode) {
         output = XmlNodes::Output::parse(outputNode);
-        std::cout << "Parsed Output: filename=" << output.filename << ", format=" << output.format << std::endl;
     }
 
     // Parse the <Neighbourhood> node
     rapidxml::xml_node<>* neighbourhoodNode = root->first_node(XmlNodes::Neighbourhood::n_name);
     if (neighbourhoodNode) {
         neighbourhood = XmlNodes::Neighbourhood::parse(neighbourhoodNode);
-        std::cout << "Parsed Neighbourhood: x0=" << neighbourhood.x0 << ", x1=" << neighbourhood.x1
-                  << ", y0=" << neighbourhood.y0 << ", y1=" << neighbourhood.y1
-                  << ", z0=" << neighbourhood.z0 << ", z1=" << neighbourhood.z1 << std::endl;
     }
 
     // Parse the <Bond> node
     rapidxml::xml_node<>* bondNode = root->first_node(XmlNodes::Bond::n_name);
     if (bondNode) {
         bond = XmlNodes::Bond::parse(bondNode);
-        std::cout << "Parsed Bond: A=" << bond.A << ", B=" << bond.B << ", C=" << bond.C << std::endl;
         // Print other bond values similarly
     }
 
@@ -55,26 +59,17 @@ void ConfigurationParser::parseXmlFile(const std::string& filePath) {
     // Parse the current layer node
         layers.emplace_back(XmlNodes::Layer::parse(layerNode));
 
-    // Output the parsed data
-        std::cout << "Parsed Layer: grains_number=" << layers.back().grains_number << ", height=" << layers.back().height
-              << ", tilt_stddev=" << layers.back().tilt_stddev << std::endl;
-
-        std::cout << "Layer's Preferred Orientation: x=" << layers.back().prefered_orientation.x
-              << ", y=" << layers.back().prefered_orientation.y
-              << ", z=" << layers.back().prefered_orientation.z << std::endl;
-        }
-
     // Move to the next "Layer" node
     layerNode = layerNode->next_sibling(XmlNodes::Layer::n_name);
     }
-
+    }
     // Parse the <Parallel> node
     rapidxml::xml_node<>* parallelNode = root->first_node(XmlNodes::Parallel::n_name);
     if (parallelNode) {
         parallel = XmlNodes::Parallel::parse(parallelNode);
-        std::cout << "Parsed Parallel: cpu_threads=" << parallel.cpu_threads << ", gpu=" << parallel.gpu << std::endl;
     }
 }
+
 
 Configuration ConfigurationParser::createConfiguration() const {
     Configuration config;
@@ -104,6 +99,8 @@ Configuration ConfigurationParser::createConfiguration() const {
     configLayer.layer_height = layer.height;
     configLayer.alpha_g = layer.alpha_g;
     configLayer.alpha_t = layer.alpha_t;
+    configLayer.dk = layer.anisotropy;
+    configLayer.diff = layer.diffusion;
 
     config.layers.push_back(configLayer);
     }
@@ -121,6 +118,9 @@ Configuration ConfigurationParser::createConfiguration() const {
     config.bond.parameters[6] = bond.G;
     config.bond.parameters[7] = bond.H;
     config.bond.parameters[8] = bond.Z;
+
+    config.time.dt = time.dt;
+    config.front.vb = front.vb;
 
     return config;
 }

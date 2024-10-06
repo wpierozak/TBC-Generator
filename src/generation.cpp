@@ -25,6 +25,8 @@ void Generator::run(Domain& input, Domain& output, double ct)
     std::minstd_rand gen(std::random_device{}());
     std::uniform_real_distribution<double> pos_dist(0, 1);
 
+    //double scaling = 1.0 + m_inv_dk + m_diff;
+
     f_vec space = {m_domain.dimX, m_domain.dimY, m_domain.dimZ};
 
     for(_long_int y = m_subspace.y0; y < m_subspace.y1; y++)
@@ -64,13 +66,9 @@ void Generator::run(Domain& input, Domain& output, double ct)
 
                 double theta = acos(grain.orientation*k);
 
-                constexpr double diff = 0.1;
-                constexpr double inv_dk = 0.1;
-
-                double v_k = cos(m_alpha_g * acos(k*m_prefered_orientation)) * (inv_dk + cos(m_alpha_t*theta));
-                double scaling = 1.0 + inv_dk;
+                double v_k = cos(m_alpha_g * acos(k*m_prefered_orientation)) * (m_inv_dk + cos(m_alpha_t*theta));
                 
-                dt = (sqrt(dx*dx + dy*dy + dz*dz)) /(shadowing*v_k + diff) ;
+                dt = (sqrt(dx*dx + dy*dy + dz*dz)) /(shadowing*v_k + m_diff) ;
                
                 if(dt <= 0) dt = INFINITY;
             }

@@ -6,6 +6,26 @@
 
 namespace XmlNodes
 {
+    Time Time::parse(rapidxml::xml_node<>* node)
+    {
+        Time time;
+        if (node == nullptr || std::strcmp(node->name(), Time::n_name) != 0) {
+            throw std::runtime_error("Invalid XML node: expected <Time>.");
+        }
+        time.dt = std::stod(node->first_node(n_dt)->value());
+        return time;
+    }
+
+    Front Front::parse(rapidxml::xml_node<>*node)
+    {
+        Front front;
+        if (node == nullptr || std::strcmp(node->name(), Front::n_name) != 0) {
+            throw std::runtime_error("Invalid XML node: expected <Front>.");
+        }
+        front.vb = std::stod(node->first_node(n_vb)->value());
+        return front;
+    }
+
     Space Space::parse(rapidxml::xml_node<>* node) {
         Space space;
         
@@ -104,6 +124,8 @@ namespace XmlNodes
         }
 
         layer.prefered_orientation = PreferedOrientation::parse(node->first_node(PreferedOrientation::n_name));
+        layer.anisotropy = std::stod(node->first_node(n_anisotropy)->value());
+        layer.diffusion = std::stod(node->first_node(n_diffusion)->value());
 
         return layer;
     }
