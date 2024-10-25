@@ -29,7 +29,6 @@ class Domain
 
     static const cell VOID;
     static const cell BOND;
-    static const cell POR;
     
     const _long_int dimX;
     const _long_int dimY;

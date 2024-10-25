@@ -68,7 +68,7 @@ void Generator::run(Domain& input, Domain& output, double ct)
 
                 double v_k = cos(m_alpha_g * acos(k*m_prefered_orientation)) * (m_inv_dk + cos(m_alpha_t*theta));
                 
-                dt = (sqrt(dx*dx + dy*dy + dz*dz)) /(shadowing*v_k + m_diff) ;
+                dt = (1.0+m_diff)*(sqrt(dx*dx + dy*dy + dz*dz)) /(shadowing*v_k + m_diff) ;
                
                 if(dt <= 0) dt = INFINITY;
             }

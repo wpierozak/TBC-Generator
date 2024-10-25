@@ -44,30 +44,32 @@ void GenerationManager::generate_layer(_int layer, double y0_p, double y1_p)
 
     bool flip = true;
 
-    double t_stop = m_config.layers[layer].layer_height*(1.0 + 1.0/m_config.layers[layer].dk + m_config.layers[layer].diff);
+    double t_stop = m_config.layers[layer].layer_height/(1.0 + 1.0/m_config.layers[layer].dk + m_config.layers[layer].diff);
 
-    for(double i = 0; i < t_stop; i+=m_config.time.dt)
+    #pragma omp parallel num_threads(m_config.parallel.cpu_threads) shared(y0,y1)
     {
-        printProgressBar(i, t_stop);
-        y0 += m_config.front.vb*m_config.time.dt;
-        for(Generator& g: m_generators)
+        _int idx = omp_get_thread_num();
+        for(double i = 0; i < t_stop; i+=m_config.time.dt)
         {
-             g.subspace().y0 = round(y0);
-             g.subspace().y1 = round(y1);
-        }
+            #pragma omp master
+            {
+                printProgressBar(i, t_stop);
+                y0 += m_config.front.vb*m_config.time.dt;
+                if(y1 < m_domain.dimY - 1){
+                    y1 += 1.0;
+                }
+            }
 
-        #pragma omp parallel num_threads(m_config.parallel.cpu_threads) 
-        {
-            _int idx = omp_get_thread_num();
             #pragma omp barrier
+            m_generators[idx].subspace().y0 = round(y0);
+            m_generators[idx].subspace().y1 = round(y1);
+            #pragma omp barrier
+
             if(flip) m_generators[idx].run(m_domain, copy, i);
             else m_generators[idx].run(copy, m_domain, i);
             !flip;
             #pragma omp barrier
-        }
-
-        if(y1 < m_domain.dimY - 1){
-            y1 += 1.0;
+        
         }
     }
 }
