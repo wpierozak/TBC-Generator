@@ -22,11 +22,6 @@ void Generator::update_grains(std::unordered_map<uint16_t, Grain> &grains)
 
 void Generator::run(Domain& input, Domain& output, double ct)
 {
-    std::minstd_rand gen(std::random_device{}());
-    std::uniform_real_distribution<double> pos_dist(0, 1);
-
-    //double scaling = 1.0 + m_inv_dk + m_diff;
-
     f_vec space = {m_domain.dimX, m_domain.dimY, m_domain.dimZ};
 
     for(_long_int y = m_subspace.y0; y < m_subspace.y1; y++)

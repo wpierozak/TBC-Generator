@@ -72,6 +72,8 @@ void GenerationManager::generate_layer(_int layer, double y0_p, double y1_p)
         
         }
     }
+
+    std::cout << std::endl;
 }
 
 void GenerationManager::create_generators()
@@ -124,7 +126,9 @@ void GenerationManager::generate()
         g0 = (layer == 0) ? 0 : g0 + m_config.layers[layer-1].grainsNumber;
         y0 = calc_y0(layer, y0, g0);
         
-        double y_max = m_nucleator.nucleate(m_domain, y0, g0, m_config.layers[layer]);
+        auto ys = m_nucleator.nucleate(m_domain, y0, g0, m_config.layers[layer]);
+        double y_max = ys.first;
+        y0 = ys.second;
 
         update_generators(layer, g0);
         generate_layer(layer, y0, y_max);
@@ -133,5 +137,5 @@ void GenerationManager::generate()
 
 _long_int GenerationManager::calc_y0(_int layer, _int y0, _int g0)
 {
-    return (layer == 0) ? 0 : y0 + m_config.layers[layer-1].layer_height*0.9;
+    return (layer == 0) ? 0 : y0 + m_config.layers[layer-1].layer_height;
 }

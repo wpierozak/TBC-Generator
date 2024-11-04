@@ -9,7 +9,7 @@
 #include"setup.hpp"
 
 
-double Nucleator::nucleate(Domain& domain, _long_int y0, _int g0, const Configuration::Layer& layer)
+std::pair<double,double> Nucleator::nucleate(Domain& domain, _long_int y0, _int g0, const Configuration::Layer& layer)
 {
     std::minstd_rand gen(std::random_device{}());
     std::uniform_real_distribution<double> pos_dist(0, 1);
@@ -25,6 +25,7 @@ double Nucleator::nucleate(Domain& domain, _long_int y0, _int g0, const Configur
     _long_int dimZ = domain.dimZ;
 
     double y_max = 0.0;
+    double y_min = y0;
 
     for(_long_int grain_ID = g0; grain_ID < g0 + layer.grainsNumber; grain_ID++)
     {
@@ -37,16 +38,21 @@ double Nucleator::nucleate(Domain& domain, _long_int y0, _int g0, const Configur
         m_grains.insert({grain_ID, Grain()});
         for(_long_int y = y0; ;)
         {
-            if( domain(x,y,z).state == Domain::VOID.state && domain(x,y-1,z).state != Domain::VOID.state)
+            if((domain(x,y,z).state == Domain::VOID.state) && (domain(x,y+1,z).state == Domain::VOID.state) && ((domain(x,y-1,z).state != Domain::VOID.state)))
             {
                 m_grains[grain_ID].center = {round( x), double(y), round( z)};
                 domain(x,y,z) = {m_grains[grain_ID].ID,0};
                 if(y > y_max){
                     y_max = static_cast<double>(y);
                 }
+                if(y < y_min)
+                {
+                    y_min = y;
+                }
+                
                 break;
             }
-            else if(domain(x,y,z).state == Domain::VOID.state)
+            else if(domain(x,y,z).state == Domain::VOID.state && (domain(x,y-1,z).state == Domain::VOID.state && domain(x,y+1,z).state == Domain::VOID.state))
             {
                 y -= 1;
             }
@@ -69,7 +75,7 @@ double Nucleator::nucleate(Domain& domain, _long_int y0, _int g0, const Configur
             
     }
 
-    return y_max;
+    return {y_max, y_min};
 }
 
 
