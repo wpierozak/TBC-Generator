@@ -109,6 +109,8 @@ void GenerationManager::update_generators(_int layer, _int g0)
         g.set_alpha_t(m_config.layers[layer].alpha_t);
         g.set_diffusion(m_config.layers[layer].diff);
         g.set_inv_dk(m_config.layers[layer].dk);
+        g.setLayer(m_config.layers[layer]);
+        g.setVkMatrix(&m_vkMatrix);
     }
 }
 
@@ -131,6 +133,9 @@ void GenerationManager::generate()
         y0 = ys.second;
 
         update_generators(layer, g0);
+        precalculateLayer(layer);
+        calculateVkMatrix(layer);
+        std::cout << "\nGeneration\n";
         generate_layer(layer, y0, y_max);
     }
 }
@@ -138,4 +143,33 @@ void GenerationManager::generate()
 _long_int GenerationManager::calc_y0(_int layer, _int y0, _int g0)
 {
     return (layer == 0) ? 0 : y0 + m_config.layers[layer-1].layer_height;
+}
+
+void GenerationManager::precalculateLayer(_int layerIdx)
+{
+    Configuration::Layer& layer = m_config.layers[layerIdx];
+
+    int32_t idx = 0;
+    for(int32_t dy = -1; dy <= 1; dy++)
+    for(int32_t dz = -1; dz <= 1; dz++)
+    for(int32_t dx = -1; dx <= 1; dx++)
+    {
+        f_vec k{-dx,-dy,-dz};
+        k.normalize();
+        layer.cosAlphaG[idx] = cos(layer.alpha_g * acos(k*layer.prefered_orientation));
+        idx++;
+    }
+}
+
+void GenerationManager::calculateVkMatrix(_int layerIdx)
+{
+    Configuration::Layer& layer = m_config.layers[layerIdx];
+
+    for(_int idx = 0; idx < 27; idx++)
+    {
+        m_vkMatrix[idx].resize(layer.grainsNumber);
+        for(_int grainId = 0; grainId < layer.grainsNumber; grainId++){
+            m_vkMatrix[idx][grainId] = layer.cosAlphaG[idx] * ((1.0/layer.dk) + cos(layer.alpha_t*m_nucleator.grains()[grainId].theta[idx]));
+        }
+    }
 }

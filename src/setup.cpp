@@ -19,7 +19,7 @@ std::pair<double,double> Nucleator::nucleate(Domain& domain, _long_int y0, _int 
     Eigen::Vector3d axis_a = prefered_orientation.cross(Eigen::Vector3d{1,0,0}).normalized();
     Eigen::Vector3d axis_b = prefered_orientation.cross(axis_a).normalized();
 
-    uint16_t grain_ID = g0;
+    //uint16_t grain_ID = g0;
     
     _long_int dimX = domain.dimX;
     _long_int dimZ = domain.dimZ;
@@ -72,8 +72,21 @@ std::pair<double,double> Nucleator::nucleate(Domain& domain, _long_int y0, _int 
     Eigen::Vector3d orientation = (rotated_a + rotated_b).normalized();
         
     m_grains[grain_ID].orientation = {orientation[0], orientation[1], orientation[2]};
+
+    int32_t idx = 0;
+    for(int32_t dy = -1; dy <= 1; dy++)
+    for(int32_t dz = -1; dz <= 1; dz++)
+    for(int32_t dx = -1; dx <= 1; dx++)
+    {
+        f_vec k = {-dx, -dy, -dz};
+        k.normalize();
+        m_grains[grain_ID].theta[idx] = acos(m_grains[grain_ID].orientation*k);
+        idx++;
+    }
             
     }
+
+   
 
     return {y_max, y_min};
 }

@@ -44,26 +44,30 @@ void Generator::run(Domain& input, Domain& output, double ct)
             }  
         }
 
+        _int idx = -1;
         for(_long_int dy = m_domain.neighbourhood.dy0; dy <= m_domain.neighbourhood.dy1; dy++)
         for(_long_int dz = m_domain.neighbourhood.dz0; dz <= m_domain.neighbourhood.dz1; dz++)
         for(_long_int dx = m_domain.neighbourhood.dx0; dx <= m_domain.neighbourhood.dx1; dx++)
         {
+            idx++;
             cell c = input.state(pos.x + dx, pos.y + dy, pos.z + dz);
-            if(c == Domain::VOID || c.state < m_g0 || m_domain(x,y,z).state == Domain::BOND.state) continue;
+            if((c.state == Domain::VOID.state) || (c.state < m_g0) || (m_domain(x,y,z).state == Domain::BOND.state) || (c.state == Domain::BOND.state)){
+                continue;
+            }
 
             Grain&  grain = m_grains[c.state];
 
             double dt = INFINITY;
             {
 
-                f_vec k = {-dx, -dy, -dz};
-                k.normalize();
+                //f_vec k = {-dx, -dy, -dz};
+                //k.normalize();
 
-                double theta = acos(grain.orientation*k);
-
-                double v_k = cos(m_alpha_g * acos(k*m_prefered_orientation)) * (m_inv_dk + cos(m_alpha_t*theta));
-                
-                dt = (1.0+m_diff)*(sqrt(dx*dx + dy*dy + dz*dz)) /(shadowing*v_k + m_diff) ;
+                //double theta = acos(grain.orientation*k);
+                // double v_k = cos(m_alpha_g * acos(k*m_prefered_orientation)) * (m_inv_dk + cos(m_alpha_t*grain.theta[idx]));
+                //double v_k = m_layer->cosAlphaG[idx] * (m_inv_dk + cos(m_alpha_t*grain.theta[idx]));
+               
+                dt = (1.0+m_diff)*(sqrt(dx*dx + dy*dy + dz*dz)) /(shadowing*(*m_vkMatrix)[idx][c.state]+ m_diff) ;
                
                 if(dt <= 0) dt = INFINITY;
             }

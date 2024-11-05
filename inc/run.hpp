@@ -19,9 +19,15 @@ class GenerationManager
 
     void create_generators();
     void update_generators(_int layer, _int g0);
+    void precalculateLayer(_int layer);
+    void calculateVkMatrix(_int layer);
+
+    double** m_vkMatrix{nullptr};
+    std::array<std::vector<double>,27> m_vkMatrix;
+
     _long_int calc_y0(_int layer, _int y0, _int g0);
 
-    const Configuration& m_config;
+    Configuration& m_config;
 
     Domain m_domain;
     Nucleator m_nucleator;

@@ -11,4 +11,6 @@ struct Grain
 
     /* Growth tensor' coordinates */
     f_vec orientation;
+
+    double theta[27];
 };

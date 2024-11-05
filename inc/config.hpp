@@ -47,6 +47,8 @@ struct Configuration {
         double dk;
         double diff;
 
+        double cosAlphaG[27];
+
         f_vec prefered_orientation;
         _int grainsNumber;
         _long_int layer_height;
