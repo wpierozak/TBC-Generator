@@ -66,8 +66,13 @@ void Generator::run(Domain& input, Domain& output, double ct)
                 //double theta = acos(grain.orientation*k);
                 // double v_k = cos(m_alpha_g * acos(k*m_prefered_orientation)) * (m_inv_dk + cos(m_alpha_t*grain.theta[idx]));
                 //double v_k = m_layer->cosAlphaG[idx] * (m_inv_dk + cos(m_alpha_t*grain.theta[idx]));
-               
-                dt = (1.0+m_diff)*(sqrt(dx*dx + dy*dy + dz*dz)) /(shadowing*(*m_vkMatrix)[idx][c.state]+ m_diff) ;
+                if(c.state > m_layer->grainsNumber){
+                    abort();
+                }
+                if(m_vkMatrix == nullptr){
+                    abort();
+                }
+                dt = (1.0+m_diff)*(sqrt(dx*dx + dy*dy + dz*dz)) /(shadowing*m_vkMatrix[c.state*27 + idx]+ m_diff) ;
                
                 if(dt <= 0) dt = INFINITY;
             }

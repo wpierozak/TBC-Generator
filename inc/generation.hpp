@@ -25,7 +25,7 @@ class Generator
     void set_inv_dk(double dk){m_inv_dk = 1.0/dk;}
     void set_diffusion(double diff){m_diff = diff;}
     void setLayer(const Configuration::Layer& layer){m_layer = &layer;}
-    void setVkMatrix(const std::array<std::vector<double>,27>* vkMatrix){m_vkMatrix = vkMatrix;}
+    void setVkMatrix(double* vkMatrix){m_vkMatrix = vkMatrix;}
 
     void run(Domain& input, Domain& output, double ct);
     Subspace& subspace() {return m_subspace;}
@@ -80,6 +80,6 @@ class Generator
     double m_kLen[27];
 
     const Configuration::Layer* m_layer;
-    const std::array<std::vector<double>,27>* m_vkMatrix{nullptr};
+    double* m_vkMatrix{nullptr};
     std::unordered_map<uint16_t, Grain> m_grains;
 };

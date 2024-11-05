@@ -22,8 +22,7 @@ class GenerationManager
     void precalculateLayer(_int layer);
     void calculateVkMatrix(_int layer);
 
-    double** m_vkMatrix{nullptr};
-    std::array<std::vector<double>,27> m_vkMatrix;
+    double* m_vkMatrix{nullptr};
 
     _long_int calc_y0(_int layer, _int y0, _int g0);
 
