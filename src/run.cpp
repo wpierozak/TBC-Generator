@@ -28,10 +28,17 @@ void printProgressBar(double dt, double time) {
 
 
 GenerationManager::GenerationManager(Configuration& config):
-    m_domain(config.space.dimX, config.space.dimY, config.space.dimZ, config.neighbourhood),
+    m_domain(config.space.dimX, config.space.dimY, config.space.dimZ),
     m_config(config)
 {
-   
+    _int idx = 0;
+    for(_long_int dy = -1; dy <= 1; dy++)
+    for(_long_int dz = -1; dz <= 1; dz++)
+    for(_long_int dx = -1; dx <= 1; dx++)
+    {
+        m_kLen[idx] = sqrt(dx*dx + dy*dy + dz*dz);
+        idx++;
+    }
 } 
 
 void GenerationManager::generate_layer(_int layer, double y0_p, double y1_p)
@@ -46,9 +53,14 @@ void GenerationManager::generate_layer(_int layer, double y0_p, double y1_p)
 
     double t_stop = m_config.layers[layer].layer_height/(1.0 + 1.0/m_config.layers[layer].dk + m_config.layers[layer].diff);
 
-    #pragma omp parallel num_threads(m_config.parallel.cpu_threads) shared(y0,y1)
+    #pragma omp parallel num_threads(m_config.parallel.cpu_threads) default(shared) firstprivate(flip, t_stop)
     {
+         
         _int idx = omp_get_thread_num();
+        _long_int dz = (m_domain.dimZ + omp_get_num_threads() - 1)/omp_get_num_threads();
+        _long_int z0 = dz*idx;
+        _long_int z1 = ((z0+dz*(idx+1)) < m_domain.dimZ) ? z0 + dz*(idx+1) : m_domain.dimZ;
+
         for(double i = 0; i < t_stop; i+=m_config.time.dt)
         {
             #pragma omp master
@@ -61,12 +73,17 @@ void GenerationManager::generate_layer(_int layer, double y0_p, double y1_p)
             }
 
             #pragma omp barrier
-            m_generators[idx].subspace().y0 = round(y0);
-            m_generators[idx].subspace().y1 = round(y1);
-            #pragma omp barrier
-
-            if(flip) m_generators[idx].run(m_domain, copy, i);
-            else m_generators[idx].run(copy, m_domain, i);
+            //m_generators[idx].subspace().y0 = round(y0);
+            //m_generators[idx].subspace().y1 = round(y1);
+            //#pragma omp barrier
+            if(flip){
+                oneIteration(i, m_domain, copy, layer, round(y0), round(y1), z0, z1);
+            }
+            else{
+                oneIteration(i, copy, m_domain, layer, round(y0), round(y1), z0, z1);
+            }
+            //if(flip) m_generators[idx].run(m_domain, copy, i);
+            //else m_generators[idx].run(copy, m_domain, i);
             !flip;
             #pragma omp barrier
         
@@ -76,56 +93,73 @@ void GenerationManager::generate_layer(_int layer, double y0_p, double y1_p)
     std::cout << std::endl;
 }
 
-void GenerationManager::create_generators()
+void GenerationManager::oneIteration(double ct, Domain& input, Domain& output, _long_int layerIdx, _long_int y0, _long_int y1, _long_int z0, _long_int z1)
 {
-    int threadsNumber = m_config.parallel.cpu_threads;
+    const Configuration::Layer& layer = m_config.layers[layerIdx];
+    f_vec space = {m_domain.dimX, m_domain.dimY, m_domain.dimZ};
 
-    _long_int dz = (m_domain.dimZ + threadsNumber - 1)/threadsNumber;
-
-    for(_long_int z = 0; z < m_domain.dimZ; z+=dz)
+    for(_long_int y = y0; y < y1; y++)
+    for(_long_int z = z0; z < z1; z++)
+    for(_long_int x = 0; x < input.dimX; x++)
     {
-        Generator::Subspace subspace;
+        if( input(x,y,z).state < m_g0 || input(x,y,z).state == Domain::BOND.state ) continue;
+        f_vec pos = {static_cast<double>(x), static_cast<double>(y), static_cast<double>(z)};
 
-        subspace.x0 = 0;
-        subspace.x1 = m_domain.dimX;
-        subspace.y0 = 0;
-        subspace.y1 = m_domain.dimY;
-        subspace.z0 = z;
-        subspace.z1 = ((z+dz) < m_domain.dimZ) ? z + dz : m_domain.dimZ;
+        double shadowing = 1.0;
+        for(_long_int dy = 0; dy <= 1; dy++)
+        for(_long_int dz = -1; dz <= 1; dz++)
+        for(_long_int dx = -1; dx <= 1; dx++)
+        {
+            if(input.state(pos.x + dx, pos.y + dy, pos.z + dz).state != Domain::VOID.state)
+            {
+                double sh = 1.0 - layer.prefered_orientation*f_vec{dx,dy,z};
+                if(sh >=  1.0) sh = 1.0;
+                if(sh < shadowing) shadowing = sh;
+            }  
+        }
 
-        m_generators.emplace_back(m_domain, subspace);
+        _int idx = -1;
+        for(_long_int dy = -1; dy <= 1; dy++)
+        for(_long_int dz = -1; dz <= 1; dz++)
+        for(_long_int dx = -1; dx <= 1; dx++)
+        {
+            idx++;
+            cell c = input.state(pos.x + dx, pos.y + dy, pos.z + dz);
+            if((c.state == Domain::VOID.state) || (c.state < m_g0) || (m_domain(x,y,z).state == Domain::BOND.state) || (c.state == Domain::BOND.state)){
+                continue;
+            }
+
+            Grain&  grain = m_nucleator.grains()[c.state];
+
+            double dt = INFINITY;
+            {
+                dt = (1.0+layer.diff)*(m_kLen[idx]) /(shadowing*m_vkMatrix[c.state*27 + idx]+ layer.diff) ;
+               
+                if(dt <= 0) dt = INFINITY;
+            }
+
+            double time = dt + c.time;
+
+            if(time < input(x,y,z).time && time <= ct)
+            {
+               output(x,y,z) = {c.state, time};
+            }
+        }
     }
 }
 
-void GenerationManager::update_generators(_int layer, _int g0)
-{
-    for(Generator& g: m_generators)
-    {
-        g.update_grains(m_nucleator.grains());
-        g.set_g0(g0);
-
-        g.set_prefered_orientation(m_config.layers[layer].prefered_orientation);
-        g.set_alpha_g(m_config.layers[layer].alpha_g);
-        g.set_alpha_t(m_config.layers[layer].alpha_t);
-        g.set_diffusion(m_config.layers[layer].diff);
-        g.set_inv_dk(m_config.layers[layer].dk);
-        g.setLayer(m_config.layers[layer]);
-        g.setVkMatrix(m_vkMatrix);
-    }
-}
 
 void GenerationManager::generate()
 {
     BondCoat bond(m_config.bond.parameters);
     bond.fill(m_domain);
     
-    create_generators();
     _int g0 = 0;
     double y0 = 0;
 
     for(_int layer = 0; layer < m_config.layers.size(); layer++)
     {
-        g0 = (layer == 0) ? 0 : g0 + m_config.layers[layer-1].grainsNumber;
+        m_g0 = (layer == 0) ? 0 : g0 + m_config.layers[layer-1].grainsNumber;
         y0 = calc_y0(layer, y0, g0);
         
         auto ys = m_nucleator.nucleate(m_domain, y0, g0, m_config.layers[layer]);
@@ -135,7 +169,6 @@ void GenerationManager::generate()
 
         precalculateLayer(layer);
         calculateVkMatrix(layer);
-        update_generators(layer, g0);
         std::cout << "\nGeneration\n";
         generate_layer(layer, y0, y_max);
     }

@@ -56,8 +56,6 @@ struct Configuration {
 
     std::vector<Layer> layers;
 
-    Neighbourhood neighbourhood;
-
     struct Parallel {
         _int cpu_threads;
         bool gpu;
@@ -88,7 +86,6 @@ struct Configuration {
 
     Configuration(const Configuration& other)
         : space(other.space), layers(other.layers),
-          neighbourhood(other.neighbourhood),
           parallel(other.parallel), output(other.output) 
           {
             time = other.time;
@@ -104,7 +101,6 @@ struct Configuration {
 
         space = other.space;
         layers = other.layers;
-        neighbourhood = other.neighbourhood;
         parallel = other.parallel;
         output = other.output;
         time = other.time;

@@ -5,8 +5,8 @@
 const cell Domain::VOID = cell(__UINT16_MAX__, std::numeric_limits<double>::max());
 const cell Domain::BOND = cell(__UINT16_MAX__ - 1, std::numeric_limits<double>::max());
 
-Domain::Domain(_long_int X, _long_int Y, _long_int Z, Neighbourhood n):
-    dimX(X), dimY(Y), dimZ(Z), neighbourhood(n)
+Domain::Domain(_long_int X, _long_int Y, _long_int Z):
+    dimX(X), dimY(Y), dimZ(Z)
 {
     buffer = std::shared_ptr<cell[]>(new cell[static_cast<_long_int>(dimX)*static_cast<_long_int>(dimZ)*static_cast<_long_int>(dimY)]);
     for(_long_int n = 0; n < static_cast<_long_int>(dimX)*static_cast<_long_int>(dimZ)*static_cast<_long_int>(dimY); n++)
