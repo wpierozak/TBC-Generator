@@ -22,3 +22,27 @@ add_executable(tbc_generator ${SRC_FILES})
 
 target_include_directories(tbc_generator PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/inc)
 target_link_libraries(tbc_generator easybmp OpenMP::OpenMP_CXX)
+
+# Set the build type to Release if not specified
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+
+# Set optimization flags for Release build
+if(CMAKE_BUILD_TYPE MATCHES Release)
+    # For GCC or Clang
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native -DNDEBUG")
+        set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} -s")
+    # For MSVC
+    elseif(MSVC)
+        set(CMAKE_CXX_FLAGS_RELEASE "/O2 /DNDEBUG")
+    endif()
+endif()
+
+# Enable warnings (optional but recommended)
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic")
+elseif(MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+endif()
