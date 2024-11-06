@@ -14,7 +14,7 @@ namespace XmlNodes
 
         static Time parse(rapidxml::xml_node<>* node);
 
-        double dt;
+        float dt;
     };
 
     struct Front
@@ -24,7 +24,7 @@ namespace XmlNodes
 
         static Front parse(rapidxml::xml_node<>* node);
 
-        double vb;
+        float vb;
     };
     
 
@@ -84,7 +84,7 @@ namespace XmlNodes
 
         static Bond parse(rapidxml::xml_node<>* node);
 
-        double A, B, C, D, E, F, G, H, Z;
+        float A, B, C, D, E, F, G, H, Z;
     };
 
     struct Layer
@@ -107,7 +107,7 @@ namespace XmlNodes
 
             static PreferedOrientation parse(rapidxml::xml_node<>* node);
 
-            double x, y, z;
+            float x, y, z;
         } prefered_orientation;
 
         static Layer parse(rapidxml::xml_node<>* node);
@@ -115,11 +115,11 @@ namespace XmlNodes
         std::string name;
         _int grains_number;
         _long_int height;
-        double tilt_stddev;
-        double alpha_g{0.5};
-        double alpha_t{4.0};
-        double anisotropy;
-        double diffusion;
+        float tilt_stddev;
+        float alpha_g{0.5};
+        float alpha_t{4.0};
+        float anisotropy;
+        float diffusion;
     };
     
     struct Parallel

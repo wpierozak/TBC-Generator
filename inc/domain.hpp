@@ -25,7 +25,7 @@ class Domain
     Domain(const Domain&) = default;
     Domain(Domain&&);
     Domain& operator=(const Domain&) = delete;
-    Domain(_long_int dimX, _long_int dimY, _long_int dimZ, Neighbourhood neighbourhood);
+    Domain(_long_int dimX, _long_int dimY, _long_int dimZ);
 
     static const cell VOID;
     static const cell BOND;
@@ -33,7 +33,6 @@ class Domain
     const _long_int dimX;
     const _long_int dimY;
     const _long_int dimZ;
-    const Neighbourhood neighbourhood;
 
     cell& operator()(_long_int x, _long_int y, _long_int z)
     {

@@ -79,11 +79,11 @@ Configuration ConfigurationParser::createConfiguration() const {
     config.output.format = output.format;
 
     // Set the Neighbourhood configuration using the new Neighbourhood struct
-    config.neighbourhood = Neighbourhood(
-        neighbourhood.x0, neighbourhood.x1,
-        neighbourhood.y0, neighbourhood.y1,
-        neighbourhood.z0, neighbourhood.z1
-    );
+    // config.neighbourhood = Neighbourhood(
+    //     neighbourhood.x0, neighbourhood.x1,
+    //     neighbourhood.y0, neighbourhood.y1,
+    //     neighbourhood.z0, neighbourhood.z1
+    // );
 
     // Set the Parallel configuration
     config.parallel.cpu_threads = parallel.cpu_threads;
