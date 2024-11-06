@@ -9,10 +9,10 @@
 #include"setup.hpp"
 
 
-std::pair<double,double> Nucleator::nucleate(Domain& domain, _long_int y0, _int g0, const Configuration::Layer& layer)
+std::pair<float,float> Nucleator::nucleate(Domain& domain, _long_int y0, _int g0, const Configuration::Layer& layer)
 {
     std::minstd_rand gen(std::random_device{}());
-    std::uniform_real_distribution<double> pos_dist(0, 1);
+    std::uniform_real_distribution<float> pos_dist(0, 1);
     std::normal_distribution<> angle_dist(0.0, layer.tilt_stddev);
 
     Eigen::Vector3d prefered_orientation = {layer.prefered_orientation.x, layer.prefered_orientation.y, layer.prefered_orientation.z};
@@ -24,14 +24,14 @@ std::pair<double,double> Nucleator::nucleate(Domain& domain, _long_int y0, _int 
     _long_int dimX = domain.dimX;
     _long_int dimZ = domain.dimZ;
 
-    double y_max = 0.0;
-    double y_min = y0;
+    float y_max = 0.0;
+    float y_min = y0;
 
     for(_long_int grain_ID = g0; grain_ID < g0 + layer.grainsNumber; grain_ID++)
     {
         m_grains[grain_ID].ID = grain_ID;
-        double x = pos_dist(gen) * dimX;
-        double z = pos_dist(gen) * dimZ;
+        float x = pos_dist(gen) * dimX;
+        float z = pos_dist(gen) * dimZ;
         /* center */
         if( x >= dimX ) x = dimX - 1;
         if( z >= dimZ ) z = dimZ - 1;
@@ -40,10 +40,10 @@ std::pair<double,double> Nucleator::nucleate(Domain& domain, _long_int y0, _int 
         {
             if((domain(x,y,z).state == Domain::VOID.state) && (domain(x,y+1,z).state == Domain::VOID.state) && ((domain(x,y-1,z).state != Domain::VOID.state)))
             {
-                m_grains[grain_ID].center = {round( x), double(y), round( z)};
+                m_grains[grain_ID].center = {round( x), float(y), round( z)};
                 domain(x,y,z) = {m_grains[grain_ID].ID,0};
                 if(y > y_max){
-                    y_max = static_cast<double>(y);
+                    y_max = static_cast<float>(y);
                 }
                 if(y < y_min)
                 {

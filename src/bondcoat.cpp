@@ -5,13 +5,13 @@
 
 void BondCoat::fill(Domain& domain)
 {
-    double max_y = *std::max_element(m_parameters.begin(), m_parameters.end());
+    float max_y = *std::max_element(m_parameters.begin(), m_parameters.end());
 
-    for(double y = 0; y < max_y; y += 1)
+    for(float y = 0; y < max_y; y += 1)
     {
-    for(double z = 0; z < static_cast<double>(domain.dimZ); z += 1)
+    for(float z = 0; z < static_cast<float>(domain.dimZ); z += 1)
     {
-    for(double x = 0; x < static_cast<double>(domain.dimX); x += 1)
+    for(float x = 0; x < static_cast<float>(domain.dimX); x += 1)
     {
         if(y <= shape_function(x,z))
         {

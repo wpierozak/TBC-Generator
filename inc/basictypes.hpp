@@ -13,9 +13,9 @@ typedef int32_t _int;
 struct cell
 {
     uint16_t state;
-    double time;
+    float time;
 
-    cell(uint16_t s = __UINT16_MAX__, double t = 0): state(s), time(t)
+    cell(uint16_t s = __UINT16_MAX__, float t = 0): state(s), time(t)
     {
 
     }
@@ -29,23 +29,23 @@ struct cell
 };
 
 
-constexpr double PI_180 = M_PI/180.0;
+constexpr float PI_180 = M_PI/180.0;
 
-inline double radians(double degrees) { return degrees * PI_180; }
+inline float radians(float degrees) { return degrees * PI_180; }
 
 struct f_vec
 {
-    double x,y,z;
-    double norm() const {
+    float x,y,z;
+    float norm() const {
         return sqrt(x*x + y*y + z*z);
     }
 
-    f_vec operator*(double f) const
+    f_vec operator*(float f) const
     {
         return {x*f, y*f, z*f};
     }
 
-    double operator*(const f_vec& a) const
+    float operator*(const f_vec& a) const
     {
         return x*a.x + y*a.y + z*a.z;
     }
@@ -65,14 +65,14 @@ struct f_vec
         return {x - b.x, y - b.y, z - b.z};
     }
 
-    double cos(const f_vec& b) const
+    float cos(const f_vec& b) const
     {
         return ( (*this)*b  )/ (this->norm() * b.norm());
     }
 
     void normalize()
     {
-        double norm = this->norm();
+        float norm = this->norm();
         x = x/norm;
         y = y/norm;
         z = z/norm;

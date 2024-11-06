@@ -10,7 +10,7 @@ struct Configuration {
     struct Time{
         Time() = default;
         Time(const Time&) = default;
-        double dt;
+        float dt;
 
     } time;
 
@@ -18,7 +18,7 @@ struct Configuration {
         Front() = default;
         Front(const Front&) = default;
 
-        double vb;
+        float vb;
     } front;
 
     struct Space {
@@ -41,13 +41,13 @@ struct Configuration {
         // Assignment operator
         Layer& operator=(const Layer& other) = default;
 
-        double tilt_stddev;
-        double alpha_g;
-        double alpha_t;
-        double dk;
-        double diff;
+        float tilt_stddev;
+        float alpha_g;
+        float alpha_t;
+        float dk;
+        float diff;
 
-        double cosAlphaG[27];
+        float cosAlphaG[27];
 
         f_vec prefered_orientation;
         _int grainsNumber;
@@ -81,7 +81,7 @@ struct Configuration {
     } output;
 
     struct Bond {
-        double parameters[BondCoat::FunctionParametersNumber];    
+        float parameters[BondCoat::FunctionParametersNumber];    
     } bond;
 
     Configuration(const Configuration& other)
@@ -90,7 +90,7 @@ struct Configuration {
           {
             time = other.time;
             front = other.front;
-            std::memcpy(bond.parameters, other.bond.parameters, sizeof(double) * BondCoat::FunctionParametersNumber);
+            std::memcpy(bond.parameters, other.bond.parameters, sizeof(float) * BondCoat::FunctionParametersNumber);
           }
 
     // Assignment operator for Configuration
@@ -105,7 +105,7 @@ struct Configuration {
         output = other.output;
         time = other.time;
         front = other.front;
-        std::memcpy(bond.parameters, other.bond.parameters, sizeof(double) * BondCoat::FunctionParametersNumber);
+        std::memcpy(bond.parameters, other.bond.parameters, sizeof(float) * BondCoat::FunctionParametersNumber);
 
         return *this;
     }

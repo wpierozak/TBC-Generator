@@ -4,9 +4,9 @@
 #include <iostream>
 #include <cmath>
 
-void printProgressBar(double dt, double time) {
+void printProgressBar(float dt, float time) {
     int barWidth = 50; // Width of the progress bar
-    double progress = dt / time;
+    float progress = dt / time;
 
     // Ensure progress does not exceed 100%
     if (progress > 1.0) progress = 1.0;
@@ -41,17 +41,17 @@ GenerationManager::GenerationManager(Configuration& config):
     }
 } 
 
-void GenerationManager::generate_layer(_int layer, double y0_p, double y1_p)
+void GenerationManager::generate_layer(_int layer, float y0_p, float y1_p)
 {
     std::cout<< "Layer: " << layer << std::endl;
     Domain copy(m_domain);
 
-    double y0 = y0_p;
-    double y1 = y1_p;
+    float y0 = y0_p;
+    float y1 = y1_p;
 
     bool flip = true;
 
-    double t_stop = m_config.layers[layer].layer_height/(1.0 + 1.0/m_config.layers[layer].dk + m_config.layers[layer].diff);
+    float t_stop = m_config.layers[layer].layer_height/(1.0 + 1.0/m_config.layers[layer].dk + m_config.layers[layer].diff);
 
     #pragma omp parallel num_threads(m_config.parallel.cpu_threads) default(shared) firstprivate(flip, t_stop)
     {
@@ -61,7 +61,7 @@ void GenerationManager::generate_layer(_int layer, double y0_p, double y1_p)
         _long_int z0 = dz*idx;
         _long_int z1 = ((z0+dz*(idx+1)) < m_domain.dimZ) ? z0 + dz*(idx+1) : m_domain.dimZ;
 
-        for(double i = 0; i < t_stop; i+=m_config.time.dt)
+        for(float i = 0; i < t_stop; i+=m_config.time.dt)
         {
             #pragma omp master
             {
@@ -73,17 +73,14 @@ void GenerationManager::generate_layer(_int layer, double y0_p, double y1_p)
             }
 
             #pragma omp barrier
-            //m_generators[idx].subspace().y0 = round(y0);
-            //m_generators[idx].subspace().y1 = round(y1);
-            //#pragma omp barrier
+            
             if(flip){
                 oneIteration(i, m_domain, copy, layer, round(y0), round(y1), z0, z1);
             }
             else{
                 oneIteration(i, copy, m_domain, layer, round(y0), round(y1), z0, z1);
             }
-            //if(flip) m_generators[idx].run(m_domain, copy, i);
-            //else m_generators[idx].run(copy, m_domain, i);
+            
             !flip;
             #pragma omp barrier
         
@@ -93,7 +90,7 @@ void GenerationManager::generate_layer(_int layer, double y0_p, double y1_p)
     std::cout << std::endl;
 }
 
-void GenerationManager::oneIteration(double ct, Domain& input, Domain& output, _long_int layerIdx, _long_int y0, _long_int y1, _long_int z0, _long_int z1)
+void GenerationManager::oneIteration(float ct, Domain& input, Domain& output, _long_int layerIdx, _long_int y0, _long_int y1, _long_int z0, _long_int z1)
 {
     const Configuration::Layer& layer = m_config.layers[layerIdx];
     f_vec space = {m_domain.dimX, m_domain.dimY, m_domain.dimZ};
@@ -103,16 +100,16 @@ void GenerationManager::oneIteration(double ct, Domain& input, Domain& output, _
     for(_long_int x = 0; x < input.dimX; x++)
     {
         if( input(x,y,z).state < m_g0 || input(x,y,z).state == Domain::BOND.state ) continue;
-        f_vec pos = {static_cast<double>(x), static_cast<double>(y), static_cast<double>(z)};
+        f_vec pos = {static_cast<float>(x), static_cast<float>(y), static_cast<float>(z)};
 
-        double shadowing = 1.0;
+        float shadowing = 1.0;
         for(_long_int dy = 0; dy <= 1; dy++)
         for(_long_int dz = -1; dz <= 1; dz++)
         for(_long_int dx = -1; dx <= 1; dx++)
         {
             if(input.state(pos.x + dx, pos.y + dy, pos.z + dz).state != Domain::VOID.state)
             {
-                double sh = 1.0 - layer.prefered_orientation*f_vec{dx,dy,z};
+                float sh = 1.0 - layer.prefered_orientation*f_vec{dx,dy,z};
                 if(sh >=  1.0) sh = 1.0;
                 if(sh < shadowing) shadowing = sh;
             }  
@@ -131,14 +128,14 @@ void GenerationManager::oneIteration(double ct, Domain& input, Domain& output, _
 
             Grain&  grain = m_nucleator.grains()[c.state];
 
-            double dt = INFINITY;
+            float dt = INFINITY;
             {
                 dt = (1.0+layer.diff)*(m_kLen[idx]) /(shadowing*m_vkMatrix[c.state*27 + idx]+ layer.diff) ;
                
                 if(dt <= 0) dt = INFINITY;
             }
 
-            double time = dt + c.time;
+            float time = dt + c.time;
 
             if(time < input(x,y,z).time && time <= ct)
             {
@@ -155,7 +152,7 @@ void GenerationManager::generate()
     bond.fill(m_domain);
     
     _int g0 = 0;
-    double y0 = 0;
+    float y0 = 0;
 
     for(_int layer = 0; layer < m_config.layers.size(); layer++)
     {
@@ -163,7 +160,7 @@ void GenerationManager::generate()
         y0 = calc_y0(layer, y0, g0);
         
         auto ys = m_nucleator.nucleate(m_domain, y0, g0, m_config.layers[layer]);
-        double y_max = ys.first;
+        float y_max = ys.first;
         y0 = ys.second;
 
 
@@ -202,7 +199,7 @@ void GenerationManager::calculateVkMatrix(_int layerIdx)
         delete [] m_vkMatrix;
     }
 
-    m_vkMatrix = new double[layer.grainsNumber*27];
+    m_vkMatrix = new float[layer.grainsNumber*27];
     for(_int grainId = 0; grainId < layer.grainsNumber; grainId++){
         for(_int idx = 0; idx < 27; idx++){
             m_vkMatrix[27*grainId + idx] = layer.cosAlphaG[idx] * ((1.0/layer.dk) + cos(layer.alpha_t*m_nucleator.grains()[grainId].theta[idx]));

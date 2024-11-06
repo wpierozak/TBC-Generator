@@ -2,8 +2,8 @@
 #include<climits>
 #include"domain.hpp"
 
-const cell Domain::VOID = cell(__UINT16_MAX__, std::numeric_limits<double>::max());
-const cell Domain::BOND = cell(__UINT16_MAX__ - 1, std::numeric_limits<double>::max());
+const cell Domain::VOID = cell(__UINT16_MAX__, std::numeric_limits<float>::max());
+const cell Domain::BOND = cell(__UINT16_MAX__ - 1, std::numeric_limits<float>::max());
 
 Domain::Domain(_long_int X, _long_int Y, _long_int Z):
     dimX(X), dimY(Y), dimZ(Z)
