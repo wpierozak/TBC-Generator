@@ -3,3 +3,4 @@ bin/*
 lib/*
 !lib/.gitkeep
 build/*
+res
