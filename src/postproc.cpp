@@ -6,9 +6,6 @@
 #include<ctime>
 
 #include"postproc.hpp"
-#include"BMP/libbmp.h"
-#include"BMP/EasyBMP.h"
-
 #define BUFFER_SIZE 1000
 
 #include <iostream>
