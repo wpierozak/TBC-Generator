@@ -81,8 +81,7 @@ void GenerationManager::generate_layer(_int layer, float y0_p, float y1_p)
                 oneIteration(i, copy, m_domain, layer, round(y0), round(y1), z0, z1);
             }
             
-            !flip;
-            #pragma omp barrier
+            flip != flip;
         
         }
     }
@@ -130,7 +129,7 @@ void GenerationManager::oneIteration(float ct, Domain& input, Domain& output, _l
 
             float dt = INFINITY;
             {
-                dt = (1.0+layer.diff)*(m_kLen[idx]) /(shadowing*m_vkMatrix[c.state*27 + idx]+ layer.diff) ;
+                dt = (1.0+layer.diff)*(m_kLen[idx]) /(shadowing*m_vkMatrix[(c.state-m_g0)*27 + idx]+ layer.diff) ;
                
                 if(dt <= 0) dt = INFINITY;
             }
@@ -151,15 +150,13 @@ void GenerationManager::generate()
     BondCoat bond(m_config.bond.parameters);
     bond.fill(m_domain);
     
-    _int g0 = 0;
     float y0 = 0;
+    m_g0 = 0;
 
     for(_int layer = 0; layer < m_config.layers.size(); layer++)
     {
-        m_g0 = (layer == 0) ? 0 : g0 + m_config.layers[layer-1].grainsNumber;
-        y0 = calc_y0(layer, y0, g0);
-        
-        auto ys = m_nucleator.nucleate(m_domain, y0, g0, m_config.layers[layer]);
+        m_g0 = (layer == 0) ? 0 : m_g0 + m_config.layers[layer-1].grainsNumber;
+        auto ys = m_nucleator.nucleate(m_domain, m_domain.dimY-2, m_g0, m_config.layers[layer]);
         float y_max = ys.first;
         y0 = ys.second;
 
@@ -167,13 +164,8 @@ void GenerationManager::generate()
         precalculateLayer(layer);
         calculateVkMatrix(layer);
         std::cout << "\nGeneration\n";
-        generate_layer(layer, y0, y_max);
+        generate_layer(layer, y0*0.9, y_max+5);
     }
-}
-
-_long_int GenerationManager::calc_y0(_int layer, _int y0, _int g0)
-{
-    return (layer == 0) ? 0 : y0 + m_config.layers[layer-1].layer_height;
 }
 
 void GenerationManager::precalculateLayer(_int layerIdx)

@@ -26,8 +26,6 @@ class GenerationManager
     float* m_vkMatrix{nullptr};
     float m_kLen[27];
 
-    _long_int calc_y0(_int layer, _int y0, _int g0);
-
     Configuration& m_config;
 
     Domain m_domain;

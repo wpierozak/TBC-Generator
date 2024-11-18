@@ -3,6 +3,7 @@
 #include"postproc.hpp"
 #include"run.hpp"
 #include<iostream>
+#include<chrono>
 
 int main(int argc, const char** argv)
 {
@@ -15,9 +16,22 @@ int main(int argc, const char** argv)
     
         parser.parseXmlFile(inputFile);
         config = parser.createConfiguration();
+        //config.print();
         GenerationManager manager(config);
+        // Start time measurement for `manager.generate()`
+        auto start = std::chrono::high_resolution_clock::now();
+
         manager.generate();
-        //run(config);
+
+        // End time measurement
+        auto end = std::chrono::high_resolution_clock::now();
+
+        // Calculate the elapsed time in milliseconds
+        std::chrono::duration<double, std::milli> elapsed = end - start;
+
+        // Print out the elapsed time
+        std::cout << "Generation time: " << elapsed.count() << " ms" << std::endl;
+
         saveMicrostructureFile(manager.domain(),config);
     }
     catch(const std::exception& e)

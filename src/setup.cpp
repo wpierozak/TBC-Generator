@@ -11,6 +11,7 @@
 
 std::pair<float,float> Nucleator::nucleate(Domain& domain, _long_int y0, _int g0, const Configuration::Layer& layer)
 {
+    m_grains.clear();
     std::minstd_rand gen(std::random_device{}());
     std::uniform_real_distribution<float> pos_dist(0, 1);
     std::normal_distribution<> angle_dist(0.0, layer.tilt_stddev);
