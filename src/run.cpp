@@ -159,11 +159,8 @@ void GenerationManager::generate()
         auto ys = m_nucleator.nucleate(m_domain, m_domain.dimY-2, m_g0, m_config.layers[layer]);
         float y_max = ys.first;
         y0 = ys.second;
-
-
         precalculateLayer(layer);
         calculateVkMatrix(layer);
-        std::cout << "\nGeneration\n";
         generate_layer(layer, y0*0.9, y_max+5);
     }
 }
