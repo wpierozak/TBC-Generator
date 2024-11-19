@@ -14,14 +14,12 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 set(SRC_DIR "${CMAKE_SOURCE_DIR}/src")
 set(INC_DIR "${CMAKE_SOURCE_DIR}/inc")
 
-add_subdirectory(EasyBMP)
-
 file(GLOB SRC_FILES "${SRC_DIR}/*.cpp")
 
 add_executable(tbc_generator ${SRC_FILES})
 
 target_include_directories(tbc_generator PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/inc)
-target_link_libraries(tbc_generator easybmp OpenMP::OpenMP_CXX)
+target_link_libraries(tbc_generator OpenMP::OpenMP_CXX)
 
 # Set the build type to Release if not specified
 if(NOT CMAKE_BUILD_TYPE)
@@ -46,3 +44,8 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 elseif(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
 endif()
+
+# Installation configuration
+install(TARGETS tbc_generator
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}  # This resolves to /usr/local/bin by default
+)
