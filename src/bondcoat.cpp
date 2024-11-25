@@ -5,7 +5,10 @@
 
 void BondCoat::fill(Domain& domain)
 {
-    float max_y = *std::max_element(m_parameters.begin(), m_parameters.end());
+    float max_y = 0;
+    for(float& parameter: m_parameters){
+        max_y += parameter;
+    }
 
     for(float y = 0; y < max_y; y += 1)
     {
